@@ -8,7 +8,7 @@ const Home: NextPage = () => {
     <div className="h-screen w-screen">
       <Header />
 
-      <div className="flex justify-between h-[calc(100vh-4rem)]">
+      <div className="flex justify-between h-[calc(100vh-4rem)] z-0">
         <section className="flex-1 p-8">apsodk</section>
 
         <Map />
