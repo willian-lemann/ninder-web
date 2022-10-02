@@ -31,10 +31,15 @@ export const MenuOptions = () => {
                 href="#"
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 "
                 )}
               >
-                Your Profile
+                <span className="relative">
+                  Messages{" "}
+                  <span className="absolute -right-2 -top-2 bg-primary rounded-full w-4 h-4 text-white text-sm flex items-center justify-center">
+                    2
+                  </span>
+                </span>
               </a>
             )}
           </Menu.Item>
@@ -47,10 +52,72 @@ export const MenuOptions = () => {
                   "block px-4 py-2 text-sm text-gray-700"
                 )}
               >
-                Settings
+                <span className="relative">
+                  Notifications
+                  <span className="absolute -right-2 -top-2 bg-primary rounded-full w-4 h-4 text-sm text-white flex items-center justify-center">
+                    2
+                  </span>
+                </span>
               </a>
             )}
           </Menu.Item>
+
+          <Menu.Item>
+            {({ active }) => (
+              <a
+                href="#"
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
+              >
+               Favorites
+              </a>
+            )}
+          </Menu.Item>
+
+          <Menu.Item>
+            {({ active }) => (
+              <a
+                href="#"
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
+              >
+                Explore
+              </a>
+            )}
+          </Menu.Item>
+
+          <Menu.Item>
+            {({ active }) => (
+              <a
+                href="#"
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
+              >
+                Account
+              </a>
+            )}
+          </Menu.Item>
+
+          <Menu.Item>
+            {({ active }) => (
+              <a
+                href="#"
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
+              >
+                Help
+              </a>
+            )}
+          </Menu.Item>
+
           <Menu.Item>
             {({ active }) => (
               <a
