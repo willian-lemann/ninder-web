@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 
 import { addErrorNotification } from "../shared/alert";
-import { LockClosedIcon } from "@heroicons/react/outline";
+import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { Loading } from "../shared/Loading";
 
 import { useAuth } from "../../context/AuthContext";

@@ -35,7 +35,7 @@ export default function Login() {
 
       <section className="hidden md:block w-[50%] h-screen">
         <img
-          src="/assets/image/login-background.jpg"
+          src="/images/login-background.png"
           alt="background image"
           className="w-full h-full object-cover"
         />
