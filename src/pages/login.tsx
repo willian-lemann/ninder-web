@@ -1,35 +1,24 @@
 import { useState } from "react";
 
-import { SignInForm } from "../components/login/SignInForm";
-import { SignUpForm } from "../components/login/SignupForm";
+import { SignInForm } from "@components/login/SignInForm";
+import { MultiStepSignup } from "../components/login/MultiStepSignup";
 import { withSSRGuest } from "../utils/withSSRGuest";
+import { LoginTypes } from "@constants/login/LoginTypes";
 
-export default function Login() {
-  const [loginType, setLoginType] = useState<"signin" | "signup">("signin");
+const Login = () => {
+  const [loginType, setLoginType] = useState<LoginTypes>("signin");
+
+  const handleChangeLoginType = (type: LoginTypes) => {
+    setLoginType(type);
+  };
 
   return (
     <div className="h-screen flex flex-col md:flex-row justify-between ">
-      <section className="max-w-md w-full flex flex-col justify-center m-auto">
-        <div>
-          <div className="mx-auto font-bold w-auto text-center text-4xl">
-            <span className="text-primary">Welcome to</span> Ninder
-          </div>
-
-          {loginType === "signin" ? (
-            <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-              Sign in to your account
-            </h2>
-          ) : (
-            <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-              Sign up to your account
-            </h2>
-          )}
-        </div>
-
+      <section className="flex-1">
         {loginType === "signin" ? (
-          <SignInForm onLoginType={setLoginType} />
+          <SignInForm onLoginType={handleChangeLoginType} />
         ) : (
-          <SignUpForm onLoginType={setLoginType} />
+          <MultiStepSignup onLoginType={handleChangeLoginType} />
         )}
       </section>
 
@@ -37,12 +26,14 @@ export default function Login() {
         <img
           src="/images/login-background.png"
           alt="background image"
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover"
         />
       </section>
     </div>
   );
-}
+};
+
+export default Login;
 
 export const getServerSideProps = withSSRGuest(async (context) => {
   return {

@@ -1,17 +1,18 @@
 import { FormEvent, useState } from "react";
 
-import { addErrorNotification } from "../shared/alert";
+import { addErrorNotification } from "@components/shared/alert";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
-import { Loading } from "../shared/Loading";
+import { Loading } from "@components/shared/Loading";
 
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "@context/auth";
+import { errors } from "@utils/errorHandler";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
 export const SignInForm = ({ onLoginType }: SignInFormProps) => {
-  const { signIn } = useAuth();
+  const { signIn } = useAuthContext();
   const [loading, setLoading] = useState(false);
 
   const [signInData, setSignInData] = useState({
@@ -22,11 +23,13 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     event.preventDefault();
     setLoading(true);
 
+    const { email, password } = signInData;
+
     try {
-      await signIn(signInData.email, signInData.password);
-    } catch (error: any) {
+      await signIn({ email, password });
+    } catch (error) {
       addErrorNotification(
-        error.code || "Error trying to sign you in, please try again!"
+        errors[error.code] || "Error trying to sign in. Try again!"
       );
     } finally {
       setLoading(false);
@@ -35,6 +38,16 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
 
   return (
     <form className="mt-8 space-y-6 mx-[1rem]" onSubmit={handleSignIn}>
+      <div>
+        <div className="mx-auto font-bold w-auto text-center text-4xl">
+          <span className="text-primary">Welcome to</span> Ninder
+        </div>
+
+        <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
+      </div>
+
       <input type="hidden" name="remember" defaultValue="true" />
       <div className="rounded-md shadow-sm -space-y-px">
         <div>
@@ -44,7 +57,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
           <input
             id="email-address"
             name="email"
-            type="email"
+            type="text"
             autoComplete="email"
             required
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"

@@ -1,20 +1,9 @@
-import {
-  firebaseDB,
-  collection,
-  addDoc,
-  getDoc,
-  doc,
-} from "../../config/firebase";
-import { User } from "../../models/user";
+import { firestore } from "@config/firebase";
+import { setDoc, doc, collection, getDoc } from "firebase/firestore";
 
-export async function createUserService(user: User) {
-  const response = await getDoc(doc(firebaseDB, "users", user.userId));
+import { User } from "@models/user";
 
-  const alreadyExistInDatabase = response.exists();
-
-  if (alreadyExistInDatabase) return;
-
-  const document = await addDoc(collection(firebaseDB, "users"), user);
-
-  return document.id;
+export async function createUserService(id: string, user: Partial<User>) {
+  const docRef = doc(firestore, "users", id);
+  await setDoc(docRef, { ...user });
 }

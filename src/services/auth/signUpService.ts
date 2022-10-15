@@ -1,23 +1,24 @@
-// import { createUserWithEmailAndPassword, auth } from "../../config/firebase";
-import { User } from "../../models/user";
-import { createUserService } from "../user/createUserService";
+import { auth, firestore } from "@config/firebase";
+
+import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
+
+import { ResponseData } from "@dtos/login/ResponseData";
+import { createUserService } from "@services/user/createUserService";
 
 export async function signUpService(
-  email: string,
-  password: string,
-  name: string
-) {
-  // const response = await createUserWithEmailAndPassword(auth, email, password);
-  // const user: User = {
-  //   avatar: response.user.displayName,
-  //   email,
-  //   name,
-  //   userId: response.user.uid,
-  // };
-  // await createUserService(user);
-  // const token = await response.user.getIdToken();
-  // return {
-  //   token,
-  //   user,
-  // };
+  signUpData: SignUpCredencials
+): Promise<ResponseData> {
+  const { email, password, name } = signUpData;
+
+  const { user } = await createUserWithEmailAndPassword(auth, email, password);
+
+  const token = await user.getIdToken();
+
+  await createUserService(user.uid, { email, name }).catch(async () => {
+    await deleteUser(user);
+  });
+
+  return { token, user: { email, id: user.uid } };
 }

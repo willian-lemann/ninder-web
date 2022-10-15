@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
-import { Header } from "../components/Header";
 
-import { Map } from "../components/Map";
+import { Header } from "@components/Header";
+import { Map } from "@components/Map";
+import { withSSRAuth } from "@utils/withSSRAuth";
 
 const Home: NextPage = () => {
   return (
@@ -18,3 +19,9 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = withSSRAuth(async (context) => {
+  return {
+    props: {},
+  };
+});
