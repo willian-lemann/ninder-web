@@ -12,9 +12,7 @@ interface SignUpFormProps {
   onLoginType: (type: LoginTypes) => void;
 }
 
-export const StepOne = ({ onLoginType }: SignUpFormProps) => {
-  const { signUp } = useAuthContext();
-
+export const UserProfile = ({ onLoginType }: SignUpFormProps) => {
   const [signUpData, setSignUpData] = useState({
     email: "",
     password: "",
