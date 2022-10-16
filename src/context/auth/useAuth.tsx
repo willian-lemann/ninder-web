@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Router from "next/router";
-import { destroyCookie, parseCookies, setCookie } from "nookies";
+import { destroyCookie, setCookie } from "nookies";
 
 import { User } from "@models/user";
 import { SignInCredencials } from "@dtos/login/SignInCredencials";
@@ -14,10 +14,8 @@ import { signUpService } from "@services/auth/signUpService";
 import { logoutService } from "@services/auth/logoutService";
 
 import { STORAGE_KEY } from "src/constants/auth";
-import { addErrorNotification } from "@components/shared/alert";
-import { errors } from "@utils/errorHandler";
-import { FirebaseError } from "firebase/app";
-
+import { auth } from "@config/firebase";
+import { useEffect } from "react";
 export interface InitialState {
   user: User | null;
   signIn(credencials: SignInCredencials): Promise<void>;
@@ -28,6 +26,8 @@ export interface InitialState {
 export function useAuth(): InitialState {
   const [user, setUser] = useState<User | null>(null);
   const location = useGeoLocation();
+
+  let authChannel: BroadcastChannel;
 
   async function signIn({ email, password }: SignInCredencials) {
     const { token, user } = await signInService({
@@ -47,6 +47,8 @@ export function useAuth(): InitialState {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
       path: "/",
     });
+
+    authChannel.postMessage("signIn");
 
     Router.push("/");
   }
@@ -79,18 +81,22 @@ export function useAuth(): InitialState {
   async function signOut() {
     await logoutService();
     destroyCookie(undefined, STORAGE_KEY);
+
+    authChannel.postMessage("signOut");
+
     Router.replace("/login");
   }
 
-  // useEffect(() => {
-  //   const { [STORAGE_KEY]: token } = parseCookies();
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    authChannel = new BroadcastChannel("auth");
 
-  //   if (token) {
-  //     getUserService(token).then((response) => {
-  //       setUser(response);
-  //     });
-  //   }
-  // }, [user?.id]);
+    authChannel.onmessage = (message) => {
+      if (message.data === "signOut") {
+        signOut();
+      }
+    };
+  }, []);
 
   return {
     user,

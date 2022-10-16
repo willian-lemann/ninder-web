@@ -3,6 +3,7 @@ import { Loading } from "@components/shared/Loading";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { FormEvent, useState } from "react";
 import { useMultistepForm } from "src/hooks/useMultistepForm";
+import { ActionButton } from "./ActionButton";
 
 import { StepOne } from "./StepOne";
 import { StepTwo } from "./StepTwo";
@@ -51,22 +52,9 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
 
       <main>{step}</main>
 
-      <div className="flex items-center mb-20 w-full justify-end">
-        <button
-          type="button"
-          onClick={back}
-          className="border-none w-auto h-[45px] bg-primary mr-2 rounded-md px-4 text-white"
-        >
-          Back
-        </button>
-
-        <button
-          type="submit"
-          onClick={back}
-          className="border-none w-auto h-[45px] bg-primary mr-2 rounded-md px-4 text-white"
-        >
-          Next
-        </button>
+      <div className="flex items-center mb-20 w-full justify-end gap-2">
+        <ActionButton label="Back" onClick={back} />
+        <ActionButton label="Next" type="submit" />
       </div>
     </form>
   );
