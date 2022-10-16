@@ -1,21 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Router from "next/router";
 import { destroyCookie, setCookie } from "nookies";
 
 import { User } from "@models/user";
+
 import { SignInCredencials } from "@dtos/login/SignInCredencials";
+import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
+import { useGeoLocation } from "@hooks/useGeoLocation";
 
 import { signInService } from "@services/auth/signInService";
-import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
-import { useGeoLocation } from "src/hooks/useGeoLocation";
-
-import { getUserService } from "@services/user/getUserService";
 import { signUpService } from "@services/auth/signUpService";
 import { logoutService } from "@services/auth/logoutService";
 
 import { STORAGE_KEY } from "src/constants/auth";
-import { auth } from "@config/firebase";
-import { useEffect } from "react";
+
 export interface InitialState {
   user: User | null;
   signIn(credencials: SignInCredencials): Promise<void>;
