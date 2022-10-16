@@ -61,7 +61,6 @@ export const UserInformation = () => {
           name="name"
           type="text"
           autoComplete="current-password"
-          required
           placeholder="Name"
         />
 
@@ -70,8 +69,21 @@ export const UserInformation = () => {
           name="email"
           type="email"
           autoComplete="email"
-          required
           placeholder="Email address"
+        />
+
+        <Input
+          id="hometown"
+          name="hometown"
+          type="text"
+          placeholder="What city do you live"
+        />
+
+        <Input
+          id="occupation"
+          name="occupation"
+          type="text"
+          placeholder="What you do for a living?"
         />
 
         <textarea

@@ -47,7 +47,7 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
       <main>{step}</main>
 
       <div className="flex items-center mb-20 w-full justify-end gap-2">
-        <ActionButton label="Back" onClick={back} />
+        <ActionButton label="Back" type="button" onClick={back} />
         <ActionButton label="Next" type="submit" />
       </div>
     </form>
