@@ -4,12 +4,11 @@ import Image from "next/image";
 import { Input } from "./Input";
 import { classNames } from "@utils/classNames";
 import { PreviewImage } from "./PreviewImage";
-
-import { SignUpData } from ".";
+import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 
 interface UserInformationData
   extends Pick<
-    SignUpData,
+    SignUpCredencials,
     "name" | "email" | "hometown" | "occupation" | "bio" | "avatar"
   > {}
 

@@ -10,12 +10,15 @@ import { UserInformation } from "./UserInformation";
 import { User } from "@models/user";
 import { classNames } from "@utils/classNames";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
+import { useAuthContext } from "@context/auth";
+import { addErrorNotification } from "@components/shared/alert";
 
 interface MultiStepSignupProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
 export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
+  const { signUp } = useAuthContext();
   const [formData, setFormData] = useState<SignUpCredencials>({
     email: "",
     name: "",
@@ -47,12 +50,18 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
     onLoginType("signin");
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
     if (!isLastStep) return next();
 
     console.log(formData);
+
+    try {
+      await signUp({ ...formData });
+    } catch (error) {
+      addErrorNotification(error);
+    }
 
     //  const { email, password, name } = signUpData;
 

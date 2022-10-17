@@ -46,14 +46,18 @@ export function useAuth(): InitialState {
       path: "/",
     });
 
-    authChannel.postMessage("signIn");
-
-    Router.push("/");
+    if (user.hasConfirmedRegulation) {
+      Router.push("/");
+    } else {
+      Router.push("/regulations");
+    }
   }
 
   async function signUp(signUpData: SignUpCredencials) {
     const { token, user } = await signUpService({
       ...signUpData,
+      location,
+      hasConfirmedRegulation: false,
     });
 
     const { email, name } = signUpData;

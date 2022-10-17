@@ -1,6 +1,6 @@
 import { User } from "@models/user";
-export interface SignUpCredencials
-  extends Omit<User, "id" | "location" | "hasConfirmedRegulation"> {
+
+export interface SignUpCredencials extends Omit<User, "id"> {
   password: string;
   confirmPassword: string;
 }

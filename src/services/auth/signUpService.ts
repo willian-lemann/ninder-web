@@ -10,13 +10,15 @@ import { createUserService } from "@services/user/createUserService";
 export async function signUpService(
   signUpData: SignUpCredencials
 ): Promise<ResponseData> {
-  const { email, password, name } = signUpData;
+  const { email, password, ...data } = signUpData;
 
   const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
   const token = await user.getIdToken();
 
-  await createUserService(user.uid, { email, name }).catch(async () => {
+  const { confirmPassword, ...payload } = data;
+
+  await createUserService(user.uid, { email, ...payload }).catch(async () => {
     await deleteUser(user);
   });
 
