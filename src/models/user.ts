@@ -6,14 +6,14 @@ export interface User {
   id?: string;
   email: string;
   name: string;
-  avatar?: string;
+  avatar?: Blob | null;
   bio?: string;
   hometown?: string;
   occupation?: string;
   nationality?: string;
   phone?: string;
-  birthday?: string;
-  gender?: string;
+  birthday?: Date;
+  gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;
 }

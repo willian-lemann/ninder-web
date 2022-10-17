@@ -1,5 +1,6 @@
-import { SignInCredencials } from "./SignInCredencials";
-
-export interface SignUpCredencials extends SignInCredencials {
-  name: string;
+import { User } from "@models/user";
+export interface SignUpCredencials
+  extends Omit<User, "id" | "location" | "hasConfirmedRegulation"> {
+  password: string;
+  confirmPassword: string;
 }

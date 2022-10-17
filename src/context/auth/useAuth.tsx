@@ -52,13 +52,11 @@ export function useAuth(): InitialState {
   }
 
   async function signUp(signUpData: SignUpCredencials) {
-    const { email, name, password } = signUpData;
-
     const { token, user } = await signUpService({
-      email,
-      password,
-      name,
+      ...signUpData,
     });
+
+    const { email, name } = signUpData;
 
     const authenticatedUser: User = {
       id: user.id,

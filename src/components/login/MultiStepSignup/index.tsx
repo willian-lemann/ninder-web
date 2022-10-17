@@ -3,24 +3,56 @@ import { FormEvent, useState } from "react";
 import { useMultistepForm } from "src/hooks/useMultistepForm";
 import { ActionButton } from "./ActionButton";
 
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+
 import { UserProfile } from "./UserProfile";
 import { UserInformation } from "./UserInformation";
+import { User } from "@models/user";
+import { classNames } from "@utils/classNames";
+import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 
 interface MultiStepSignupProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
 export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
-  const { next, back, step } = useMultistepForm([
-    <UserInformation />,
-    <UserProfile onLoginType={onLoginType} />,
-  ]);
+  const [formData, setFormData] = useState<SignUpCredencials>({
+    email: "",
+    name: "",
+    avatar: null,
+    bio: "",
+    birthday: new Date(),
+    gender: null,
+    hometown: "",
+    nationality: "",
+    occupation: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleUpdateFields = (fields: Partial<SignUpCredencials | null>) => {
+    setFormData((state) => ({ ...state, ...fields }));
+  };
+
+  const { next, back, step, currentStepIndex, isLastStep, isFirstStep } =
+    useMultistepForm([
+      <UserInformation {...formData} onUpdateFields={handleUpdateFields} />,
+      <UserProfile {...formData} onUpdateFields={handleUpdateFields} />,
+    ]);
 
   const [isSubmiting, setIsSubmiting] = useState(false);
 
+  const handleBacktoSignin = () => {
+    onLoginType("signin");
+  };
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    next();
+
+    if (!isLastStep) return next();
+
+    console.log(formData);
 
     //  const { email, password, name } = signUpData;
 
@@ -35,20 +67,52 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
     //  }
   };
 
+  const renderHeaderLabel = (stepIndex: number) => {
+    type LabelIndex = {
+      [key: number]: string;
+    };
+
+    const labelBasedOnIndex: LabelIndex = {
+      0: "User Information",
+      1: "Fill your profile",
+    };
+
+    return labelBasedOnIndex[stepIndex] || "";
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
       className="h-full w-full max-w-md m-auto flex flex-col justify-between"
     >
-      <div className="mx-auto font-bold w-auto text-center text-4xl mt-10">
-        <span className="text-primary">Create your profile</span>
+      <div className="flex items-center mt-10">
+        <div
+          className="flex items-center group cursor-pointer"
+          onClick={handleBacktoSignin}
+        >
+          <ArrowLeftIcon className="h-6 w-6 group-hover:text-primary transition-colors duration-300" />
+          <span className="pl-2 group-hover:text-primary transition-colors duration-300">
+            Sign in
+          </span>
+        </div>
+
+        <span className="text-primary mx-auto font-bold w-auto text-center text-4xl">
+          {renderHeaderLabel(currentStepIndex)}
+        </span>
       </div>
 
       <main>{step}</main>
 
-      <div className="flex items-center mb-20 w-full justify-end gap-2">
-        <ActionButton label="Back" type="button" onClick={back} />
-        <ActionButton label="Next" type="submit" />
+      <div
+        className={classNames(
+          isFirstStep ? "justify-end" : "justify-between",
+          "flex items-center my-4 w-full gap-2"
+        )}
+      >
+        {!isFirstStep && (
+          <ActionButton label="Back" type="button" onClick={back} />
+        )}
+        <ActionButton label={isLastStep ? "Submit" : "Next"} type="submit" />
       </div>
     </form>
   );
