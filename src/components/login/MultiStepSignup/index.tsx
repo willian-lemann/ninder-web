@@ -59,7 +59,7 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
 
     try {
       await signUp({ ...formData });
-    } catch (error) {
+    } catch (error: any) {
       addErrorNotification(error);
     }
 

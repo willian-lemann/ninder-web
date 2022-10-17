@@ -28,7 +28,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
 
     try {
       await signIn({ email, password });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof FirebaseError) {
         addErrorNotification(
           errors[error.code] || "Error trying to sign in. Try again!"
@@ -46,7 +46,9 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
       <form className=" space-y-6 mx-[1rem]" onSubmit={handleSignIn}>
         <div>
           <div className="mx-auto font-bold w-auto text-center text-4xl">
-            <span className="text-primary">Welcome to</span> Ninder
+            <span className="text-primary">
+              Discover new users, new cultures, new possibilities and have fun
+            </span>
           </div>
 
           <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
