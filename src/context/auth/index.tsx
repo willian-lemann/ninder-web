@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect } from "react";
+import { SessionContext } from "next-auth/react";
 
 import { InitialState, useAuth } from "./useAuth";
 
@@ -15,3 +16,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 }
 
 export const useAuthContext = () => useContext(AuthContext);
+
+export const useGoogleContext = () => {
+  const context = useContext(SessionContext);
+
+  return {
+    session: context?.data,
+  };
+};

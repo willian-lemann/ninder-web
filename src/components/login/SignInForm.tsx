@@ -1,22 +1,22 @@
+/* eslint-disable react/no-unescaped-entities */
 import { FormEvent, useState } from "react";
 
 import { addErrorNotification } from "@components/shared/alert";
-import { GoogleLogin } from "../GoogleLogin";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
-
 import { Loading } from "@components/shared/Loading";
+import { Input } from "./Input";
+import Image from "next/image";
 
 import { useAuthContext } from "@context/auth";
 import { errors } from "@utils/errorHandler";
 import { FirebaseError } from "firebase/app";
-import { Input } from "./Input";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
 export const SignInForm = ({ onLoginType }: SignInFormProps) => {
-  const { signIn } = useAuthContext();
+  const { signIn, signInWithGoogle } = useAuthContext();
   const [loading, setLoading] = useState(false);
 
   const [signInData, setSignInData] = useState({
@@ -53,8 +53,11 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
 
         <section>
           <span>
-            Don't have an account?{" "}
-            <span className="underline cursor-pointer text-primary">
+            Don't have an account?
+            <span
+              className="underline cursor-pointer text-primary pl-1"
+              onClick={() => onLoginType("signup")}
+            >
               Sign Up
             </span>
           </span>
@@ -116,7 +119,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-8">
           <button
             type="submit"
             className="group outline-none relative w-full py-3 flex justify-center items-center border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:brightness-90 transition-all duration-300"
@@ -136,7 +139,22 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
             <span className="flex-1 h-[1px] bg-zinc-200" />
           </div>
 
-          <GoogleLogin label="Continue with Google" />
+          <button
+            type="button"
+            onClick={() => signInWithGoogle()}
+            className="flex items-center justify-center shadow-md px-3 py-3 rounded-md border"
+          >
+            <div className="h-6 w-6 relative">
+              <Image
+                src="/icons/google.svg"
+                objectFit="cover"
+                layout="fill"
+                alt="google icon"
+              />
+            </div>
+
+            <span className="pl-4">Continue with Google</span>
+          </button>
         </div>
       </form>
     </div>

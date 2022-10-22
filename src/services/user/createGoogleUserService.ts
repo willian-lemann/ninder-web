@@ -1,12 +1,11 @@
 import { firestore, storage } from "@config/firebase";
-import { setDoc, doc } from "firebase/firestore";
-import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
-
 import { User } from "@models/user";
+import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
-export async function createUserService(id: string, user: Partial<User>) {
-  const docRef = doc(firestore, "users", id);
-  const storageRef = ref(storage, `users/${id}`);
+export async function createGoogleUserService(user: Partial<User>) {
+  const docRef = doc(firestore, "users", user.email as string);
+  const storageRef = ref(storage, `users/${docRef.id}`);
 
   if (user.avatar) {
     const uploadTask = uploadBytesResumable(storageRef, user.avatar);

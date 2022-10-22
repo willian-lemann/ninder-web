@@ -11,12 +11,12 @@ import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps, session }: AppProps) {
   return (
-    <Provider>
-      <AlertProvider />
-      <SessionProvider session={session}>
+    <SessionProvider session={session}>
+      <Provider>
+        <AlertProvider />
         <Component {...pageProps} />
-      </SessionProvider>
-    </Provider>
+      </Provider>
+    </SessionProvider>
   );
 }
 

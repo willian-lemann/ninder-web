@@ -16,4 +16,5 @@ export interface User {
   gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;
+  provider?: string;
 }

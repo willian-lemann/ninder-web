@@ -5,8 +5,11 @@ import { SignInForm } from "@components/login/SignInForm";
 import { MultiStepSignup } from "../components/login/MultiStepSignup";
 import { withSSRGuest } from "../utils/withSSRGuest";
 import { LoginTypes } from "@constants/login/LoginTypes";
+import { useSession } from "next-auth/react";
 
 const Login = () => {
+  const { data } = useSession();
+  console.log(data);
   const [loginType, setLoginType] = useState<LoginTypes>("signin");
 
   const handleChangeLoginType = (type: LoginTypes) => {
