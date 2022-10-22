@@ -7,12 +7,15 @@ import "@styles/globals.css";
 import { AlertProvider } from "../components/shared/alert";
 
 import { Provider } from "../context";
+import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps, session }: AppProps) {
   return (
     <Provider>
       <AlertProvider />
-      <Component {...pageProps} />
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
     </Provider>
   );
 }

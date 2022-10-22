@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 
-import { Input } from "./Input";
+import { Input } from "../Input";
 import { classNames } from "@utils/classNames";
 import { PreviewImage } from "./PreviewImage";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";

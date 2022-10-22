@@ -7,7 +7,6 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 import { UserProfile } from "./UserProfile";
 import { UserInformation } from "./UserInformation";
-import { User } from "@models/user";
 import { classNames } from "@utils/classNames";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 import { useAuthContext } from "@context/auth";

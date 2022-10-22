@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
-import { Input } from "./Input";
+import { Input } from "../Input";
 import { DatePicker } from "./DatePicker";
 import { FEMALE, MALE, OTHER } from "@constants/gender";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
