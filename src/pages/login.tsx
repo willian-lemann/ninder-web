@@ -7,7 +7,6 @@ import { withSSRGuest } from "../utils/withSSRGuest";
 import { LoginTypes } from "@constants/login/LoginTypes";
 
 const Login = () => {
-
   const [loginType, setLoginType] = useState<LoginTypes>("signin");
 
   const handleChangeLoginType = (type: LoginTypes) => {

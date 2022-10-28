@@ -121,7 +121,7 @@ export function useAuth(): InitialState {
   }, []);
 
   useEffect(() => {
-    async function loadSession() {
+    async function loadGoogleSession() {
       if (session) {
         const sessionUser = {
           email: session.user?.email as string,
@@ -133,13 +133,13 @@ export function useAuth(): InitialState {
 
         if (hasUser) return setUser(hasUser);
 
-        createUserService(sessionUser.email, sessionUser).then(() => {
-          setUser(sessionUser);
-        });
+        await createGoogleUserService(sessionUser);
+
+        setUser(sessionUser);
       }
     }
 
-    loadSession();
+    loadGoogleSession();
   }, [session]);
 
   return {

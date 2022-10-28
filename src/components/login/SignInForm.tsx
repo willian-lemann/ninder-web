@@ -18,12 +18,22 @@ interface SignInFormProps {
 export const SignInForm = ({ onLoginType }: SignInFormProps) => {
   const { signIn, signInWithGoogle } = useAuthContext();
   const [loading, setLoading] = useState(false);
+  const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
 
   const [signInData, setSignInData] = useState({
     email: "",
     password: "",
   });
-  async function handleSignIn(event: FormEvent) {
+
+  const handleSignInWithGoogle = async () => {
+    setIsSigningWithGoogle(true);
+
+    await signInWithGoogle();
+
+    setIsSigningWithGoogle(false);
+  };
+
+  const handleSignIn = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
 
@@ -33,16 +43,16 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
       await signIn({ email, password });
     } catch (error: any) {
       if (error instanceof FirebaseError) {
-        addErrorNotification(
+        return addErrorNotification(
           errors[error.code] || "Error trying to sign in. Try again!"
         );
       }
 
-      addErrorNotification(error);
+      addErrorNotification("Error trying to sign in. Try again!");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="m-auto max-w-md">
@@ -55,7 +65,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
           <span>
             Don't have an account?
             <span
-              className="underline cursor-pointer text-primary pl-1"
+              className=" cursor-pointer text-primary pl-1"
               onClick={() => onLoginType("signup")}
             >
               Sign Up
@@ -141,14 +151,20 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
 
           <button
             type="button"
-            onClick={() => signInWithGoogle()}
+            onClick={handleSignInWithGoogle}
             className="flex items-center justify-center shadow-md px-3 py-3 rounded-md border"
           >
-            <div className="h-6 w-6 relative">
-              <Image src="/icons/google.svg" alt="google icon" fill />
-            </div>
+            {isSigningWithGoogle ? (
+              <Loading />
+            ) : (
+              <>
+                <div className="h-6 w-6 relative">
+                  <Image src="/icons/google.svg" alt="google icon" fill />
+                </div>
 
-            <span className="pl-4">Continue with Google</span>
+                <span className="pl-4">Continue with Google</span>
+              </>
+            )}
           </button>
         </div>
       </form>
