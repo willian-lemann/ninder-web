@@ -54,8 +54,6 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
 
     if (!isLastStep) return next();
 
-    console.log(formData);
-
     try {
       await signUp({ ...formData });
     } catch (error: any) {

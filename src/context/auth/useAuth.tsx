@@ -133,16 +133,14 @@ export function useAuth(): InitialState {
 
         if (hasUser) return setUser(hasUser);
 
-        createUserService(sessionUser.email, sessionUser)
-          .then(() => {
-            setUser(sessionUser);
-          })
-          .catch(async () => await signOut());
+        createUserService(sessionUser.email, sessionUser).then(() => {
+          setUser(sessionUser);
+        });
       }
     }
 
     loadSession();
-  }, [session, signOut]);
+  }, [session]);
 
   return {
     user,

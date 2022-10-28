@@ -45,7 +45,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
   }
 
   return (
-    <div className="m-auto h-full max-w-md">
+    <div className="m-auto max-w-md">
       <header className="flex items-center justify-between mt-16">
         <section>
           <h1 className="text-4xl">Ninder Logo</h1>
@@ -145,12 +145,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
             className="flex items-center justify-center shadow-md px-3 py-3 rounded-md border"
           >
             <div className="h-6 w-6 relative">
-              <Image
-                src="/icons/google.svg"
-                objectFit="cover"
-                layout="fill"
-                alt="google icon"
-              />
+              <Image src="/icons/google.svg" alt="google icon" fill />
             </div>
 
             <span className="pl-4">Continue with Google</span>
