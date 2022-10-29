@@ -1,6 +1,3 @@
-import { User } from "@models/user";
+import { RegisterForm } from "./RegisterForm";
 
-export interface SignUpCredencials extends Omit<User, "id"> {
-  password: string;
-  confirmPassword: string;
-}
+export interface SignUpCredencials extends RegisterForm {}

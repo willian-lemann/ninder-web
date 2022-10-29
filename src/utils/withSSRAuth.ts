@@ -5,7 +5,7 @@ import {
 } from "next";
 import { getSession } from "next-auth/react";
 import { parseCookies } from "nookies";
-import { STORAGE_KEY } from "src/constants/auth";
+import { STORAGE_KEY } from "src/constants/login/auth";
 
 export function withSSRAuth<P>(fn: GetServerSideProps<any>) {
   return async (

@@ -2,13 +2,13 @@ import { auth, firestore } from "@config/firebase";
 
 import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
+import { RegisterForm } from "@dtos/login/RegisterForm";
 
 import { ResponseData } from "@dtos/login/ResponseData";
 import { createUserService } from "@services/user/createUserService";
 
 export async function signUpService(
-  signUpData: SignUpCredencials
+  signUpData: RegisterForm
 ): Promise<ResponseData> {
   const { email, password, ...data } = signUpData;
 

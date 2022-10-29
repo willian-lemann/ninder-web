@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-key */
 import { FormEvent, useState } from "react";
+import * as yup from "yup";
 import { useMultistepForm } from "src/hooks/useMultistepForm";
 import { ActionButton } from "./ActionButton";
 
@@ -8,9 +9,15 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { UserProfile } from "./UserProfile";
 import { UserInformation } from "./UserInformation";
 import { classNames } from "@utils/classNames";
-import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
+
 import { useAuthContext } from "@context/auth";
-import { addErrorNotification } from "@components/shared/alert";
+import { RegisterForm } from "@dtos/login/RegisterForm";
+import {
+  userInformationSchema,
+  userProfileSchema,
+} from "@validators/login/schemas";
+
+import { errors, Errors, ErrorType } from "src/validators/login/errors";
 
 interface MultiStepSignupProps {
   onLoginType: (type: "signin" | "signup") => void;
@@ -18,13 +25,15 @@ interface MultiStepSignupProps {
 
 export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
   const { signUp } = useAuthContext();
-  const [formData, setFormData] = useState<SignUpCredencials>({
+  const [formErrors, setFormErrors] = useState<Errors>(errors);
+
+  const [formData, setFormData] = useState<RegisterForm>({
     email: "",
     name: "",
     avatar: null,
     bio: "",
-    birthday: new Date(),
-    gender: null,
+    birthday: null,
+    gender: 0,
     hometown: "",
     nationality: "",
     occupation: "",
@@ -33,14 +42,22 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
     confirmPassword: "",
   });
 
-  const handleUpdateFields = (fields: Partial<SignUpCredencials | null>) => {
+  const handleUpdateFields = (fields: Partial<RegisterForm | null>) => {
     setFormData((state) => ({ ...state, ...fields }));
   };
 
   const { next, back, step, currentStepIndex, isLastStep, isFirstStep } =
     useMultistepForm([
-      <UserInformation {...formData} onUpdateFields={handleUpdateFields} />,
-      <UserProfile {...formData} onUpdateFields={handleUpdateFields} />,
+      <UserInformation
+        {...formData}
+        errors={formErrors}
+        onUpdateFields={handleUpdateFields}
+      />,
+      <UserProfile
+        {...formData}
+        errors={formErrors}
+        onUpdateFields={handleUpdateFields}
+      />,
     ]);
 
   const [isSubmiting, setIsSubmiting] = useState(false);
@@ -52,25 +69,33 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    if (!isLastStep) return next();
+    setFormErrors(errors);
 
     try {
+      if (!isLastStep) {
+        await userInformationSchema.validate(formData, {
+          abortEarly: false,
+        });
+
+        return next();
+      }
+
+      await userProfileSchema.validate(formData, { abortEarly: false });
+
       await signUp({ ...formData });
-    } catch (error: any) {
-      addErrorNotification(error);
+    } catch (err: any) {
+      if (err instanceof yup.ValidationError) {
+        const errors: ErrorType = {};
+
+        err.inner.forEach((error) => {
+          errors[String(error.path)] = error.message;
+        });
+
+        console.log(errors);
+
+        setFormErrors((state) => ({ ...state, ...errors }));
+      }
     }
-
-    //  const { email, password, name } = signUpData;
-
-    //  try {
-    //    await signUp({ email, name, password });
-    //  } catch (error) {
-    //    addErrorNotification(
-    //      errors[error.code] || "Error trying to sign up. Try again!"
-    //    );
-    //  } finally {
-    //    setLoading(false);
-    //  }
   };
 
   const renderHeaderLabel = (stepIndex: number) => {

@@ -17,7 +17,7 @@ import { signInService } from "@services/auth/signInService";
 import { signUpService } from "@services/auth/signUpService";
 import { logoutService } from "@services/auth/logoutService";
 
-import { STORAGE_KEY } from "src/constants/auth";
+import { STORAGE_KEY } from "src/constants/login/auth";
 import { useGoogleContext } from ".";
 import { createUserService } from "@services/user/createUserService";
 import { createGoogleUserService } from "@services/user/createGoogleUserService";

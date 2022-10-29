@@ -12,9 +12,8 @@ export interface User {
   occupation?: string;
   nationality?: string;
   phone?: string;
-  birthday?: Date;
+  birthday?: Date | null;
   gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;
-  provider?: string;
 }

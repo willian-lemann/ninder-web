@@ -25,7 +25,8 @@
       "@config/*": ["src/config/*"],
       "@context/*": ["src/context/*"],
       "@constants/*": ["src/constants/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@validators/*": ["src/validators/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
