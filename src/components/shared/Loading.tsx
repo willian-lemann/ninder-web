@@ -6,7 +6,7 @@ interface LoadingProps {
   message?: string;
 }
 
-export const Loading = ({ color, size, message }: LoadingProps) => {
+export const Loading = ({ color, size = 6, message }: LoadingProps) => {
   return (
     <div role="status" className="flex items-center">
       <span>{message}</span>

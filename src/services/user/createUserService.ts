@@ -1,20 +1,30 @@
-import {
-  firebaseDB,
-  collection,
-  addDoc,
-  getDoc,
-  doc,
-} from "../../config/firebase";
-import { User } from "../../models/user";
+import { firestore, storage } from "@config/firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
 
-export async function createUserService(user: User) {
-  const response = await getDoc(doc(firebaseDB, "users", user.userId));
+import { User } from "@models/user";
 
-  const alreadyExistInDatabase = response.exists();
+export async function createUserService(id: string, user: Partial<User>) {
+  const docRef = doc(firestore, "users", id);
+  const storageRef = ref(storage, `users/${id}`);
 
-  if (alreadyExistInDatabase) return;
+  if (user.avatar) {
+    const uploadTask = uploadBytesResumable(storageRef, user.avatar);
 
-  const document = await addDoc(collection(firebaseDB, "users"), user);
+    uploadTask.on(
+      "state_changed",
+      () => {},
+      (err) => {
+        console.log(err);
+      },
+      async () => {
+        const url = await getDownloadURL(uploadTask.snapshot.ref);
+        await setDoc(docRef, { ...user, avatar: url });
+      }
+    );
 
-  return document.id;
+    return;
+  }
+
+  await setDoc(docRef, { ...user });
 }

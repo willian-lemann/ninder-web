@@ -1,5 +1,6 @@
-// import { signOut, auth } from "../../config/firebase";
+import { auth } from "@config/firebase";
+import { signOut } from "firebase/auth";
 
 export async function logoutService() {
-  // await signOut(auth);
+  await signOut(auth);
 }

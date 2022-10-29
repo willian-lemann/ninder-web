@@ -1,109 +1,173 @@
+/* eslint-disable react/no-unescaped-entities */
 import { FormEvent, useState } from "react";
 
-import { addErrorNotification } from "../shared/alert";
-import { LockClosedIcon } from "@heroicons/react/outline";
-import { Loading } from "../shared/Loading";
+import { addErrorNotification } from "@components/shared/alert";
+import { LockClosedIcon } from "@heroicons/react/24/outline";
+import { Loading } from "@components/shared/Loading";
+import { Input } from "./Input";
+import Image from "next/image";
 
-import { useAuth } from "../../context/AuthContext";
+import { useAuthContext } from "@context/auth";
+import { errors } from "@utils/errorHandler";
+import { FirebaseError } from "firebase/app";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
 export const SignInForm = ({ onLoginType }: SignInFormProps) => {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuthContext();
   const [loading, setLoading] = useState(false);
+  const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
 
   const [signInData, setSignInData] = useState({
     email: "",
     password: "",
   });
-  async function handleSignIn(event: FormEvent) {
+
+  const handleSignInWithGoogle = async () => {
+    setIsSigningWithGoogle(true);
+
+    await signInWithGoogle();
+
+    setIsSigningWithGoogle(false);
+  };
+
+  const handleSignIn = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
 
+    const { email, password } = signInData;
+
     try {
-      await signIn(signInData.email, signInData.password);
+      await signIn({ email, password });
     } catch (error: any) {
-      addErrorNotification(
-        error.code || "Error trying to sign you in, please try again!"
-      );
+      if (error instanceof FirebaseError) {
+        return addErrorNotification(
+          errors[error.code] || "Error trying to sign in. Try again!"
+        );
+      }
+
+      addErrorNotification("Error trying to sign in. Try again!");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
-    <form className="mt-8 space-y-6 mx-[1rem]" onSubmit={handleSignIn}>
-      <input type="hidden" name="remember" defaultValue="true" />
-      <div className="rounded-md shadow-sm -space-y-px">
-        <div>
-          <label htmlFor="email-address" className="sr-only">
-            Email address
-          </label>
-          <input
-            id="email-address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Email address"
-            value={signInData.email}
-            onChange={({ target }) =>
-              setSignInData({ ...signInData, email: target.value })
-            }
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="sr-only">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Password"
-            value={signInData.password}
-            onChange={({ target }) =>
-              setSignInData({ ...signInData, password: target.value })
-            }
-          />
-        </div>
-      </div>
+    <div className="m-auto max-w-md">
+      <header className="flex items-center justify-between mt-16">
+        <section>
+          <h1 className="text-4xl">Ninder Logo</h1>
+        </section>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
+        <section>
+          <span>
+            Don't have an account?
+            <span
+              className=" cursor-pointer text-primary pl-1"
+              onClick={() => onLoginType("signup")}
+            >
+              Sign Up
+            </span>
+          </span>
+        </section>
+      </header>
+
+      <form className="space-y-6 mt-16" onSubmit={handleSignIn}>
+        <div>
+          <strong className="text-3xl">Get Started!</strong>
+          <p className="m-0 text-lg">
+            Find native spearkers right where you are. Practice, Have fun!
+          </p>
+        </div>
+
+        <input type="hidden" name="remember" defaultValue="true" />
+        <div className="rounded-md shadow-sm flex flex-col gap-4">
+          <div>
+            <label htmlFor="email-address" className="">
+              Email
+            </label>
+            <Input
+              id="email-address"
+              name="email"
+              type="text"
+              autoComplete="email"
+              required
+              placeholder="Email"
+              value={signInData.email}
+              onChange={({ target }) =>
+                setSignInData({ ...signInData, email: target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="">
+              Password
+            </label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              placeholder="Password"
+              value={signInData.password}
+              onChange={({ target }) =>
+                setSignInData({ ...signInData, password: target.value })
+              }
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="text-sm">
+            <a href="#" className="font-medium text-primary">
+              Forgot your password?
+            </a>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-8">
+          <button
+            type="submit"
+            className="group outline-none relative w-full py-3 flex justify-center items-center border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:brightness-90 transition-all duration-300"
+          >
+            <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+              <LockClosedIcon
+                className="h-5 w-5 text-white"
+                aria-hidden="true"
+              />
+            </span>
+            {loading ? <Loading size={6} /> : "Sign in"}
+          </button>
+
+          <div className="flex items-center">
+            <span className="flex-1 h-[1px] bg-zinc-200" />
+            <span className="mx-4">or</span>
+            <span className="flex-1 h-[1px] bg-zinc-200" />
+          </div>
+
           <button
             type="button"
-            className="ml-2 block text-sm text-gray-900 font-medium hover:text-primary"
-            onClick={() => onLoginType("signup")}
+            onClick={handleSignInWithGoogle}
+            className="flex items-center justify-center shadow-md px-3 py-3 rounded-md border"
           >
-            Sign Up
+            {isSigningWithGoogle ? (
+              <Loading />
+            ) : (
+              <>
+                <div className="h-6 w-6 relative">
+                  <Image src="/icons/google.svg" alt="google icon" fill />
+                </div>
+
+                <span className="pl-4">Continue with Google</span>
+              </>
+            )}
           </button>
         </div>
-
-        <div className="text-sm">
-          <a href="#" className="font-medium text-primary">
-            Forgot your password?
-          </a>
-        </div>
-      </div>
-
-      <div>
-        <button
-          type="submit"
-          className="group outline-none relative w-full h-[38px] flex justify-center items-center border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:brightness-90 "
-        >
-          <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-            <LockClosedIcon className="h-5 w-5 text-white" aria-hidden="true" />
-          </span>
-          {loading ? <Loading size={6} /> : "Sign in"}
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };

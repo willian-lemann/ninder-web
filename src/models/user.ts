@@ -1,6 +1,19 @@
+interface Location {
+  latitude: number;
+  longitude: number;
+}
 export interface User {
-  userId: string;
-  email: string | null;
-  name: string | null;
-  avatar: string | null;
+  id?: string;
+  email: string;
+  name: string;
+  avatar?: Blob | null;
+  bio?: string;
+  hometown?: string;
+  occupation?: string;
+  nationality?: string;
+  phone?: string;
+  birthday?: Date | null;
+  gender?: number | null;
+  location?: Location | null;
+  hasConfirmedRegulation?: boolean;
 }

@@ -1,20 +1,19 @@
-import { firebaseDB, getDoc, doc } from "../../config/firebase";
-import { User } from "../../models/user";
+import { firestore } from "@config/firebase";
+import { User } from "@models/user";
+import { doc, getDoc } from "firebase/firestore";
 
-export async function getUserService(userId: string) {
-   console.log(userId)
-  const response = await getDoc(doc(firebaseDB, "users", userId));
+export async function getUserService(id: string): Promise<User | null> {
+  const docRef = doc(firestore, "users", id);
+  const docSnap = await getDoc(docRef);
 
-  if (!response.exists()) {
+  if (!docSnap.exists()) {
     return null;
   }
 
-  const user: User = {
-    avatar: response.data().avatar,
-    email: response.data().email,
-    name: response.data().name,
-    userId: response.id,
-  };
+  const user = docSnap.data() as User;
 
-  return user;
+  return {
+    ...user,
+    id: docSnap.id,
+  };
 }

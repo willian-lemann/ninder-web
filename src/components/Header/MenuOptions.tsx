@@ -1,8 +1,11 @@
+import { useAuthContext } from "@context/auth";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { classNames } from "../../utils/classNames";
 
 export const MenuOptions = () => {
+  const { signOut } = useAuthContext();
+
   return (
     <Menu as="div" className="relative ml-3">
       <div>
@@ -71,7 +74,7 @@ export const MenuOptions = () => {
                   "block px-4 py-2 text-sm text-gray-700"
                 )}
               >
-               Favorites
+                Favorites
               </a>
             )}
           </Menu.Item>
@@ -120,15 +123,15 @@ export const MenuOptions = () => {
 
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
+                onClick={signOut}
                 className={classNames(
                   active ? "bg-gray-100" : "",
                   "block px-4 py-2 text-sm text-gray-700"
                 )}
               >
                 Sign out
-              </a>
+              </button>
             )}
           </Menu.Item>
         </Menu.Items>
