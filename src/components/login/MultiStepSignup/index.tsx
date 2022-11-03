@@ -32,7 +32,7 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
     name: "",
     avatar: null,
     bio: "",
-    birthday: null,
+    birthday: new Date(),
     gender: 0,
     hometown: "",
     nationality: "",
@@ -80,6 +80,8 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
         return next();
       }
 
+      setIsSubmiting(true);
+
       await userProfileSchema.validate(formData, { abortEarly: false });
 
       await signUp({ ...formData });
@@ -95,6 +97,8 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
 
         setFormErrors((state) => ({ ...state, ...errors }));
       }
+    } finally {
+      setIsSubmiting(false);
     }
   };
 
@@ -143,7 +147,11 @@ export const MultiStepSignup = ({ onLoginType }: MultiStepSignupProps) => {
         {!isFirstStep && (
           <ActionButton label="Back" type="button" onClick={back} />
         )}
-        <ActionButton label={isLastStep ? "Submit" : "Next"} type="submit" />
+        <ActionButton
+          label={isLastStep ? "Submit" : "Next"}
+          type="submit"
+          loading={isSubmiting}
+        />
       </div>
     </form>
   );

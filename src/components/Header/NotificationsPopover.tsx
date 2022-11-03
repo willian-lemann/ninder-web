@@ -21,8 +21,6 @@ export const NotificationsPopover = () => {
               <li>Notification 1</li>
             </ul>
           </div>
-
-          <img src="/solutions.jpg" alt="" />
         </div>
       </Popover.Panel>
     </Popover>

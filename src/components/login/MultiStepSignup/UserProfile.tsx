@@ -105,19 +105,22 @@ export const UserProfile = ({
 
             <span
               className={
-                errors.password ? "not-sr-only text-red-600 pl-2 text-sm" : "sr-only "
+                errors.password
+                  ? "not-sr-only text-red-600 pl-2 text-sm"
+                  : "sr-only "
               }
             >
               {errors.password}
             </span>
           </label>
 
-          <div className=" rounded-lg relative bg-black">
+          <div className="rounded-lg relative bg-black">
             <Input
               id="password"
               name="password"
               type={isPasswordVisible ? "text" : "password"}
               error={errors.password}
+              autoComplete="text"
               placeholder="password"
               value={password}
               onChange={({ target }) =>
