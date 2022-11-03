@@ -2,11 +2,12 @@ interface Location {
   latitude: number;
   longitude: number;
 }
+
 export interface User {
   id?: string;
   email: string;
   name: string;
-  avatar?: Blob | null;
+  avatar?: Blob | null | string;
   bio?: string;
   hometown?: string;
   occupation?: string;
@@ -16,4 +17,5 @@ export interface User {
   gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;
+  provider?: number;
 }

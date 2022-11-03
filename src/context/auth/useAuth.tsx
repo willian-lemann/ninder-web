@@ -19,10 +19,11 @@ import { logoutService } from "@services/auth/logoutService";
 
 import { STORAGE_KEY } from "src/constants/login/auth";
 import { useGoogleContext } from ".";
-import { createUserService } from "@services/user/createUserService";
+
 import { createGoogleUserService } from "@services/user/createGoogleUserService";
-import { getUserService } from "@services/user/getUserService";
 import { getUserByEmailService } from "@services/user/getUserByEmailService";
+import { Provider } from "@constants/login/provider";
+import { addErrorNotification } from "@components/shared/alert";
 
 export interface InitialState {
   user: User | null;
@@ -41,18 +42,20 @@ export function useAuth(): InitialState {
   let authChannel: BroadcastChannel;
 
   async function signIn({ email, password }: SignInCredencials) {
-    const { token, user } = await signInService({
+    const response = await signInService({
       email,
       password,
     });
 
-    const authenticatedUser: User = {
-      id: user.id,
-      email,
-      name: "",
-    };
+    if (!response) {
+      return addErrorNotification(
+        "User does not exist or is not registered in our database."
+      );
+    }
 
-    setUser(authenticatedUser);
+    const { token, user } = response;
+
+    setUser(user);
 
     setCookie(undefined, STORAGE_KEY, token, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
@@ -71,17 +74,10 @@ export function useAuth(): InitialState {
       ...signUpData,
       location,
       hasConfirmedRegulation: false,
+      provider: Provider.Internal,
     });
 
-    const { email, name } = signUpData;
-
-    const authenticatedUser: User = {
-      id: user.id,
-      email,
-      name,
-    };
-
-    setUser(authenticatedUser);
+    setUser(user);
 
     setCookie(undefined, STORAGE_KEY, token, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
@@ -123,10 +119,11 @@ export function useAuth(): InitialState {
   useEffect(() => {
     async function loadGoogleSession() {
       if (session) {
-        const sessionUser = {
+        const sessionUser: User = {
           email: session.user?.email as string,
           avatar: session.user?.image as null,
           name: session.user?.name as string,
+          provider: Provider.Google,
         };
 
         const hasUser = await getUserByEmailService(sessionUser.email);

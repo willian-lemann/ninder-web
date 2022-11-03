@@ -42,6 +42,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     try {
       await signIn({ email, password });
     } catch (error: any) {
+      console.log(error);
       if (error instanceof FirebaseError) {
         return addErrorNotification(
           errors[error.code] || "Error trying to sign in. Try again!"

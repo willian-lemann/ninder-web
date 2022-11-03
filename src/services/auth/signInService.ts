@@ -3,15 +3,27 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { SignInCredencials } from "@dtos/login/SignInCredencials";
 import { ResponseData } from "@dtos/login/ResponseData";
+import { User } from "@models/user";
+import { getUserService } from "@services/user/getUserService";
 
-export async function signInService(
-  credencials: SignInCredencials
-): Promise<ResponseData> {
+export async function signInService(credencials: SignInCredencials) {
   const { email, password } = credencials;
 
-  const { user } = await signInWithEmailAndPassword(auth, email, password);
+  const response = await signInWithEmailAndPassword(auth, email, password);
 
-  const token = await user.getIdToken();
+  const token = await response.user.getIdToken();
 
-  return { token, user: { id: user.uid, email } };
+  const { uid } = response.user;
+
+  const user = await getUserService(uid);
+
+  console.log(user);
+  if (!user) {
+    return null;
+  }
+
+  return {
+    user,
+    token,
+  };
 }

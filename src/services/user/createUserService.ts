@@ -4,27 +4,46 @@ import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
 
 import { User } from "@models/user";
 
-export async function createUserService(id: string, user: Partial<User>) {
+export async function createUserService(id: string, user: User) {
   const docRef = doc(firestore, "users", id);
   const storageRef = ref(storage, `users/${id}`);
 
   if (user.avatar) {
-    const uploadTask = uploadBytesResumable(storageRef, user.avatar);
+    const file = user.avatar as Blob;
+    const uploadTask = await uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      "state_changed",
-      () => {},
-      (err) => {
-        console.log(err);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        await setDoc(docRef, { ...user, avatar: url });
-      }
-    );
+    // const teste = uploadTask.on(
+    //   "state_changed",
+    //   () => {},
+    //   (err) => {
+    //     console.log(err);
+    //   },
+    //   async () => {
+    //     const url = await getDownloadURL(uploadTask.snapshot.ref);
 
-    return;
+    //     const data = {
+    //       ...user,
+    //       avatar: url,
+    //     };
+
+    //     await setDoc(docRef, data);
+    //   }
+    // );
+    if (uploadTask.state === "success") {
+      const url = await getDownloadURL(uploadTask.ref);
+
+      const data = {
+        ...user,
+        avatar: url,
+      };
+
+      await setDoc(docRef, data);
+
+      return data;
+    }
   }
 
   await setDoc(docRef, { ...user });
+
+  return user as User;
 }

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import Image from "next/image";
 import { Input } from "../Input";
 import { classNames } from "@utils/classNames";
@@ -23,21 +23,28 @@ export const UserInformation = ({
 }: UserInformationProps) => {
   const [preview, setPreview] = useState("");
 
-  function handleChangeImage(event: ChangeEvent<HTMLInputElement> | null) {
-    if (!event) {
-      return document.getElementById("profile-image")?.click();
-    }
+  const handleChangeImage = useCallback(
+    (event: ChangeEvent<HTMLInputElement> | null) => {
+      console.log(!!event);
+      if (!event) {
+        return document.getElementById("profile-image")?.click();
+      }
 
-    event.preventDefault();
-    event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
-    const { files } = event.target;
-    const file = files?.item(0) as File;
-    const previewImage = URL.createObjectURL(file);
-    setPreview(previewImage);
+      const { files } = event.target;
+      const file = files?.item(0) as File;
 
-    onUpdateFields({ avatar: file });
-  }
+      if (!file) return;
+      
+      const previewImage = URL.createObjectURL(file);
+      setPreview(previewImage);
+
+      onUpdateFields({ avatar: file });
+    },
+    [onUpdateFields]
+  );
 
   return (
     <div className="space-y-4">

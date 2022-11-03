@@ -1,6 +1,9 @@
 import { RegisterForm } from "@dtos/login/RegisterForm";
 
-export type Errors = Record<keyof RegisterForm, null>;
+export type Errors = Record<
+  keyof Omit<RegisterForm, "hasConfirmedRegulation" | "location">,
+  null
+>;
 
 export type ErrorType = {
   [key: string]: string;
