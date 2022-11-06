@@ -62,8 +62,7 @@ const Regulations = () => {
               htmlFor="checked-checkbox"
               className="ml-2 text-base font-medium text-zinc-700"
             >
-              By clicking in here, you agree with our terms of use and that you
-              are 18+
+              I Agree with the terms above
             </label>
           </div>
 
