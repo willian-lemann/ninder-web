@@ -55,7 +55,7 @@ export function useAuth(): InitialState {
 
     const { token, user } = response;
 
-    setUser(user);
+    setUser({ ...user, location });
 
     setCookie(undefined, STORAGE_KEY, token, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
@@ -128,16 +128,16 @@ export function useAuth(): InitialState {
 
         const hasUser = await getUserByEmailService(sessionUser.email);
 
-        if (hasUser) return setUser(hasUser);
+        if (hasUser) return setUser({ ...hasUser, location });
 
-        await createGoogleUserService(sessionUser);
+        await createGoogleUserService({ ...sessionUser, location });
 
         setUser(sessionUser);
       }
     }
 
     loadGoogleSession();
-  }, [session]);
+  }, [session, location]);
 
   return {
     user,
