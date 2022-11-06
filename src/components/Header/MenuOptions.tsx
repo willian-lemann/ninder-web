@@ -7,7 +7,6 @@ import { classNames } from "../../utils/classNames";
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
 
-  console.log(user);
   return (
     <Menu as="div" className="relative ml-3">
       <div>
@@ -15,12 +14,15 @@ export const MenuOptions = () => {
           <span className="sr-only">Open user menu</span>
 
           <div className="h-8 w-8">
-            <Image
-              className="object-cover rounded-full"
-              src={user?.avatar as string}
-              alt="avatar image"
-              fill
-            />
+            {user?.avatar ? (
+              <Image
+                className="object-cover rounded-full"
+                src={user?.avatar as string}
+                alt="avatar image"
+                fill
+                loading="lazy"
+              />
+            ) : null}
           </div>
         </Menu.Button>
       </div>

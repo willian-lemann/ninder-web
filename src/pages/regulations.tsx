@@ -69,7 +69,7 @@ const Regulations = () => {
           <button
             disabled={!acceptedTerms}
             className={
-              "disabled:opacity-50  disabled:cursor-not-allowed border-none bg-primary rounded-lg px-4 py-1 text-white"
+              "disabled:opacity-50 disabled:cursor-not-allowed border-none bg-primary rounded-lg px-4 py-1 text-white"
             }
             onClick={handleAccepRegulations}
           >

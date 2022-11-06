@@ -2,8 +2,7 @@ import { auth } from "@config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { SignInCredencials } from "@dtos/login/SignInCredencials";
-import { ResponseData } from "@dtos/login/ResponseData";
-import { User } from "@models/user";
+
 import { getUserService } from "@services/user/getUserService";
 
 export async function signInService(credencials: SignInCredencials) {

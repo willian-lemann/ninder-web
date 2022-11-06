@@ -5,7 +5,7 @@ import {
   signIn as NextAuthSignIn,
   signOut as NextAuthSignOut,
 } from "next-auth/react";
-import { destroyCookie, setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 
 import { User } from "@models/user";
 
@@ -24,6 +24,9 @@ import { createGoogleUserService } from "@services/user/createGoogleUserService"
 import { getUserByEmailService } from "@services/user/getUserByEmailService";
 import { Provider } from "@constants/login/provider";
 import { addErrorNotification } from "@components/shared/alert";
+import { getUserService } from "@services/user/getUserService";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@config/firebase";
 
 export interface InitialState {
   user: User | null;
@@ -114,11 +117,20 @@ export function useAuth(): InitialState {
         signOut();
       }
     };
+
+    onAuthStateChanged(auth, (stateUser) => {
+      getUserService(stateUser?.uid as string).then((recoveredUser) =>
+        setUser(recoveredUser)
+      );
+    });
   }, []);
+
+  console.log(user);
 
   useEffect(() => {
     async function loadGoogleSession() {
       if (session) {
+        console.log("session");
         const sessionUser: User = {
           email: session.user?.email as string,
           avatar: session.user?.image as null,
