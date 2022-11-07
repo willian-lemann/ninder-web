@@ -6,7 +6,7 @@ import { MultiStepSignup } from "../components/login/MultiStepSignup";
 import { withSSRGuest } from "../utils/withSSRGuest";
 import { LoginTypes } from "@constants/login/LoginTypes";
 
-const Login = () => {
+export default function Login() {
   const [loginType, setLoginType] = useState<LoginTypes>("signin");
 
   const handleChangeLoginType = (type: LoginTypes) => {
@@ -34,9 +34,7 @@ const Login = () => {
       </section>
     </div>
   );
-};
-
-export default Login;
+}
 
 export const getServerSideProps = withSSRGuest(async (context) => {
   return {

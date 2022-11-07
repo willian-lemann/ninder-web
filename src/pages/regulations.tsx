@@ -10,7 +10,7 @@ import { Loading } from "@components/shared/Loading";
 const file =
   "https://firebasestorage.googleapis.com/v0/b/ninder-dev.appspot.com/o/documents%2Fninder-terms.pdf?alt=media&token=57bbb415-9b05-461f-b950-d009effe0ed4";
 
-const Regulations = () => {
+export default function Regulations() {
   const { user } = useAuthContext();
   const [isAcceptingRegulation, setIsAcceptingRegulation] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -79,6 +79,4 @@ const Regulations = () => {
       </div>
     </div>
   );
-};
-
-export default Regulations;
+}
