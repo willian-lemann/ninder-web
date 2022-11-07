@@ -1,5 +1,5 @@
 import { Disclosure } from "@headlessui/react";
-import { classNames } from "../../utils/classNames";
+import { classNames } from "@utils/classNames";
 
 const navigation = [
   { name: "Dashboard", href: "#", current: true },

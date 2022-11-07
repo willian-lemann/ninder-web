@@ -2,7 +2,7 @@ import { useAuthContext } from "@context/auth";
 import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
 import { Fragment } from "react";
-import { classNames } from "../../utils/classNames";
+import { classNames } from "@utils/classNames";
 
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();

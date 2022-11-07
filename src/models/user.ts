@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 interface Location {
   latitude: number;
   longitude: number;
@@ -13,7 +15,7 @@ export interface User {
   occupation?: string;
   nationality?: string;
   phone?: string;
-  birthday?: Date | null;
+  birthday?: Date | Timestamp | null;
   gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;

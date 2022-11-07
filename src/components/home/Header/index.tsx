@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 
-import { BellIcon } from "@heroicons/react/24/outline";
-
 import { MenuOptions } from "./MenuOptions";
 import { MobileMenuOptions } from "./MobileMenuOptions";
 import { MobileBarMenu } from "./MobileBarMenu";
@@ -10,13 +8,11 @@ import { SearchUsers } from "./SearchUsers";
 import { NotificationsPopover } from "./NotificationsPopover";
 
 export const Header = () => {
-  const [search, setSearch] = useState("");
-
   return (
     <Disclosure as="nav" className="bg-white">
       {({ open }) => (
         <>
-          <div className=" px-2 sm:px-6 lg:px-8 lg:w-full">
+          <div className="px-2 sm:px-6 lg:px-8 lg:w-full">
             <div className="relative flex h-16 items-center justify-between">
               <MobileBarMenu open={open} />
 

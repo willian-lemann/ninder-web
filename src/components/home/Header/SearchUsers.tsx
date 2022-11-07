@@ -1,16 +1,18 @@
+import { useState } from "react";
+
+import { classNames } from "@utils/classNames";
+
 import {
   MagnifyingGlassIcon as SearchIcon,
   BellIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { classNames } from "../../utils/classNames";
 
 export const SearchUsers = () => {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="hidden sm:block w-1/4">
+    <div className="hidden sm:block sm:w-1/2 md:w-1/4">
       <div className="relative flex items-center">
         <input
           type="text"
