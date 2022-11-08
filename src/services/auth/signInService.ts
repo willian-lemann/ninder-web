@@ -16,7 +16,6 @@ export async function signInService(credencials: SignInCredencials) {
 
   const user = await getUserService(uid);
 
-  console.log(user);
   if (!user) {
     return null;
   }

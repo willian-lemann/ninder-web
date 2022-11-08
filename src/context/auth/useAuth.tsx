@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import {
-  useSession,
   signIn as NextAuthSignIn,
   signOut as NextAuthSignOut,
 } from "next-auth/react";
-import { destroyCookie, parseCookies, setCookie } from "nookies";
+import { destroyCookie, setCookie } from "nookies";
 
 import { User } from "@models/user";
 
@@ -76,8 +75,6 @@ export function useAuth(): InitialState {
     const { token, user } = await signUpService({
       ...signUpData,
       location,
-      hasConfirmedRegulation: false,
-      provider: Provider.Internal,
     });
 
     setUser(user);

@@ -1,12 +1,12 @@
-import { auth, firestore } from "@config/firebase";
+import { auth } from "@config/firebase";
 
 import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+
 import { RegisterForm } from "@dtos/login/RegisterForm";
 
-import { ResponseData } from "@dtos/login/ResponseData";
 import { createUserService } from "@services/user/createUserService";
 import { User } from "@models/user";
+import { Provider } from "@constants/login/provider";
 
 export async function signUpService(signUpData: RegisterForm) {
   const { email, password, confirmPassword, ...data } = signUpData;
@@ -17,7 +17,14 @@ export async function signUpService(signUpData: RegisterForm) {
 
   const token = await user.getIdToken();
 
-  const registeredUser = await createUserService(user.uid, { email, ...data });
+  const payload: User = {
+    ...data,
+    email,
+    hasConfirmedRegulation: false,
+    provider: Provider.Internal,
+  };
+
+  const registeredUser = await createUserService(user.uid, payload);
 
   return { token, user: registeredUser };
 }
