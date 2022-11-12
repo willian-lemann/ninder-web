@@ -4,7 +4,7 @@ import {
   signIn as NextAuthSignIn,
   signOut as NextAuthSignOut,
 } from "next-auth/react";
-import { destroyCookie, setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 
 import { User } from "@models/user";
 
@@ -116,18 +116,18 @@ export function useAuth(): InitialState {
     };
 
     onAuthStateChanged(auth, (stateUser) => {
+      console.log("state user", stateUser);
+      if (!stateUser) return;
+
       getUserService(stateUser?.uid as string).then((recoveredUser) =>
         setUser(recoveredUser)
       );
     });
   }, []);
 
-  console.log(user);
-
   useEffect(() => {
     async function loadGoogleSession() {
       if (session) {
-        console.log("session");
         const sessionUser: User = {
           email: session.user?.email as string,
           avatar: session.user?.image as null,

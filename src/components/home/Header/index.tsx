@@ -6,6 +6,7 @@ import { MobileMenuOptions } from "./MobileMenuOptions";
 import { MobileBarMenu } from "./MobileBarMenu";
 import { SearchUsers } from "./SearchUsers";
 import { NotificationsPopover } from "./NotificationsPopover";
+import useSWR from "swr";
 
 export const Header = () => {
   return (

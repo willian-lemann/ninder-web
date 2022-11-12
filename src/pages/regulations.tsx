@@ -20,6 +20,7 @@ export default function Regulations() {
 
     const id = user?.id as string;
 
+    console.log(id);
     try {
       await updateUserService(id, { hasConfirmedRegulation: true });
 

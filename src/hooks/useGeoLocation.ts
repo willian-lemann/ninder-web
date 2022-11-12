@@ -8,10 +8,7 @@ interface Location {
 }
 
 export const useGeoLocation = () => {
-  const [location, setLocation] = useState<Location>({
-    latitude: 0,
-    longitude: 0,
-  });
+  const [location, setLocation] = useState<Location | null>(null);
 
   const onSuccess = (position: GeolocationPosition) => {
     const { coords } = position;

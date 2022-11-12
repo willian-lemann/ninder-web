@@ -1,4 +1,3 @@
-import type { NextPage } from "next";
 import { withSSRAuth } from "@utils/withSSRAuth";
 
 import { Header } from "@components/home/Header";

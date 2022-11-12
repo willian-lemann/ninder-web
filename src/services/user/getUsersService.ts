@@ -1,8 +1,6 @@
 import { firestore } from "@config/firebase";
 import { User } from "@models/user";
-import { getDocs, collection } from "firebase/firestore";
-
-import { differenceInYears } from "date-fns";
+import { getDocs, collection, query, where } from "firebase/firestore";
 
 export async function getUsersService() {
   const usersRef = collection(firestore, "users");

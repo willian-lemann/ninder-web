@@ -1,3 +1,4 @@
+import { differenceInYears } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
 interface Location {
@@ -21,3 +22,9 @@ export interface User {
   hasConfirmedRegulation?: boolean;
   provider?: number;
 }
+
+export function formatAge(birthday: Timestamp) {
+  const age = differenceInYears(new Date(), birthday.toDate());
+  return age;
+}
+

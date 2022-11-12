@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Icon, LatLngExpression } from "leaflet";
+import { geoJson, Icon, LatLngExpression } from "leaflet";
 import { Marker as LMarker } from "react-leaflet";
 
 interface MarkerProps {
@@ -14,6 +14,7 @@ export const Marker = ({ iconUrl, position, children }: MarkerProps) => {
     iconRetinaUrl: iconUrl,
     popupAnchor: [-0, -25],
     iconSize: [80, 80],
+    className: "rounded-full",
   });
 
   return (

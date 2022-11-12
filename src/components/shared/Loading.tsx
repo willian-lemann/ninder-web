@@ -13,8 +13,8 @@ export const Loading = ({ color, size = 6, message }: LoadingProps) => {
 
       <svg
         aria-hidden="true"
-        className={`mr-2 ml-2 w-${size} h-${size}  text-gray-200 animate-spin dark:text-gray-600  ${
-          color || "fill-white"
+        className={`mr-2 ml-2 w-${size} h-${size}  animate-spin fill-white  ${
+          color || "text-zinc-400"
         }`}
         viewBox="0 0 100 101"
         fill="none"
