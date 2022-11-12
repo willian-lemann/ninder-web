@@ -17,6 +17,7 @@ export async function createUserService(id: string, user: User) {
 
       const data = {
         ...user,
+        id,
         avatar: url,
       };
 
@@ -26,7 +27,7 @@ export async function createUserService(id: string, user: User) {
     }
   }
 
-  await setDoc(docRef, { ...user });
+  await setDoc(docRef, { ...user, id });
 
   return user as User;
 }

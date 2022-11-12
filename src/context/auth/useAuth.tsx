@@ -37,7 +37,6 @@ export interface InitialState {
 
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
-
   const [user, setUser] = useState<User | null>(null);
   const location = useGeoLocation();
 
@@ -76,6 +75,8 @@ export function useAuth(): InitialState {
       ...signUpData,
       location,
     });
+
+    console.log("user", user);
 
     setUser(user);
 

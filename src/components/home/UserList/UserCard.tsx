@@ -12,12 +12,14 @@ import { HeartIcon as FilledHeartIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useGeoLocation } from "@hooks/useGeoLocation";
 import { useAuthContext } from "@context/auth";
+import { classNames } from "@utils/classNames";
 
 interface UserCardProps {
   user: User;
+  toggleMap: boolean;
 }
 
-export const UserCard = memo(({ user }: UserCardProps) => {
+export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser } = useAuthContext();
 
   const distance = getDistanceBetweenTwoCoords({
@@ -27,7 +29,13 @@ export const UserCard = memo(({ user }: UserCardProps) => {
   });
 
   return (
-    <li key={user.id} className="w-full h-[200px]">
+    <li
+      key={user.id}
+      className={classNames(
+        toggleMap ? "w-[330px]" : "w-full",
+        "h-[230px] flex flex-col cursor-pointer"
+      )}
+    >
       <div className="w-full h-full relative rounded-md">
         <FilledHeartIcon className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-primary" />
 

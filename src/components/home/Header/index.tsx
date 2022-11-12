@@ -10,7 +10,7 @@ import useSWR from "swr";
 
 export const Header = () => {
   return (
-    <Disclosure as="nav" className="bg-white">
+    <Disclosure as="nav" className="bg-white container">
       {({ open }) => (
         <>
           <div className="px-2 sm:px-6 lg:px-8 lg:w-full">

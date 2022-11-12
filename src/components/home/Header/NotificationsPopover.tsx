@@ -8,19 +8,15 @@ export const NotificationsPopover = () => {
         <BellIcon className="h-6 w-6" aria-hidden="true" />
       </Popover.Button>
 
-      <Popover.Panel className="absolute w-[300px] h-52 z-[9999] right-0 shadow-lg bg-white rounded-md">
+      <Popover.Panel className="absolute w-[300px] z-[9999] right-0 shadow-lg bg-white rounded-md">
         <div className="p-4">
-          <header>My notifications</header>
-
-          <div className="flex flex-col overflow-auto h-auto max-h-[calc(13rem-66px)] ">
-            <ul className="mt-2 divide-y-2 pr-8   flex flex-col gap-4">
-              <li>Notification 1</li>
-              <li>Notification 1</li>
-              <li>Notification 1</li>
-              <li>Notification 1</li>
-              <li>Notification 1</li>
-            </ul>
-          </div>
+          <ul className="divide-y pr-8 flex flex-col">
+            <li className="py-3">Notification 1</li>
+            <li className="py-3">Notification 1</li>
+            <li className="py-3">Notification 1</li>
+            <li className="py-3">Notification 1</li>
+            <li className="py-3">Notification 1</li>
+          </ul>
         </div>
       </Popover.Panel>
     </Popover>

@@ -141,7 +141,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
                 aria-hidden="true"
               />
             </span>
-            {loading ? <Loading size={6} /> : "Sign in"}
+            {loading ? <Loading size={5} /> : "Sign in"}
           </button>
 
           <div className="flex items-center">

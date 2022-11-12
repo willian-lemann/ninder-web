@@ -3,8 +3,13 @@ import { UserCard } from "./UserCard";
 import { useUsers } from "@context/users/useUsers";
 import { Skeleton } from "./Skeleton";
 import { useAuthContext } from "@context/auth";
+import { classNames } from "@utils/classNames";
 
-export const UserList = () => {
+interface UserListProps {
+  toggleMap: boolean;
+}
+
+export const UserList = ({ toggleMap }: UserListProps) => {
   const { user: currentUser } = useAuthContext();
   const { data } = useUsers();
 
@@ -13,12 +18,15 @@ export const UserList = () => {
   }
 
   return (
-    <section className="flex-1 p-4">
-      <ul className="md:grid md:grid-cols-2 gap-4">
+    <section className="flex-1 p-4 overflow-y-auto">
+      <ul className={classNames(
+        toggleMap ? "md:grid-cols-4" : "md:grid-cols-2",
+        "md:grid gap-4"
+      )}>
         {data.map((user) => {
           if (user.id === currentUser?.id) return null;
-          
-          return <UserCard key={user.id} user={user} />;
+
+          return <UserCard key={user.id} user={user} toggleMap={toggleMap} />;
         })}
       </ul>
     </section>
