@@ -50,7 +50,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       <div className="mt-2">
         <div>
           <strong className="m-0">{user.name},</strong>
-          <span>{formatAge(user.birthday as Timestamp)}</span>
+          <span>{formatAge(user.birthday)}</span>
         </div>
 
         <p className="m-0 text-sm leading-3 text-zinc-400">
