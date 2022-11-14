@@ -1,7 +1,7 @@
 import { RegisterForm } from "@dtos/login/RegisterForm";
 
 export type Errors = Record<
-  keyof Omit<RegisterForm, "hasConfirmedRegulation" | "location">,
+  keyof Omit<RegisterForm, "hasConfirmedRegulation" | "location" | "provider">,
   null
 >;
 
