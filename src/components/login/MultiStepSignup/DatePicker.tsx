@@ -8,7 +8,7 @@ import { Timestamp } from "firebase/firestore";
 
 interface DatePickerProps {
   error?: string | null;
-  value: Date | Timestamp | undefined | null;
+  value: Date | undefined | null;
   onChangeDate: (newDate: Date) => void;
 }
 

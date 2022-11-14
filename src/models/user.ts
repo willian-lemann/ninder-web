@@ -16,15 +16,14 @@ export interface User {
   occupation?: string;
   nationality?: string;
   phone?: string;
-  birthday?: Date | Timestamp | null;
+  birthday?: Date | null;
   gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;
   provider?: number;
 }
 
-export function formatAge(birthday: Timestamp) {
+export function formatAge(birthday: any) {
   const age = differenceInYears(new Date(), birthday.toDate());
   return age;
 }
-
