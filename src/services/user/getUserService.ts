@@ -2,7 +2,7 @@ import { firestore } from "@config/firebase";
 import { User } from "@models/user";
 import { doc, getDoc } from "firebase/firestore";
 
-export async function getUserService(id: string): Promise<User | null> {
+export async function getUserService(id: string) {
   const docRef = doc(firestore, "users", id);
   const docSnap = await getDoc(docRef);
 

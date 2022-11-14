@@ -42,6 +42,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     try {
       await signIn({ email, password });
     } catch (error: any) {
+      console.log(error);
       if (error instanceof FirebaseError) {
         return addErrorNotification(
           errors[error.code] || "Error trying to sign in. Try again!"
@@ -140,7 +141,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
                 aria-hidden="true"
               />
             </span>
-            {loading ? <Loading size={6} /> : "Sign in"}
+            {loading ? <Loading size={5} /> : "Sign in"}
           </button>
 
           <div className="flex items-center">

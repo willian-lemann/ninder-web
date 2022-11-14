@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import {
-  useSession,
   signIn as NextAuthSignIn,
   signOut as NextAuthSignOut,
 } from "next-auth/react";
-import { destroyCookie, setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 
 import { User } from "@models/user";
 
@@ -19,10 +18,14 @@ import { logoutService } from "@services/auth/logoutService";
 
 import { STORAGE_KEY } from "src/constants/login/auth";
 import { useGoogleContext } from ".";
-import { createUserService } from "@services/user/createUserService";
+
 import { createGoogleUserService } from "@services/user/createGoogleUserService";
-import { getUserService } from "@services/user/getUserService";
 import { getUserByEmailService } from "@services/user/getUserByEmailService";
+import { Provider } from "@constants/login/provider";
+import { addErrorNotification } from "@components/shared/alert";
+import { getUserService } from "@services/user/getUserService";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@config/firebase";
 
 export interface InitialState {
   user: User | null;
@@ -34,25 +37,26 @@ export interface InitialState {
 
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
-
   const [user, setUser] = useState<User | null>(null);
   const location = useGeoLocation();
 
   let authChannel: BroadcastChannel;
 
   async function signIn({ email, password }: SignInCredencials) {
-    const { token, user } = await signInService({
+    const response = await signInService({
       email,
       password,
     });
 
-    const authenticatedUser: User = {
-      id: user.id,
-      email,
-      name: "",
-    };
+    if (!response) {
+      return addErrorNotification(
+        "User does not exist or is not registered in our database."
+      );
+    }
 
-    setUser(authenticatedUser);
+    const { token, user } = response;
+
+    setUser({ ...user, location });
 
     setCookie(undefined, STORAGE_KEY, token, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
@@ -70,18 +74,11 @@ export function useAuth(): InitialState {
     const { token, user } = await signUpService({
       ...signUpData,
       location,
-      hasConfirmedRegulation: false,
     });
 
-    const { email, name } = signUpData;
+    console.log("user", user);
 
-    const authenticatedUser: User = {
-      id: user.id,
-      email,
-      name,
-    };
-
-    setUser(authenticatedUser);
+    setUser(user);
 
     setCookie(undefined, STORAGE_KEY, token, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
@@ -118,29 +115,39 @@ export function useAuth(): InitialState {
         signOut();
       }
     };
+
+    onAuthStateChanged(auth, (stateUser) => {
+      console.log("state user", stateUser);
+      if (!stateUser) return;
+
+      getUserService(stateUser?.uid as string).then((recoveredUser) =>
+        setUser(recoveredUser)
+      );
+    });
   }, []);
 
   useEffect(() => {
     async function loadGoogleSession() {
       if (session) {
-        const sessionUser = {
+        const sessionUser: User = {
           email: session.user?.email as string,
           avatar: session.user?.image as null,
           name: session.user?.name as string,
+          provider: Provider.Google,
         };
 
         const hasUser = await getUserByEmailService(sessionUser.email);
 
-        if (hasUser) return setUser(hasUser);
+        if (hasUser) return setUser({ ...hasUser, location });
 
-        await createGoogleUserService(sessionUser);
+        await createGoogleUserService({ ...sessionUser, location });
 
         setUser(sessionUser);
       }
     }
 
     loadGoogleSession();
-  }, [session]);
+  }, [session, location]);
 
   return {
     user,

@@ -1,8 +1,9 @@
 import "react-datepicker/dist/react-datepicker.css";
-
-import ReactDatePicker from "react-datepicker";
 import { useState } from "react";
+
+import { format } from "date-fns";
 import { classNames } from "@utils/classNames";
+import ReactDatePicker from "react-datepicker";
 
 interface DatePickerProps {
   error?: string | null;
@@ -18,23 +19,23 @@ export const DatePicker = ({ value, error, onChangeDate }: DatePickerProps) => {
     onChangeDate(date);
   };
 
-  console.log("render");
+  const dateInString = format(new Date(startDate as Date), "dd/MM/yyyy");
 
   return (
     <div>
       <label htmlFor="birthday" className="text-sm text-zinc-500">
-        Birthday{" "}
+        Birthday
         <span className={error ? "not-sr-only text-red-600" : "sr-only"}>
           {error}
         </span>
       </label>
       <ReactDatePicker
         id="birthday"
+        autoComplete="birthday"
         selected={startDate}
         showYearDropdown
+        value={dateInString}
         scrollableYearDropdown
-        placeholderText="Your birthday date"
-        autoComplete="date"
         onChange={handleChangeDate}
         dateFormat="dd/MM/yyyy"
         className={classNames(

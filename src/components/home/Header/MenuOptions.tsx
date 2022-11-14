@@ -1,21 +1,34 @@
+import { Fragment } from "react";
+import Router from "next/router";
 import { useAuthContext } from "@context/auth";
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { classNames } from "../../utils/classNames";
+import Image from "next/image";
+import { classNames } from "@utils/classNames";
 
 export const MenuOptions = () => {
-  const { signOut } = useAuthContext();
+  const { user, signOut } = useAuthContext();
+
+  function handleNavigate(path: string) {
+    Router.push(path);
+  }
 
   return (
     <Menu as="div" className="relative ml-3">
       <div>
         <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="sr-only">Open user menu</span>
-          <img
-            className="h-8 w-8 rounded-full"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-            alt=""
-          />
+
+          <div className="h-8 w-8">
+            {user?.avatar ? (
+              <Image
+                className="object-cover rounded-full"
+                src={user?.avatar as string}
+                alt="avatar image"
+                fill
+                loading="lazy"
+              />
+            ) : null}
+          </div>
         </Menu.Button>
       </div>
       <Transition
@@ -30,94 +43,85 @@ export const MenuOptions = () => {
         <Menu.Items className="absolute right-0 z-[500] mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700 "
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 <span className="relative">
-                  Messages{" "}
-                  <span className="absolute -right-2 -top-2 bg-primary rounded-full w-4 h-4 text-white text-sm flex items-center justify-center">
-                    2
-                  </span>
+                  Messages
+                  <span className="absolute -right-3 -top-1 bg-primary rounded-full w-3 h-3 text-white text-sm flex items-center justify-center"></span>
                 </span>
-              </a>
+              </button>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 <span className="relative">
                   Notifications
-                  <span className="absolute -right-2 -top-2 bg-primary rounded-full w-4 h-4 text-sm text-white flex items-center justify-center">
-                    2
-                  </span>
+                  <span className="absolute -right-3 -top-1 bg-primary rounded-full w-3 h-3 text-sm text-white flex items-center justify-center"></span>
                 </span>
-              </a>
+              </button>
             )}
           </Menu.Item>
 
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 Favorites
-              </a>
+              </button>
             )}
           </Menu.Item>
 
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 Explore
-              </a>
+              </button>
             )}
           </Menu.Item>
 
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
+                onClick={() => handleNavigate("/account")}
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 Account
-              </a>
+              </button>
             )}
           </Menu.Item>
 
           <Menu.Item>
             {({ active }) => (
-              <a
-                href="#"
+              <button
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 Help
-              </a>
+              </button>
             )}
           </Menu.Item>
 
@@ -127,7 +131,7 @@ export const MenuOptions = () => {
                 onClick={signOut}
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
+                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
                 )}
               >
                 Sign out
