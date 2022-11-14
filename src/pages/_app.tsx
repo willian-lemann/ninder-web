@@ -8,9 +8,8 @@ import { AlertProvider } from "../components/shared/alert";
 
 import { Provider } from "../context";
 import { SessionProvider } from "next-auth/react";
-import { SWRConfig } from "swr";
 
-function MyApp({ Component, pageProps, session }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
       <Provider>
