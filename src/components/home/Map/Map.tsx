@@ -33,7 +33,12 @@ const Map = ({ toggleMap }: MapProps) => {
   }
 
   return (
-    <div className={classNames(toggleMap ? "w-0" : "w-[53%]", "h-[100%] transition-all duration-300")}>
+    <div
+      className={classNames(
+        toggleMap ? "w-0" : "w-[53%]",
+        "h-[100%] transition-all duration-300"
+      )}
+    >
       <MapContainer
         center={[currentLocation.latitude, currentLocation.longitude]}
         zoom={13}
@@ -71,7 +76,7 @@ const Map = ({ toggleMap }: MapProps) => {
                     <div>
                       <strong>{nearUser.name}</strong>,
                       <span className="pl-1">
-                        {formatAge(nearUser.birthday as Timestamp)}
+                        {formatAge(nearUser.birthday)}
                       </span>
                     </div>
                     <span>{nearUser.hometown}</span>
