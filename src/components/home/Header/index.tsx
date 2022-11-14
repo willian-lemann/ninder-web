@@ -13,7 +13,7 @@ export const Header = () => {
     <Disclosure as="nav" className="bg-white container">
       {({ open }) => (
         <>
-          <div className="px-2 sm:px-6 lg:px-8 lg:w-full">
+          <div className="lg:w-full">
             <div className="relative flex h-16 items-center justify-between">
               <MobileBarMenu open={open} />
 

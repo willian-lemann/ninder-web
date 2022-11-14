@@ -18,15 +18,28 @@ export const UserList = ({ toggleMap }: UserListProps) => {
   }
 
   return (
-    <section className="flex-1 p-4 overflow-y-auto">
-      <ul className={classNames(
-        toggleMap ? "md:grid-cols-4" : "md:grid-cols-2",
-        "md:grid gap-4"
-      )}>
+    <section
+      className={classNames(
+        toggleMap ? "container" : "",
+        "px-4 overflow-y-auto flex-1"
+      )}
+    >
+      <ul
+        className={classNames(
+          toggleMap ? "md:grid-cols-4" : "md:grid-cols-2",
+          "md:grid gap-4 justify-items-center"
+        )}
+      >
         {data.map((user) => {
           if (user.id === currentUser?.id) return null;
 
-          return <UserCard key={user.id} user={user} toggleMap={toggleMap} />;
+          return (
+            <>
+              <UserCard key={user.id} user={user} toggleMap={toggleMap} />
+              <UserCard key={user.id} user={user} toggleMap={toggleMap} />
+              <UserCard key={user.id} user={user} toggleMap={toggleMap} />
+            </>
+          );
         })}
       </ul>
     </section>
