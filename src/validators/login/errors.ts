@@ -9,6 +9,7 @@ export type ErrorType = {
   [key: string]: string;
 };
 
+
 export const errors: Errors = {
   email: null,
   name: null,
