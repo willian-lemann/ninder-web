@@ -13,6 +13,9 @@ import Image from "next/image";
 import { useGeoLocation } from "@hooks/useGeoLocation";
 import { useAuthContext } from "@context/auth";
 import { classNames } from "@utils/classNames";
+import { updateUserService } from "@services/user/updateUserService";
+import { useUsers } from "@context/users/useUsers";
+import { useUsersContext } from "@context/users";
 
 interface UserCardProps {
   user: User;
@@ -20,7 +23,51 @@ interface UserCardProps {
 }
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
-  const { user: currentUser } = useAuthContext();
+  const { user: currentUser, setUser } = useAuthContext();
+
+  const handleFavorite = async (userId: string) => {
+    const previousFavorites = currentUser?.favorites ?? [];
+
+    const removedFavorites = previousFavorites.filter(
+      (favoritedUser) => favoritedUser !== userId
+    );
+
+    if (currentUser?.favorites?.includes(userId)) {
+      console.log("is favorite");
+      setUser((state) => ({
+        ...(state as User),
+        favorites: removedFavorites,
+      }));
+
+      try {
+        await updateUserService(currentUser?.id as string, {
+          favorites: removedFavorites,
+        });
+      } catch (error) {
+        setUser((state) => ({
+          ...(state as User),
+          favorites: previousFavorites,
+        }));
+      }
+
+      return;
+    }
+
+    const newFavorites = [...previousFavorites, userId];
+
+    setUser((state) => ({ ...(state as User), favorites: newFavorites }));
+
+    try {
+      await updateUserService(currentUser?.id as string, {
+        favorites: newFavorites,
+      });
+    } catch (error) {
+      setUser((state) => ({
+        ...(state as User),
+        favorites: previousFavorites,
+      }));
+    }
+  };
 
   const distance = getDistanceBetweenTwoCoords({
     isMiles: false,
@@ -28,6 +75,9 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
     targetLocation: user.location,
   });
 
+  const isFavorite = currentUser?.favorites?.includes(user.id as string);
+
+  console.log("currentUser?.favorites", currentUser?.favorites);
   return (
     <li
       key={user.id}
@@ -37,7 +87,17 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       )}
     >
       <div className="w-full h-full relative rounded-md">
-        <FilledHeartIcon className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-primary" />
+        {isFavorite ? (
+          <FilledHeartIcon
+            onClick={() => handleFavorite(user.id as string)}
+            className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-primary"
+          />
+        ) : (
+          <OutlinedHeartIcon
+            onClick={() => handleFavorite(user.id as string)}
+            className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-zinc-200"
+          />
+        )}
 
         <Image
           className="rounded-md object-cover"

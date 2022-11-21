@@ -20,6 +20,7 @@ export interface User {
   gender?: number | null;
   location?: Location | null;
   hasConfirmedRegulation?: boolean;
+  favorites?: string[];
   provider?: number;
 }
 

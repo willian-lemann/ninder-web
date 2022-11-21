@@ -77,10 +77,15 @@ export const MenuOptions = () => {
               <button
                 className={classNames(
                   active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
+                  "block px-4 py-2 text-left w-full"
                 )}
               >
-                Favorites
+                <span className="text-sm text-gray-700 relative">
+                  Favorites
+                  <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-xs text-white flex items-center justify-center">
+                    {user?.favorites?.length}
+                  </span>
+                </span>
               </button>
             )}
           </Menu.Item>

@@ -4,14 +4,13 @@ import Image from "next/image";
 import { formatAge } from "@models/user";
 
 import { useAuthContext } from "@context/auth";
-import { useUsers } from "@context/users/useUsers";
+import { useUsersContext } from "@context/users";
 import { useGeoLocation } from "@hooks/useGeoLocation";
 
 import { MapContainer, Popup, TileLayer } from "react-leaflet";
 
 import { Marker } from "./Marker";
 import { Loading } from "@components/shared/Loading";
-import { Timestamp } from "firebase/firestore";
 import { classNames } from "@utils/classNames";
 
 interface MapProps {
@@ -19,10 +18,9 @@ interface MapProps {
 }
 
 const Map = ({ toggleMap }: MapProps) => {
-  console.log(toggleMap);
   const currentLocation = useGeoLocation();
   const { user } = useAuthContext();
-  const { data } = useUsers();
+  const { users } = useUsersContext();
 
   if (!currentLocation) {
     return (
@@ -49,7 +47,7 @@ const Map = ({ toggleMap }: MapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {data?.map((nearUser) => {
+        {users.map((nearUser) => {
           if (nearUser.id === user?.id) return null;
 
           return (

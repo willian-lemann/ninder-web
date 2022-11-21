@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Disclosure } from "@headlessui/react";
 
 import { MenuOptions } from "./MenuOptions";
@@ -6,7 +6,6 @@ import { MobileMenuOptions } from "./MobileMenuOptions";
 import { MobileBarMenu } from "./MobileBarMenu";
 import { SearchUsers } from "./SearchUsers";
 import { NotificationsPopover } from "./NotificationsPopover";
-import useSWR from "swr";
 
 export const Header = () => {
   return (
