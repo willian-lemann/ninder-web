@@ -6,6 +6,9 @@ import { PreviewImage } from "./PreviewImage";
 import { UserInformationForm } from "@dtos/login/UserInformationForm";
 import { Errors } from "@validators/login/errors";
 import { Textarea } from "../Textarea";
+import { useCountries } from "@hooks/useCountries";
+import { Select } from "./Select";
+import useSWR from "swr";
 
 interface UserInformationProps extends UserInformationForm {
   errors: Errors;
@@ -21,6 +24,8 @@ export const UserInformation = ({
   onUpdateFields,
   errors,
 }: UserInformationProps) => {
+  const { countries, isLoading } = useCountries();
+
   const [preview, setPreview] = useState("");
 
   const handleChangeImage = useCallback(
@@ -37,7 +42,7 @@ export const UserInformation = ({
       const file = files?.item(0) as File;
 
       if (!file) return;
-      
+
       const previewImage = URL.createObjectURL(file);
       setPreview(previewImage);
 
@@ -104,13 +109,14 @@ export const UserInformation = ({
           onChange={({ target }) => onUpdateFields({ email: target.value })}
         />
 
-        <Input
+        <Select
           label="Hometown"
           id="hometown"
           name="hometown"
-          type="text"
+          options={countries}
+          loading={isLoading}
           error={errors.hometown}
-          placeholder="City or state you are from..."
+          placeholder="City, state or country you are from..."
           value={hometown}
           onChange={({ target }) => onUpdateFields({ hometown: target.value })}
         />

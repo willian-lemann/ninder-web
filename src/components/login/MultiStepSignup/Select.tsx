@@ -3,13 +3,14 @@ import { SelectHTMLAttributes } from "react";
 
 interface Options {
   label: string;
-  value: number;
+  value: number | string;
 }
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   error?: string | null;
   label?: string;
   options: Options[];
+  loading: boolean;
 }
 
 export const Select = ({
@@ -17,6 +18,7 @@ export const Select = ({
   error,
   options,
   className,
+  loading,
   ...props
 }: SelectProps) => {
   return (
@@ -35,21 +37,29 @@ export const Select = ({
       >
         <select
           {...props}
+          disabled={loading}
           className={classNames(
             className ? className : "",
             error ? "border-red-600 text-red-600" : "",
+            loading ? "text-zinc-400" : "",
             "border outline-none appearance-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           )}
         >
-          <option value={0} selected>
-            Select an option
-          </option>
+          {loading ? (
+            <option>loading...</option>
+          ) : (
+            <>
+              <option value={0} selected>
+                Select an option
+              </option>
 
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
+              {options?.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </>
+          )}
         </select>
       </div>
     </div>

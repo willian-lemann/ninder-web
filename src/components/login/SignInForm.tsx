@@ -10,6 +10,8 @@ import Image from "next/image";
 import { useAuthContext } from "@context/auth";
 import { errors } from "@utils/errorHandler";
 import { FirebaseError } from "firebase/app";
+import { mutate } from "swr";
+import { api } from "@config/axios";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
@@ -24,6 +26,13 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     email: "",
     password: "",
   });
+
+  const handlePrefetchCountries = () => {
+    mutate(
+      "/api/data",
+      api.get("/countries").then((response) => response.data)
+    );
+  };
 
   const handleSignInWithGoogle = async () => {
     setIsSigningWithGoogle(true);
@@ -68,6 +77,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
             <span
               className=" cursor-pointer text-primary pl-1"
               onClick={() => onLoginType("signup")}
+              onMouseEnter={handlePrefetchCountries}
             >
               Sign Up
             </span>

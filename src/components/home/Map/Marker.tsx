@@ -14,7 +14,7 @@ export const Marker = ({ iconUrl, position, children }: MarkerProps) => {
     iconRetinaUrl: iconUrl,
     popupAnchor: [-0, -25],
     iconSize: [80, 80],
-    className: "rounded-full",
+    className: "rounded-full animate-fadeIn",
   });
 
   return (

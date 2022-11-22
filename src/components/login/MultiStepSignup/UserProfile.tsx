@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { mutate } from "swr";
 
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
@@ -10,6 +11,7 @@ import { FEMALE, MALE, OTHER } from "@constants/login/gender";
 import { UserProfileForm } from "@dtos/login/UserProfileForm";
 import { Errors } from "@validators/login/errors";
 import { Select } from "./Select";
+
 interface UserProfileProps extends UserProfileForm {
   errors: Errors;
   onUpdateFields: (fields: Partial<UserProfileForm>) => void;

@@ -77,13 +77,12 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
 
   const isFavorite = currentUser?.favorites?.includes(user.id as string);
 
-  console.log("currentUser?.favorites", currentUser?.favorites);
   return (
     <li
       key={user.id}
       className={classNames(
         toggleMap ? "w-[330px]" : "w-full",
-        "h-[230px] flex flex-col cursor-pointer opacity-100 "
+        "h-[230px] flex flex-col cursor-pointer animate-fadeIn"
       )}
     >
       <div className="w-full h-full relative rounded-md">
