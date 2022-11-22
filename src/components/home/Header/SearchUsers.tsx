@@ -5,8 +5,6 @@ import {
   startTransition,
   Dispatch,
   SetStateAction,
-  useEffect,
-  useCallback,
 } from "react";
 
 import { classNames } from "@utils/classNames";
@@ -16,10 +14,8 @@ import {
   BellIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useUsers } from "@context/users/useUsers";
+
 import { useUsersContext } from "@context/users";
-import { getUsersService } from "@services/user/getUsersService";
-import { addErrorNotification } from "@components/shared/alert";
 
 interface SearchUsersProps {
   onSearchFilter: Dispatch<SetStateAction<string>>;
@@ -27,27 +23,6 @@ interface SearchUsersProps {
 
 export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
   const [searchValue, setSearchValue] = useState("");
-  const [filter, setFilter] = useState("");
-  const { setUsers, setIsFetching } = useUsersContext();
-
-  const handleSearch = useCallback(
-    async (filter: string) => {
-      setIsFetching(true);
-
-      try {
-        const response = await getUsersService(filter);
-
-        const { result } = response.data;
-
-        setUsers(result);
-      } catch (error) {
-        addErrorNotification("Error fetching users");
-      } finally {
-        setIsFetching(false);
-      }
-    },
-    [setIsFetching, setUsers]
-  );
 
   const handleSearchFilter = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
@@ -58,10 +33,8 @@ export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
   };
 
   const handleReset = () => {
-    if (searchValue.length === 0) {
-      setFilter("");
-      setSearchValue("");
-    }
+    setSearchValue("");
+    onSearchFilter("");
   };
 
   // useEffect(() => {
@@ -82,10 +55,16 @@ export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
 
         <button
           type="button"
-          onClick={() => setFilter(searchValue)}
           className="text-white absolute right-0 rounded-full px-2 py-2 mr-2 flex items-center justify-center"
         >
-          <SearchIcon className="text-title-opacity  h-6 w-6 relative" />
+          {searchValue.length > 0 ? (
+            <XMarkIcon
+              className="text-title-opacity  h-6 w-6 relative animate-fadeIn"
+              onClick={handleReset}
+            />
+          ) : (
+            <SearchIcon className="text-title-opacity  h-6 w-6 relative animate-fadeIn" />
+          )}
         </button>
       </div>
     </div>

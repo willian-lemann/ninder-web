@@ -10,7 +10,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   error?: string | null;
   label?: string;
   options: Options[];
-  loading: boolean;
+  loading?: boolean;
 }
 
 export const Select = ({
