@@ -7,7 +7,11 @@ import { MobileBarMenu } from "./MobileBarMenu";
 import { SearchUsers } from "./SearchUsers";
 import { NotificationsPopover } from "./NotificationsPopover";
 
-export const Header = () => {
+interface HeaderProps {
+  onSearchFilter: Dispatch<SetStateAction<string>>;
+}
+
+export const Header = ({ onSearchFilter }: HeaderProps) => {
   return (
     <Disclosure as="nav" className="bg-white container">
       {({ open }) => (
@@ -21,7 +25,7 @@ export const Header = () => {
                   <span className="text-2xl text-primary">Ninder</span>
                 </div>
 
-                <SearchUsers />
+                <SearchUsers onSearchFilter={onSearchFilter} />
 
                 <div className="absolute flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <NotificationsPopover />

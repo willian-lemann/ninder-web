@@ -21,7 +21,11 @@ import { useUsersContext } from "@context/users";
 import { getUsersService } from "@services/user/getUsersService";
 import { addErrorNotification } from "@components/shared/alert";
 
-export const SearchUsers = () => {
+interface SearchUsersProps {
+  onSearchFilter: Dispatch<SetStateAction<string>>;
+}
+
+export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
   const [searchValue, setSearchValue] = useState("");
   const [filter, setFilter] = useState("");
   const { setUsers, setIsFetching } = useUsersContext();
@@ -45,6 +49,14 @@ export const SearchUsers = () => {
     [setIsFetching, setUsers]
   );
 
+  const handleSearchFilter = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+
+    startTransition(() => {
+      onSearchFilter(event.target.value);
+    });
+  };
+
   const handleReset = () => {
     if (searchValue.length === 0) {
       setFilter("");
@@ -52,9 +64,9 @@ export const SearchUsers = () => {
     }
   };
 
-  useEffect(() => {
-    handleSearch(filter);
-  }, [filter, handleSearch]);
+  // useEffect(() => {
+  //   handleSearch(filter);
+  // }, [filter, handleSearch]);
 
   return (
     <div className="hidden sm:block sm:w-1/2 md:w-1/4">
@@ -65,8 +77,7 @@ export const SearchUsers = () => {
           className="block p-3 pl-4 w-full shadow-sm hover:shadow-md transition-shadow duration-300 outline-none text-sm text-title-opacity  rounded-3xl border border-gray-300 "
           placeholder="Type a name and then ENTER..."
           value={searchValue}
-          onChange={({ target }) => setSearchValue(target.value)}
-          onKeyUp={handleReset}
+          onChange={handleSearchFilter}
         />
 
         <button

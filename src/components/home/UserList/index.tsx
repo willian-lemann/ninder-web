@@ -4,16 +4,18 @@ import { Skeleton } from "./Skeleton";
 import { useAuthContext } from "@context/auth";
 import { classNames } from "@utils/classNames";
 import { useUsersContext } from "@context/users";
+import { useUsers } from "@context/users/useUsers";
 
 interface UserListProps {
   toggleMap: boolean;
+  searchFilter: string;
 }
 
-export const UserList = ({ toggleMap }: UserListProps) => {
+export const UserList = ({ toggleMap, searchFilter }: UserListProps) => {
   const { user: currentUser } = useAuthContext();
-  const { users, isFetching, isEmpty } = useUsersContext();
+  const { users, isLoading, isEmpty } = useUsers();
 
-  if (isFetching) {
+  if (isLoading) {
     return <Skeleton />;
   }
 
@@ -25,6 +27,13 @@ export const UserList = ({ toggleMap }: UserListProps) => {
       </div>
     );
   }
+
+  const data =
+    searchFilter.length > 0
+      ? users?.filter((user) =>
+          user.name.toLowerCase().includes(searchFilter.toLowerCase())
+        )
+      : users;
 
   return (
     <section
@@ -39,7 +48,7 @@ export const UserList = ({ toggleMap }: UserListProps) => {
           "md:grid gap-4 justify-items-center"
         )}
       >
-        {users.map((user) => {
+        {data.map((user) => {
           if (user.id === currentUser?.id) return null;
 
           return <UserCard key={user.id} user={user} toggleMap={toggleMap} />;

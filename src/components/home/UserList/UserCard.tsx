@@ -83,7 +83,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       key={user.id}
       className={classNames(
         toggleMap ? "w-[330px]" : "w-full",
-        "h-[230px] flex flex-col cursor-pointer"
+        "h-[230px] flex flex-col cursor-pointer opacity-100 "
       )}
     >
       <div className="w-full h-full relative rounded-md">

@@ -3,39 +3,20 @@ import { withSSRAuth } from "@utils/withSSRAuth";
 import { Header } from "@components/home/Header";
 import { Map } from "@components/home/Map";
 import { UserList } from "@components/home/UserList";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { classNames } from "@utils/classNames";
-
-import { useUsersContext } from "@context/users";
-import { getUsersService } from "@services/user/getUsersService";
 
 export default function Home() {
   const [toggleMap, setToggleMap] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
-  const { setUsers, setIsFetching } = useUsersContext();
-
-  useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const response = await getUsersService();
-        const { result } = response.data;
-        setUsers(result);
-      } catch (error) {
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
-    loadUsers();
-  }, [setIsFetching, setUsers]);
 
   return (
     <div className="h-screen w-screen">
-      <Header />
+      <Header onSearchFilter={setSearchFilter} />
 
       <div className="flex justify-between h-[calc(100vh-4rem)] z-0 relative">
-        <UserList toggleMap={toggleMap} />
-        <Map toggleMap={toggleMap} />
+        <UserList toggleMap={toggleMap} searchFilter={searchFilter} />
+        <Map toggleMap={toggleMap} searchFilter={searchFilter} />
         <button
           onClick={() => setToggleMap((state) => !state)}
           className={classNames(

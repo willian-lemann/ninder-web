@@ -3,6 +3,7 @@ import { User } from "@models/user";
 import { getUsersService } from "@services/user/getUsersService";
 import { Dispatch, SetStateAction, useState } from "react";
 
+import useSWR from "swr";
 export interface InitialState {
   isFetching: boolean;
   isEmpty: boolean;
@@ -11,17 +12,28 @@ export interface InitialState {
   setIsFetching: Dispatch<SetStateAction<boolean>>;
 }
 
-export const useUsers = (): InitialState => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [isFetching, setIsFetching] = useState(true);
+export const useUsers = () => {
+  const usersData = useSWR("/users", () =>
+    getUsersService().then((response) => response.data.result)
+  );
 
-  const isEmpty = users.length === 0;
+  const isLoading = !usersData.data;
+  const isEmpty = usersData.data?.length === 0;
 
   return {
-    isFetching,
+    ...usersData,
+    isLoading,
+    users: usersData.data as User[],
     isEmpty,
-    setIsFetching,
-    users,
-    setUsers,
   };
+  // const [users, setUsers] = useState<User[]>([]);
+  // const [isFetching, setIsFetching] = useState(true);
+  // const isEmpty = users.length === 0;
+  // return {
+  //   isFetching,
+  //   isEmpty,
+  //   setIsFetching,
+  //   users,
+  //   setUsers,
+  // };
 };
