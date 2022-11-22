@@ -1,14 +1,18 @@
 import { ChangeEvent, useCallback, useState } from "react";
+
 import Image from "next/image";
-import { Input } from "../Input";
-import { classNames } from "@utils/classNames";
+
 import { PreviewImage } from "./PreviewImage";
+import { Textarea } from "../Textarea";
+import { Select } from "./Select";
+import { Input } from "../Input";
+
+import { addErrorNotification } from "@components/shared/alert";
+import { classNames } from "@utils/classNames";
+import { UPLOAD_LIMIT_IN_MB } from "@constants/login/userInformation";
 import { UserInformationForm } from "@dtos/login/UserInformationForm";
 import { Errors } from "@validators/login/errors";
-import { Textarea } from "../Textarea";
 import { useCountries } from "@hooks/useCountries";
-import { Select } from "./Select";
-import useSWR from "swr";
 
 interface UserInformationProps extends UserInformationForm {
   errors: Errors;
@@ -25,12 +29,10 @@ export const UserInformation = ({
   errors,
 }: UserInformationProps) => {
   const { countries, isLoading } = useCountries();
-
   const [preview, setPreview] = useState("");
 
   const handleChangeImage = useCallback(
     (event: ChangeEvent<HTMLInputElement> | null) => {
-      console.log(!!event);
       if (!event) {
         return document.getElementById("profile-image")?.click();
       }
@@ -42,6 +44,12 @@ export const UserInformation = ({
       const file = files?.item(0) as File;
 
       if (!file) return;
+
+      const imageSizeInMegaBytes = (file.size / 1024 / 1000).toFixed(2);
+
+      if (Number(imageSizeInMegaBytes) > UPLOAD_LIMIT_IN_MB) {
+        return addErrorNotification("Image must have a size less than 2mb");
+      }
 
       const previewImage = URL.createObjectURL(file);
       setPreview(previewImage);
