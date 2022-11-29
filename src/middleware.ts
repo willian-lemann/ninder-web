@@ -10,7 +10,7 @@ export function middleware(req: NextRequest) {
 
   if (!token) {
     return new NextResponse(
-      JSON.stringify({ success: false, message: "authentication failed" }),
+      JSON.stringify({ message: "authentication failed", statusCode: 401 }),
       { status: 401, headers: { "content-type": "application/json" } }
     );
   }
