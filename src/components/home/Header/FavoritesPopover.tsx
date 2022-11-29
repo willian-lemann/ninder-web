@@ -5,6 +5,8 @@ import { BookmarkIcon } from "@heroicons/react/24/solid";
 import { BookmarkIcon as OutlinedBookmarkIcon } from "@heroicons/react/24/outline";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { useUsers } from "@context/users/useUsers";
+import { useAuthContext } from "@context/auth";
 
 interface FavoritesPopoverProps {
   numberOfFavorites: number;
@@ -13,24 +15,21 @@ interface FavoritesPopoverProps {
 export const FavoritesPopover = ({
   numberOfFavorites,
 }: FavoritesPopoverProps) => {
-  const users = [
-    {
-      id: 1,
-      name: "person name",
-      description: "description",
-      favorite: true,
-    },
-    {
-      id: 2,
-      name: "person name",
-      description: "description",
-      favorite: false,
-    },
-  ];
+  const { user } = useAuthContext();
+  const { users: favorites } = useUsers();
+
+  const favoriteUsers = user?.favorites?.map((userFavorite) => {
+    const mappedFavoriteUser = favorites.find(
+      (favorite) => favorite.id === userFavorite
+    );
+
+    return mappedFavoriteUser;
+  });
 
   return (
     <Popover className="relative">
       <Popover.Button
+        disabled={numberOfFavorites === 0}
         as="button"
         className={classNames(
           "block hover:bg-gray-200 px-4 py-2 text-left w-full"
@@ -54,12 +53,12 @@ export const FavoritesPopover = ({
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Popover.Panel className="absolute z-10 -left-[100%]">
-          <div className="bg-white h-52 w-64 rounded-md py-4 px-6">
+        <Popover.Panel className="absolute z-10 -left-[135%]">
+          <div className="bg-white h-auto w-64 rounded-md py-4 px-6">
             <ul>
-              {users.map((favorite) => (
+              {favoriteUsers.map((favoriteUser) => (
                 <li
-                  key={favorite.id}
+                  key={favoriteUser.id}
                   className="flex justify-between group mb-4 last:mb-0"
                 >
                   <div className="flex items-center">
@@ -68,12 +67,12 @@ export const FavoritesPopover = ({
                     </div>
 
                     <div className="leading-5 pl-2">
-                      <strong>person name</strong>
-                      <p className="">Descrition</p>
+                      <strong>{favoriteUser.name}</strong>
+                      <p className="">{favoriteUser.hometown}</p>
                     </div>
                   </div>
 
-                  {favorite.favorite ? (
+                  {true ? (
                     <BookmarkIcon className="h-4 w-4 cursor-pointer" />
                   ) : (
                     <OutlinedBookmarkIcon className="h-4 w-4 cursor-pointer" />

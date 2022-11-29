@@ -26,7 +26,6 @@ export const useCountries = () => {
     value: country.name.common,
   })) as Country[];
 
-  console.log(mappedCountries);
   return {
     error: countriesData.error,
     mutate: countriesData.mutate,
