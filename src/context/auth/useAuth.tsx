@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Router from "next/router";
 import {
   signIn as NextAuthSignIn,
@@ -29,6 +29,7 @@ import { auth } from "@config/firebase";
 
 export interface InitialState {
   user: User | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
   signIn(credencials: SignInCredencials): Promise<void>;
   signInWithGoogle(): Promise<void>;
   signUp(credencials: SignUpCredencials): Promise<void>;
@@ -151,6 +152,7 @@ export function useAuth(): InitialState {
 
   return {
     user,
+    setUser,
     signIn,
     signUp,
     signOut,

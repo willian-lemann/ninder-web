@@ -4,33 +4,40 @@ import Image from "next/image";
 import { formatAge } from "@models/user";
 
 import { useAuthContext } from "@context/auth";
-import { useUsers } from "@context/users/useUsers";
+import { useUsersContext } from "@context/users";
 import { useGeoLocation } from "@hooks/useGeoLocation";
 
 import { MapContainer, Popup, TileLayer } from "react-leaflet";
 
 import { Marker } from "./Marker";
 import { Loading } from "@components/shared/Loading";
-import { Timestamp } from "firebase/firestore";
 import { classNames } from "@utils/classNames";
+import { useUsers } from "@context/users/useUsers";
 
 interface MapProps {
   toggleMap: boolean;
+  searchFilter: string;
 }
 
-const Map = ({ toggleMap }: MapProps) => {
-  console.log(toggleMap);
+const Map = ({ toggleMap, searchFilter }: MapProps) => {
   const currentLocation = useGeoLocation();
   const { user } = useAuthContext();
-  const { data } = useUsers();
+  const { users, isLoading } = useUsers();
 
-  if (!currentLocation) {
+  if (!currentLocation || isLoading) {
     return (
       <div className="w-[53%] h-[100%] flex items-center justify-center">
         <Loading size={8} />
       </div>
     );
   }
+
+  const data =
+    searchFilter.length > 0
+      ? users.filter((user) =>
+          user.name.toLowerCase().includes(searchFilter.toLowerCase())
+        )
+      : users;
 
   return (
     <div
@@ -49,7 +56,7 @@ const Map = ({ toggleMap }: MapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {data?.map((nearUser) => {
+        {data.map((nearUser) => {
           if (nearUser.id === user?.id) return null;
 
           return (

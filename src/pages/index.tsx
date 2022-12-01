@@ -8,14 +8,15 @@ import { classNames } from "@utils/classNames";
 
 export default function Home() {
   const [toggleMap, setToggleMap] = useState(false);
+  const [searchFilter, setSearchFilter] = useState("");
 
   return (
     <div className="h-screen w-screen">
-      <Header />
+      <Header onSearchFilter={setSearchFilter} />
 
       <div className="flex justify-between h-[calc(100vh-4rem)] z-0 relative">
-        <UserList toggleMap={toggleMap} />
-        <Map toggleMap={toggleMap} />
+        <UserList toggleMap={toggleMap} searchFilter={searchFilter} />
+        <Map toggleMap={toggleMap} searchFilter={searchFilter} />
         <button
           onClick={() => setToggleMap((state) => !state)}
           className={classNames(
@@ -23,7 +24,7 @@ export default function Home() {
             "absolute px-4 py-2 z-[9999] -translate-x-1/2 -translate-y-1/2 shadow-md hover:shadow-lg transition-shadow duration-300 rounded-full bg-primary text-white"
           )}
         >
-          {toggleMap ? "Show Map" : "List"}
+          {toggleMap ? "Show Map" : "Hide Map"}
         </button>
       </div>
     </div>

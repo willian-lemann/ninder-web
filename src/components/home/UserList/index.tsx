@@ -1,21 +1,39 @@
 import { UserCard } from "./UserCard";
 
-import { useUsers } from "@context/users/useUsers";
 import { Skeleton } from "./Skeleton";
 import { useAuthContext } from "@context/auth";
 import { classNames } from "@utils/classNames";
 
+import { useUsers } from "@context/users/useUsers";
+
 interface UserListProps {
   toggleMap: boolean;
+  searchFilter: string;
 }
 
-export const UserList = ({ toggleMap }: UserListProps) => {
+export const UserList = ({ toggleMap, searchFilter }: UserListProps) => {
   const { user: currentUser } = useAuthContext();
-  const { data } = useUsers();
+  const { users, isLoading, isEmpty } = useUsers();
 
-  if (!data) {
+  if (isLoading) {
     return <Skeleton />;
   }
+
+  if (isEmpty) {
+    return (
+      <div className="px-4 flex-1 flex flex-col items-center justify-center">
+        <h1 className="text-xl text-zinc-400">Woh oh</h1>
+        <p className="text-base text-zinc-400">No users found...</p>
+      </div>
+    );
+  }
+
+  const data =
+    searchFilter.length > 0
+      ? users?.filter((user) =>
+          user.name.toLowerCase().includes(searchFilter.toLowerCase())
+        )
+      : users;
 
   return (
     <section
@@ -33,13 +51,7 @@ export const UserList = ({ toggleMap }: UserListProps) => {
         {data.map((user) => {
           if (user.id === currentUser?.id) return null;
 
-          return (
-            <>
-              <UserCard key={user.id} user={user} toggleMap={toggleMap} />
-              <UserCard key={user.id} user={user} toggleMap={toggleMap} />
-              <UserCard key={user.id} user={user} toggleMap={toggleMap} />
-            </>
-          );
+          return <UserCard key={user.id} user={user} toggleMap={toggleMap} />;
         })}
       </ul>
     </section>

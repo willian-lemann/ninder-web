@@ -5,6 +5,8 @@ import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
 import { classNames } from "@utils/classNames";
 
+import { FavoritesPopover } from "./FavoritesPopover";
+
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
 
@@ -73,16 +75,9 @@ export const MenuOptions = () => {
           </Menu.Item>
 
           <Menu.Item>
-            {({ active }) => (
-              <button
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
-                )}
-              >
-                Favorites
-              </button>
-            )}
+            <FavoritesPopover
+              numberOfFavorites={Number(user?.favorites?.length)}
+            />
           </Menu.Item>
 
           <Menu.Item>

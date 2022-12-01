@@ -15,7 +15,7 @@ export default function Login() {
 
   return (
     <div className="h-screen flex flex-col md:flex-row justify-between ">
-      {/* <section className="flex-1">
+      <section className="flex-1">
         {loginType === "signin" ? (
           <SignInForm onLoginType={handleChangeLoginType} />
         ) : (
@@ -31,16 +31,7 @@ export default function Login() {
           fill
           loading="lazy"
         />
-      </section> */}
-      <main className="flex items-center justify-center h-screen w-screen bg-zinc-900">
-        <div className="text-center flex gap-4 flex-col">
-          <h1 className="text-white"> Coming soon...</h1>
-          <p className="text-white">
-            A platform where you can find native speakers to practice your
-            english, to share cultures and have fun.
-          </p>
-        </div>
-      </main>
+      </section>
     </div>
   );
 }
