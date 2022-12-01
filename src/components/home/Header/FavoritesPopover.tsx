@@ -7,6 +7,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useUsers } from "@context/users/useUsers";
 import { useAuthContext } from "@context/auth";
+import { User } from "@models/user";
 
 interface FavoritesPopoverProps {
   numberOfFavorites: number;
@@ -15,16 +16,18 @@ interface FavoritesPopoverProps {
 export const FavoritesPopover = ({
   numberOfFavorites,
 }: FavoritesPopoverProps) => {
-  const { user } = useAuthContext();
+  const { user, setUser } = useAuthContext();
   const { users: favorites } = useUsers();
 
   const favoriteUsers = user?.favorites?.map((userFavorite) => {
     const mappedFavoriteUser = favorites.find(
       (favorite) => favorite.id === userFavorite
-    );
+    ) as User;
 
     return mappedFavoriteUser;
   });
+
+  console.log(user);
 
   return (
     <Popover className="relative">
@@ -56,10 +59,10 @@ export const FavoritesPopover = ({
         <Popover.Panel className="absolute z-10 -left-[135%]">
           <div className="bg-white h-auto w-64 rounded-md py-4 px-6">
             <ul>
-              {favoriteUsers.map((favoriteUser) => (
+              {favoriteUsers?.map((favoriteUser) => (
                 <li
-                  key={favoriteUser.id}
-                  className="flex justify-between group mb-4 last:mb-0"
+                  key={favoriteUser?.id}
+                  className="flex justify-between group mb-4 last:mb-0 cursor-pointer"
                 >
                   <div className="flex items-center">
                     <div className="h-10 w-10 relative">
@@ -67,8 +70,8 @@ export const FavoritesPopover = ({
                     </div>
 
                     <div className="leading-5 pl-2">
-                      <strong>{favoriteUser.name}</strong>
-                      <p className="">{favoriteUser.hometown}</p>
+                      <strong>{favoriteUser?.name}</strong>
+                      <p className="">{favoriteUser?.hometown}</p>
                     </div>
                   </div>
 

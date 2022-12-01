@@ -1,8 +1,7 @@
 import { memo } from "react";
+import Router from "next/router";
 
 import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
-import { differenceInYears } from "date-fns";
-import { Timestamp } from "firebase/firestore";
 
 import { formatAge, User } from "@models/user";
 
@@ -10,12 +9,9 @@ import { HeartIcon as OutlinedHeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as FilledHeartIcon } from "@heroicons/react/24/solid";
 
 import Image from "next/image";
-import { useGeoLocation } from "@hooks/useGeoLocation";
 import { useAuthContext } from "@context/auth";
 import { classNames } from "@utils/classNames";
 import { updateUserService } from "@services/user/updateUserService";
-import { useUsers } from "@context/users/useUsers";
-import { useUsersContext } from "@context/users";
 
 interface UserCardProps {
   user: User;
@@ -24,6 +20,10 @@ interface UserCardProps {
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser, setUser } = useAuthContext();
+
+  const handleSeeUserDetails = (id: string) => {
+    Router.push(`/user/${id}`);
+  };
 
   const handleFavorite = async (userId: string) => {
     const previousFavorites = currentUser?.favorites ?? [];
@@ -84,6 +84,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
         toggleMap ? "w-[330px]" : "w-full",
         "h-[230px] flex flex-col cursor-pointer animate-fadeIn"
       )}
+      onClick={() => handleSeeUserDetails(user.id as string)}
     >
       <div className="w-full h-full relative rounded-md">
         {isFavorite ? (

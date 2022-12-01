@@ -46,6 +46,8 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     event.preventDefault();
     setLoading(true);
 
+    console.log("render");
+
     const { email, password } = signInData;
 
     try {
