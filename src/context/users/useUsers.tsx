@@ -6,7 +6,7 @@ import { getUsersService } from "@services/user/getUsersService";
 import useSWR from "swr";
 
 export const useUsers = () => {
-  const usersData = useSWR("/users", (path) =>
+  const usersData = useSWR("/users", () =>
     getUsersService().then((response) => response.data.result)
   );
 

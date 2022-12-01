@@ -3,7 +3,7 @@ import { UserCard } from "./UserCard";
 import { Skeleton } from "./Skeleton";
 import { useAuthContext } from "@context/auth";
 import { classNames } from "@utils/classNames";
-import { useUsersContext } from "@context/users";
+
 import { useUsers } from "@context/users/useUsers";
 
 interface UserListProps {
