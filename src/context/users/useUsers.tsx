@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { addErrorNotification } from "@components/shared/alert";
+
 import { User } from "@models/user";
 import { getUsersService } from "@services/user/getUsersService";
 
