@@ -1,5 +1,4 @@
 import { differenceInYears } from "date-fns";
-import { Timestamp } from "firebase/firestore";
 
 interface Location {
   latitude: number;
@@ -7,7 +6,7 @@ interface Location {
 }
 
 export interface User {
-  id?: string;
+  id: string;
   email: string;
   name: string;
   avatar?: Blob | null | string;
@@ -27,4 +26,16 @@ export interface User {
 export function formatAge(birthday: any) {
   const age = differenceInYears(new Date(), birthday.toDate());
   return age;
+}
+
+export function getGender(genderEnum: number) {
+  const genderBasedOnEnum = {
+    1: "Male",
+    2: "Female",
+  };
+
+  return (
+    genderBasedOnEnum[genderEnum as keyof typeof genderBasedOnEnum] ||
+    "Other gender"
+  );
 }

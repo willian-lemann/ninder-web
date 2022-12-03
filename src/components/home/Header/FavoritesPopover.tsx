@@ -16,7 +16,7 @@ interface FavoritesPopoverProps {
 export const FavoritesPopover = ({
   numberOfFavorites,
 }: FavoritesPopoverProps) => {
-  const { user, setUser } = useAuthContext();
+  const { user } = useAuthContext();
   const { users: favorites } = useUsers();
 
   const favoriteUsers = user?.favorites?.map((userFavorite) => {

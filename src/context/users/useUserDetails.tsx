@@ -12,6 +12,6 @@ export const useUserDetails = (id: string) => {
   return {
     ...userData,
     isLoading,
-    data: userData.data as User,
+    user: userData.data as User,
   };
 };

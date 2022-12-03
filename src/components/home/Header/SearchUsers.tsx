@@ -1,21 +1,15 @@
 import {
   useState,
-  KeyboardEvent,
   ChangeEvent,
   startTransition,
   Dispatch,
   SetStateAction,
 } from "react";
 
-import { classNames } from "@utils/classNames";
-
 import {
   MagnifyingGlassIcon as SearchIcon,
-  BellIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-
-import { useUsersContext } from "@context/users";
 
 interface SearchUsersProps {
   onSearchFilter: Dispatch<SetStateAction<string>>;

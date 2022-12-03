@@ -4,7 +4,7 @@ import {
   signIn as NextAuthSignIn,
   signOut as NextAuthSignOut,
 } from "next-auth/react";
-import { destroyCookie, parseCookies, setCookie } from "nookies";
+import { destroyCookie, setCookie } from "nookies";
 
 import { User } from "@models/user";
 
@@ -27,9 +27,10 @@ import { getUserService } from "@services/user/getUserService";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@config/firebase";
 
+type UserModel = Partial<User>;
 export interface InitialState {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
+  user: UserModel | null;
+  setUser: Dispatch<SetStateAction<UserModel | null>>;
   signIn(credencials: SignInCredencials): Promise<void>;
   signInWithGoogle(): Promise<void>;
   signUp(credencials: SignUpCredencials): Promise<void>;
@@ -38,7 +39,7 @@ export interface InitialState {
 
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserModel | null>(null);
   const location = useGeoLocation();
 
   let authChannel: BroadcastChannel;
@@ -130,7 +131,7 @@ export function useAuth(): InitialState {
   useEffect(() => {
     async function loadGoogleSession() {
       if (session) {
-        const sessionUser: User = {
+        const sessionUser = {
           email: session.user?.email as string,
           avatar: session.user?.image as null,
           name: session.user?.name as string,

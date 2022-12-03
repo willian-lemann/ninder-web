@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, MouseEvent } from "react";
 import Router from "next/router";
 
 import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
@@ -10,6 +10,7 @@ import { HeartIcon as FilledHeartIcon } from "@heroicons/react/24/solid";
 
 import Image from "next/image";
 import { useAuthContext } from "@context/auth";
+
 import { classNames } from "@utils/classNames";
 import { updateUserService } from "@services/user/updateUserService";
 
@@ -25,7 +26,12 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
     Router.push(`/user/${id}`);
   };
 
-  const handleFavorite = async (userId: string) => {
+  const handleFavorite = async (
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    userId: string
+  ) => {
+    event.stopPropagation();
+
     const previousFavorites = currentUser?.favorites ?? [];
 
     const removedFavorites = previousFavorites.filter(
@@ -89,12 +95,12 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       <div className="w-full h-full relative rounded-md">
         {isFavorite ? (
           <FilledHeartIcon
-            onClick={() => handleFavorite(user.id as string)}
+            onClick={(event) => handleFavorite(event, user.id as string)}
             className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-primary"
           />
         ) : (
           <OutlinedHeartIcon
-            onClick={() => handleFavorite(user.id as string)}
+            onClick={(event) => handleFavorite(event, user.id as string)}
             className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-zinc-200"
           />
         )}

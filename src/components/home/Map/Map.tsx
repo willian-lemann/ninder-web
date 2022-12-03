@@ -1,18 +1,16 @@
 import "leaflet/dist/leaflet.css";
-import Image from "next/image";
-
-import { formatAge } from "@models/user";
 
 import { useAuthContext } from "@context/auth";
-import { useUsersContext } from "@context/users";
+
 import { useGeoLocation } from "@hooks/useGeoLocation";
 
-import { MapContainer, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 
 import { Marker } from "./Marker";
 import { Loading } from "@components/shared/Loading";
 import { classNames } from "@utils/classNames";
 import { useUsers } from "@context/users/useUsers";
+import { Popup } from "./Popup";
 
 interface MapProps {
   toggleMap: boolean;
@@ -68,32 +66,15 @@ const Map = ({ toggleMap, searchFilter }: MapProps) => {
                 Number(nearUser.location?.longitude),
               ]}
             >
-              <Popup>
-                <div className="h-44 flex flex-col justify-end">
-                  <div className="w-full h-[100px] absolute right-0 top-0">
-                    <Image
-                      src={nearUser.avatar as string}
-                      className="object-cover rounded-t-md"
-                      alt="user avatar"
-                      fill
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <div>
-                      <strong>{nearUser.name}</strong>,
-                      <span className="pl-1">
-                        {formatAge(nearUser.birthday)}
-                      </span>
-                    </div>
-                    <span>{nearUser.hometown}</span>
-                  </div>
-
-                  <button className="mt-2 border-none bg-primary rounded-md text-white px-2 py-2">
-                    Start a conversation
-                  </button>
-                </div>
-              </Popup>
+              <Popup
+                userInfo={{
+                  id: nearUser.id as string,
+                  avatar: nearUser.avatar as string,
+                  name: nearUser.name,
+                  birthday: nearUser.birthday as Date,
+                  hometown: nearUser.hometown as string,
+                }}
+              />
             </Marker>
           );
         })}

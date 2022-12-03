@@ -1,7 +1,55 @@
+import { useUserDetails } from "@context/users";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
-export default function User() {
-  const { query } = useRouter();
+import { getGender } from "@models/user";
 
-  return <div>{query.id}</div>;
+export default function User() {
+  const { query, push } = useRouter();
+  const { user, isLoading } = useUserDetails(query.id as string);
+
+  if (isLoading) return <p>loading...</p>;
+
+  return (
+    <div className="container">
+      <div className="flex items-center mt-10">
+        <div className="relative h-[100px] w-[100px] object-cover rounded-full border-4 border-black">
+          <Image
+            src={user.avatar as string}
+            alt="user avatar"
+            fill
+            className="rounded-full"
+          />
+        </div>
+
+        <div className="px-4">
+          <strong>{user.name}</strong>
+          <p>
+            {user.hometown}, <span>{user.nationality}</span>
+          </p>
+        </div>
+      </div>
+
+      <div className="p-4">
+        <p>{user.bio}</p>
+
+        <p>{user.email}</p>
+        <p>{getGender(user.gender as number)}</p>
+        <p>{user.occupation}</p>
+        <div>
+          <strong>Phone number:</strong>
+          <span>{user.phone}</span>
+        </div>
+      </div>
+
+      <div>
+        <button
+          onClick={() => push(`/chat/${user.id}`)}
+          className="rounded-md bg-primary text-white px-4 py-2 hover:brightness-90 transition-[filter] duration-300"
+        >
+          Start a conversation
+        </button>
+      </div>
+    </div>
+  );
 }
