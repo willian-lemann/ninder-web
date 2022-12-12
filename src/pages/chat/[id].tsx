@@ -4,11 +4,9 @@ import { useState } from "react";
 import { ChatItem } from "@components/chat/ChatItem";
 import { MessageItem } from "@components/chat/MessageItem";
 import { useUserChats } from "@context/chat/userUserChats";
-import { useAuthContext } from "@context/auth";
 
 export default function Chat() {
-  const { user } = useAuthContext();
-  const { data, isLoading } = useUserChats();
+  const { chats, isLoading } = useUserChats();
 
   const [messages, ,] = useState([
     {
@@ -19,8 +17,6 @@ export default function Chat() {
       date: new Date(),
     },
   ]);
-
-  console.log(data);
 
   if (isLoading) return <p>loading...</p>;
 
@@ -37,14 +33,14 @@ export default function Chat() {
           </div>
 
           <ul>
-            {data?.map((chat) => (
+            {chats?.map((chat) => (
               <ChatItem
-                key={chat.id}
-                avatar={chat.avatar}
-                title={chat.title}
-                subtitle={chat.subtitle}
-                date={chat.date}
-                unread={chat.unread}
+                key={chat?.id}
+                avatar={chat.user?.avatar}
+                title={chat.user?.name}
+                subtitle={chat.lastMessage?.message}
+                date={chat.lastMessage?.sentAt}
+                unread={0}
               />
             ))}
           </ul>

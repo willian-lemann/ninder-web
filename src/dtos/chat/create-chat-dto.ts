@@ -1,3 +1,5 @@
 import { Chat } from "@models/chat";
 
-export interface CreateChatDto extends Omit<Chat, "id"> {}
+export interface CreateChatDto extends Omit<Chat, "id"> {
+  senderId: string;
+}

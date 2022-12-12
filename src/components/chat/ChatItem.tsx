@@ -18,8 +18,13 @@ export const ChatItem = ({
   return (
     <li className="flex items-center justify-between px-4 py-2 hover:bg-zinc-200 transition-colors duration-300 cursor-pointer">
       <section className="flex items-center">
-        <div className="h-10 w-10 relative">
-          <Image src={avatar} alt="avatar image" fill />
+        <div className="h-10 w-10 relative rounded-full">
+          <Image
+            src={avatar}
+            alt="avatar image"
+            fill
+            className="rounded-full object-cover"
+          />
         </div>
 
         <div className="ml-2">
