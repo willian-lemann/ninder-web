@@ -28,6 +28,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@config/firebase";
 
 type UserModel = Partial<User>;
+
 export interface InitialState {
   user: UserModel | null;
   setUser: Dispatch<SetStateAction<UserModel | null>>;

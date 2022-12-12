@@ -23,6 +23,8 @@ export interface User {
   provider?: number;
 }
 
+export type UserModel = Partial<User>;
+
 export function formatAge(birthday: any) {
   const age = differenceInYears(new Date(), birthday.toDate());
   return age;

@@ -1,5 +1,5 @@
 import { firestore, storage } from "@config/firebase";
-import { setDoc, doc, Timestamp } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
 
 import { User } from "@models/user";

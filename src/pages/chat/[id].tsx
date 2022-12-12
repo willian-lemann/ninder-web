@@ -3,8 +3,13 @@ import { useState } from "react";
 
 import { ChatItem } from "@components/chat/ChatItem";
 import { MessageItem } from "@components/chat/MessageItem";
+import { useUserChats } from "@context/chat/userUserChats";
+import { useAuthContext } from "@context/auth";
 
 export default function Chat() {
+  const { user } = useAuthContext();
+  const { data, isLoading } = useUserChats();
+
   const [messages, ,] = useState([
     {
       id: 1,
@@ -14,16 +19,10 @@ export default function Chat() {
       date: new Date(),
     },
   ]);
-  const [chats, ,] = useState([
-    {
-      id: 1,
-      avatar: "/icons/avatar.svg",
-      title: "Name",
-      subtitle: "apsodkapodkpokdsapod apsodkapodk aspdokaspodk",
-      date: new Date(),
-      unread: 2,
-    },
-  ]);
+
+  console.log(data);
+
+  if (isLoading) return <p>loading...</p>;
 
   return (
     <div className="container">
@@ -38,7 +37,7 @@ export default function Chat() {
           </div>
 
           <ul>
-            {chats.map((chat) => (
+            {data?.map((chat) => (
               <ChatItem
                 key={chat.id}
                 avatar={chat.avatar}
