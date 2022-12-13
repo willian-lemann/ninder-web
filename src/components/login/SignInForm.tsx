@@ -10,12 +10,16 @@ import Image from "next/image";
 import { useAuthContext } from "@context/auth";
 import { errors } from "@utils/errorHandler";
 import { FirebaseError } from "firebase/app";
-import { mutate } from "swr";
+import { mutate, preload } from "swr";
 import { api } from "@config/axios";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
+
+const fetcher = () => api.get("/countries").then((response) => response.data);
+
+preload("/api/data", fetcher);
 
 export const SignInForm = ({ onLoginType }: SignInFormProps) => {
   const { signIn, signInWithGoogle } = useAuthContext();
@@ -26,13 +30,6 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     email: "",
     password: "",
   });
-
-  const handlePrefetchCountries = () => {
-    mutate(
-      "/api/data",
-      api.get("/countries").then((response) => response.data)
-    );
-  };
 
   const handleSignInWithGoogle = async () => {
     setIsSigningWithGoogle(true);

@@ -8,6 +8,7 @@ import { useUserChats } from "@context/chat/userUserChats";
 export default function Chat() {
   const { chats, isLoading } = useUserChats();
 
+  console.log(isLoading);
   const [messages, ,] = useState([
     {
       id: 1,
