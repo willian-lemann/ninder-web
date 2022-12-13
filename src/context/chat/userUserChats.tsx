@@ -10,9 +10,8 @@ import { Chat } from "@models/chat";
 export const useUserChats = () => {
   const { user } = useAuthContext();
 
-  const { data, error, mutate, isLoading, isValidating } = useSWR(
-    "/chats",
-    () => getUserChatsService(user?.id as string).then((chat) => chat)
+  const { data, error, mutate } = useSWR("/chats", () =>
+    getUserChatsService(user?.id as string).then((chat) => chat)
   );
 
   const chatUsersRef = collection(firestore, "chats");
@@ -20,9 +19,9 @@ export const useUserChats = () => {
   useEffect(() => {
     const sub = onSnapshot(chatUsersRef, (docSnap) => {
       docSnap.forEach((doc) => {
-        if (data && !isValidating) {
+        if (data) {
           const newChat = { ...doc.data(), id: doc.id } as Chat;
-          mutate([...data, newChat]);
+          mutate([...data, newChat], { optimisticData: data });
         }
       });
     });
@@ -33,7 +32,7 @@ export const useUserChats = () => {
 
   return {
     error,
-    isLoading,
+    isLoading: !data,
     chats: data,
   };
 };
