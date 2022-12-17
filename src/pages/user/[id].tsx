@@ -8,17 +8,33 @@ import { createChatService } from "@services/chat/createChatService";
 import { CreateChatDto } from "@dtos/chat/create-chat-dto";
 import { useAuthContext } from "@context/auth";
 
+interface StarConversationParams extends Pick<User, "id" | "name" | "avatar"> {}
+
 export default function UserDetails() {
   const { user: currentUser } = useAuthContext();
   const { query, push } = useRouter();
   const { user, isLoading } = useUserDetails(query.id as string);
 
-  const handleStartConversation = async ({ id, name, avatar }: User) => {
+  const handleStartConversation = async ({
+    id,
+    name,
+    avatar,
+  }: StarConversationParams) => {
     try {
       const payload: CreateChatDto = {
-        user: { avatar: avatar as string, id, name },
-        senderId: currentUser?.id as string,
-        lastMessage: { message: "", sentAt: new Date() },
+        users: [
+          {
+            id: currentUser?.id as string,
+            avatar: currentUser?.avatar as string,
+            name: currentUser?.name as string,
+          },
+          {
+            id,
+            name,
+            avatar: avatar as string,
+          },
+        ],
+        lastMessage: null,
       };
 
       await createChatService(payload);

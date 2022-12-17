@@ -1,12 +1,16 @@
 import { classNames } from "@utils/classNames";
+import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
+
+import { formatDate } from "@models/chat";
 
 interface ChatItemProps {
   avatar: string;
   title: string;
   subtitle: string;
-  date: Date;
+  sentAt: Timestamp;
   unread: number;
+  onStartChatting: () => void;
 }
 
 export const ChatItem = ({
@@ -14,9 +18,16 @@ export const ChatItem = ({
   title,
   subtitle,
   unread,
+  sentAt,
+  onStartChatting,
 }: ChatItemProps) => {
+  const formattedDateToNow = formatDate(sentAt);
+
   return (
-    <li className="flex items-center justify-between px-4 py-2 hover:bg-zinc-200 transition-colors duration-300 cursor-pointer">
+    <li
+      onClick={() => onStartChatting()}
+      className="flex items-center justify-between px-4 py-2 hover:bg-zinc-200 transition-colors duration-300 cursor-pointer"
+    >
       <section className="flex items-center">
         <div className="h-10 w-10 relative rounded-full">
           <Image
@@ -34,7 +45,7 @@ export const ChatItem = ({
       </section>
 
       <section className="flex flex-col gap-1 items-end">
-        <span>Just now</span>
+        <span>{formattedDateToNow}</span>
 
         <span
           className={classNames(
