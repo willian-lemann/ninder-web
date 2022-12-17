@@ -9,7 +9,7 @@ import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
 
 import { ChatItem } from "@components/chat/ChatItem";
 import { MessageItem } from "@components/chat/MessageItem";
-import { useUserChats } from "@context/chat/userUserChats";
+import { useUserChats } from "@context/chat/useUserChats";
 import { useUserMessages } from "@context/chat/useUserMessages";
 import { sendMessageService } from "@services/chat/sendMessageService";
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
@@ -19,7 +19,7 @@ import { Loading } from "@components/shared/Loading";
 
 export default function ChatPage() {
   const { user } = useAuthContext();
-  const { chats, isLoading: isLoadingChats } = useUserChats();
+  const { chats, isLoading: isLoadingChats } = useUserChats(user);
   const [chat, setChat] = useState<ChatModel | null>(null);
   const {
     messages,

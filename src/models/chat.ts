@@ -6,7 +6,7 @@ interface LastMessage {
   sentAt: Timestamp;
 }
 
-interface User {
+export interface User {
   id: string;
   name: string;
   avatar: string;

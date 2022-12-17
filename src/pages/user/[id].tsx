@@ -7,13 +7,20 @@ import { createChatService } from "@services/chat/createChatService";
 
 import { CreateChatDto } from "@dtos/chat/create-chat-dto";
 import { useAuthContext } from "@context/auth";
+import { useUserChats } from "@context/chat/useUserChats";
+import { v4 as uuid } from "uuid";
 
-interface StarConversationParams extends Pick<User, "id" | "name" | "avatar"> {}
+interface StarConversationParams {
+  id: string;
+  name: string;
+  avatar: string;
+}
 
 export default function UserDetails() {
   const { user: currentUser } = useAuthContext();
   const { query, push } = useRouter();
   const { user, isLoading } = useUserDetails(query.id as string);
+  const { mutate, chats } = useUserChats(currentUser);
 
   const handleStartConversation = async ({
     id,
@@ -21,23 +28,31 @@ export default function UserDetails() {
     avatar,
   }: StarConversationParams) => {
     try {
-      const payload: CreateChatDto = {
+      const newChat: CreateChatDto = {
         users: [
           {
             id: currentUser?.id as string,
-            avatar: currentUser?.avatar as string,
             name: currentUser?.name as string,
+            avatar: currentUser?.avatar as string,
           },
           {
             id,
             name,
-            avatar: avatar as string,
+            avatar,
           },
         ],
         lastMessage: null,
       };
 
-      await createChatService(payload);
+      // await createChatService(payload);
+
+      mutate(
+        [
+          ...chats,
+          { id: uuid(), user: { id, name, avatar }, lastMessage: null },
+        ],
+        false
+      );
 
       push(`/chat/${user.id}`);
     } catch (error) {
@@ -81,7 +96,13 @@ export default function UserDetails() {
 
       <div>
         <button
-          onClick={() => handleStartConversation(user)}
+          onClick={() =>
+            handleStartConversation({
+              id: user.id as string,
+              name: user.name as string,
+              avatar: user.avatar as string,
+            })
+          }
           className="rounded-md bg-primary text-white px-4 py-2 hover:brightness-90 transition-[filter] duration-300"
         >
           Start a conversation

@@ -1,5 +1,5 @@
 import { firestore } from "@config/firebase";
-import { Chat, ChatModel } from "@models/chat";
+import { Chat, ChatModel, User } from "@models/chat";
 
 import { collection, query, getDocs, where } from "firebase/firestore";
 
@@ -9,30 +9,34 @@ interface GetUserChatsServiceParams {
   avatar: string;
 }
 
-export async function getUserChatsService(params: GetUserChatsServiceParams) {
+export async function getUserChatsService(
+  currentUser: GetUserChatsServiceParams
+) {
   const chatsRef = collection(firestore, "chats");
-  const docsSnap = query(chatsRef, where("users", "array-contains", params));
+
+  const docsSnap = query(
+    chatsRef,
+    where("users", "array-contains", currentUser)
+  );
 
   const docChats = await getDocs(docsSnap);
 
-  const chats = docChats.docs
-    .map((doc) => {
-      const chat = { ...doc.data(), id: doc.id } as Chat;
+  const chats = docChats.docs.map((doc) => {
+    const chat = { ...doc.data(), id: doc.id } as Chat;
 
-      const userChatWith = chat.users.find(
-        (chatuser) => chatuser.id !== params.id
-      );
+    const userChatWith = chat.users.find(
+      (chatuser) => chatuser.id !== currentUser.id
+    );
 
-      return {
-        id: chat.id,
-        lastMessage: {
-          message: chat.lastMessage?.message,
-          sentAt: chat.lastMessage?.sentAt,
-        },
-        user: userChatWith,
-      };
-    })
-    .filter((chat) => chat.lastMessage !== null) as ChatModel[];
+    return {
+      id: chat.id,
+      lastMessage: {
+        message: chat.lastMessage?.message,
+        sentAt: chat.lastMessage?.sentAt,
+      },
+      user: userChatWith,
+    };
+  }) as ChatModel[];
 
   const mostRecentChatsSorted = chats.sort((a, b) => {
     if (!a.lastMessage?.sentAt) return -1;
@@ -42,8 +46,6 @@ export async function getUserChatsService(params: GetUserChatsServiceParams) {
 
     return -1;
   });
-
-  console.log(mostRecentChatsSorted);
 
   return mostRecentChatsSorted;
 }

@@ -27,11 +27,9 @@ import { getUserService } from "@services/user/getUserService";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@config/firebase";
 
-type UserModel = Partial<User>;
-
 export interface InitialState {
-  user: UserModel | null;
-  setUser: Dispatch<SetStateAction<UserModel | null>>;
+  user: User | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
   signIn(credencials: SignInCredencials): Promise<void>;
   signInWithGoogle(): Promise<void>;
   signUp(credencials: SignUpCredencials): Promise<void>;
@@ -40,7 +38,7 @@ export interface InitialState {
 
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
-  const [user, setUser] = useState<UserModel | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const location = useGeoLocation();
 
   let authChannel: BroadcastChannel;
