@@ -5,7 +5,7 @@ interface Location {
   longitude: number;
 }
 
-export interface User {
+export type User = Partial<{
   id: string;
   email: string;
   name: string;
@@ -21,9 +21,7 @@ export interface User {
   hasConfirmedRegulation?: boolean;
   favorites?: string[];
   provider?: number;
-}
-
-export type UserModel = Partial<User>;
+}>;
 
 export function formatAge(birthday: any) {
   const age = differenceInYears(new Date(), birthday.toDate());
