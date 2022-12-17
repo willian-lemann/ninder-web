@@ -15,24 +15,22 @@ export async function getUserChatsService(params: GetUserChatsServiceParams) {
 
   const docChats = await getDocs(docsSnap);
 
-  const chats = docChats.docs
-    .map((doc) => {
-      const chat = { ...doc.data(), id: doc.id } as Chat;
+  const chats = docChats.docs.map((doc) => {
+    const chat = { ...doc.data(), id: doc.id } as Chat;
 
-      const userChatWith = chat.users.find(
-        (chatuser) => chatuser.id !== params.id
-      );
+    const userHasChatWith = chat.users.find(
+      (chatuser) => chatuser.id !== params.id
+    );
 
-      return {
-        id: chat.id,
-        lastMessage: {
-          message: chat.lastMessage?.message,
-          sentAt: chat.lastMessage?.sentAt,
-        },
-        user: userChatWith,
-      };
-    })
-    .filter((chat) => chat.lastMessage !== null) as ChatModel[];
+    return {
+      id: chat.id,
+      lastMessage: {
+        message: chat.lastMessage?.message,
+        sentAt: chat.lastMessage?.sentAt,
+      },
+      user: userHasChatWith,
+    };
+  }) as ChatModel[];
 
   const mostRecentChatsSorted = chats.sort((a, b) => {
     if (!a.lastMessage?.sentAt) return -1;
