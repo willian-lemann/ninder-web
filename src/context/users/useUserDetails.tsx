@@ -1,3 +1,4 @@
+import { useChatsContext } from "@context/chat";
 import { User } from "@models/user";
 import { getUserService } from "@services/user/getUserService";
 import useSWR from "swr";

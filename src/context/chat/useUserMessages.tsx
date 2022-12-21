@@ -16,6 +16,8 @@ export const useUserMessages = ({ chatId }: UseUserMessagsParams) => {
     getMessagesService(chatId).then((message) => message)
   );
 
+  const isEmpty = data?.length === 0;
+
   useEffect(() => {
     const messagesRef = collection(firestore, "messages");
 
@@ -35,7 +37,8 @@ export const useUserMessages = ({ chatId }: UseUserMessagsParams) => {
   return {
     error,
     mutate,
+    isEmpty,
     isLoading: !data,
-    messages: data,
+    messages: data as Message[],
   };
 };

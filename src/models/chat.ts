@@ -14,7 +14,7 @@ export interface User {
 
 export interface Chat {
   id: string;
-  users: Array<{ id: string; avatar: string; name: string }>;
+  users: User[];
   lastMessage: LastMessage | null;
 }
 

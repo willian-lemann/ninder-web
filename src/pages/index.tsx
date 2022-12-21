@@ -5,6 +5,7 @@ import { Map } from "@components/home/Map";
 import { UserList } from "@components/home/UserList";
 import { useState } from "react";
 import { classNames } from "@utils/classNames";
+import { useAuthContext } from "@context/auth";
 
 export default function Home() {
   const [toggleMap, setToggleMap] = useState(false);

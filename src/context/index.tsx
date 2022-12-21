@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { AuthProvider } from "./auth";
+import { ChatsProvider } from "./chat";
+
 import { ProviderComposer } from "./ProviderComposer";
 
 interface ProviderProps {
@@ -7,5 +9,7 @@ interface ProviderProps {
 }
 
 export const Provider = ({ children }: ProviderProps) => (
-  <ProviderComposer with={[AuthProvider]}>{children}</ProviderComposer>
+  <ProviderComposer with={[AuthProvider, ChatsProvider]}>
+    {children}
+  </ProviderComposer>
 );

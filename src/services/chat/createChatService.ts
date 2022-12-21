@@ -7,4 +7,6 @@ export async function createChatService(createChatDto: CreateChatDto) {
   const chatsRef = doc(collection(firestore, "chats"));
 
   await setDoc(chatsRef, { ...createChatDto });
+
+  return chatsRef.id;
 }
