@@ -13,6 +13,7 @@ import { useAuthContext } from "@context/auth";
 
 import { classNames } from "@utils/classNames";
 import { updateUserService } from "@services/user/updateUserService";
+import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
 
 interface UserCardProps {
   user: User;
@@ -21,58 +22,10 @@ interface UserCardProps {
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser, setUser } = useAuthContext();
+  const { favorite } = useFavoriteUsers();
 
   const handleSeeUserDetails = (id: string) => {
     Router.push(`/user/${id}`);
-  };
-
-  const handleFavorite = async (
-    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
-    userId: string
-  ) => {
-    event.stopPropagation();
-
-    const previousFavorites = currentUser?.favorites ?? [];
-
-    const removedFavorites = previousFavorites.filter(
-      (favoritedUser) => favoritedUser !== userId
-    );
-
-    if (currentUser?.favorites?.includes(userId)) {
-      console.log("is favorite");
-      setUser((state) => ({
-        ...(state as User),
-        favorites: removedFavorites,
-      }));
-
-      try {
-        await updateUserService(currentUser?.id as string, {
-          favorites: removedFavorites,
-        });
-      } catch (error) {
-        setUser((state) => ({
-          ...(state as User),
-          favorites: previousFavorites,
-        }));
-      }
-
-      return;
-    }
-
-    const newFavorites = [...previousFavorites, userId];
-
-    setUser((state) => ({ ...(state as User), favorites: newFavorites }));
-
-    try {
-      await updateUserService(currentUser?.id as string, {
-        favorites: newFavorites,
-      });
-    } catch (error) {
-      setUser((state) => ({
-        ...(state as User),
-        favorites: previousFavorites,
-      }));
-    }
   };
 
   const distance = getDistanceBetweenTwoCoords({
@@ -95,12 +48,12 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       <div className="w-full h-full relative rounded-md">
         {isFavorite ? (
           <FilledHeartIcon
-            onClick={(event) => handleFavorite(event, user.id as string)}
+            onClick={(event) => favorite(event, user.id as string)}
             className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-primary"
           />
         ) : (
           <OutlinedHeartIcon
-            onClick={(event) => handleFavorite(event, user.id as string)}
+            onClick={(event) => favorite(event, user.id as string)}
             className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-zinc-200"
           />
         )}

@@ -71,6 +71,8 @@ export default function UserDetails() {
         lastMessage: {
           message: messageText,
           sentAt,
+          unRead: false,
+          sentBy: currentUser?.id as string,
         },
       };
 
@@ -93,20 +95,6 @@ export default function UserDetails() {
       alert(error);
     }
   };
-
-  const renderButtonLabel = useCallback(() => {
-    if (isSendingMessage) {
-      return <Loading />;
-    }
-
-    const chatId = hasChatWith(query.id as string);
-
-    if (chatId) {
-      return "Go talk";
-    }
-
-    return "Send Message";
-  }, [hasChatWith, isSendingMessage, query.id]);
 
   if (isLoading) return <p>loading...</p>;
 

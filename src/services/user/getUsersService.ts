@@ -27,7 +27,7 @@ function getNearbyUsersByDistance(users: User[], currentUserId?: string) {
   return filteredUsersByDistance;
 }
 
-export async function getUsersService(queryFilter?: string) {
+export async function getUsersService() {
   let currentUserId: string | undefined;
   onAuthStateChanged(auth, (response) => (currentUserId = response?.uid));
 
@@ -36,32 +36,32 @@ export async function getUsersService(queryFilter?: string) {
 
   const docUsers = await getDocs(docsSnap);
 
-  if (queryFilter) {
-    const filteredDocSnap = query(
-      usersRef,
-      orderBy("name"),
-      where("name", ">=", queryFilter),
-      where("name", "<", `${queryFilter}z`)
-    );
+  // if (queryFilter) {
+  //   const filteredDocSnap = query(
+  //     usersRef,
+  //     orderBy("name"),
+  //     where("name", ">=", queryFilter),
+  //     where("name", "<", `${queryFilter}z`)
+  //   );
 
-    const filteredDocUsers = await getDocs(filteredDocSnap);
+  //   const filteredDocUsers = await getDocs(filteredDocSnap);
 
-    const mappedFilteredUsers = filteredDocUsers.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    })) as User[];
+  //   const mappedFilteredUsers = filteredDocUsers.docs.map((doc) => ({
+  //     ...doc.data(),
+  //     id: doc.id,
+  //   })) as User[];
 
-    const filteredUsers = getNearbyUsersByDistance(
-      mappedFilteredUsers,
-      currentUserId
-    );
+  //   const filteredUsers = getNearbyUsersByDistance(
+  //     mappedFilteredUsers,
+  //     currentUserId
+  //   );
 
-    return {
-      data: {
-        result: filteredUsers,
-      },
-    };
-  }
+  //   return {
+  //     data: {
+  //       result: filteredUsers,
+  //     },
+  //   };
+  // }
 
   const mappedUsers = docUsers.docs.map((doc) => ({
     ...doc.data(),

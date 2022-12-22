@@ -4,7 +4,7 @@ import {
   addDoc,
   doc,
   collection,
-  serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
@@ -16,7 +16,9 @@ export async function sendMessageService(sendMessageDto: SendMessageDto) {
 
   const lastMessage = {
     message: sendMessageDto.messageText,
-    sentAt: serverTimestamp(),
+    sentBy: sendMessageDto.sentBy,
+    sentAt: Timestamp.fromDate(new Date()),
+    unRead: true,
   };
 
   await updateDoc(chatsRef, { lastMessage });

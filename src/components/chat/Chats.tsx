@@ -1,8 +1,5 @@
-import Router from "next/router";
-
 import { Loading } from "@components/shared/Loading";
-import { useAuthContext } from "@context/auth";
-import { useUserChats } from "@context/chat/useUserChats";
+
 import { ChatModel } from "@models/chat";
 import { Timestamp } from "firebase/firestore";
 import { ChatItem } from "./ChatItem";
@@ -13,7 +10,7 @@ interface ChatsProps {
 }
 
 export const Chats = ({ onStartChatting }: ChatsProps) => {
-  const { chats, isLoading, isEmpty } = useChatsContext();
+  const { chats, isLoading } = useChatsContext();
 
   if (isLoading) {
     return (
@@ -33,14 +30,15 @@ export const Chats = ({ onStartChatting }: ChatsProps) => {
       </div>
 
       <ul className="overflow-auto">
-        {chats?.map((chat) => (
+        {chats.map((chat) => (
           <ChatItem
             key={chat?.id}
             avatar={chat.user?.avatar}
             title={chat.user?.name}
             subtitle={chat.lastMessage?.message as string}
             sentAt={chat.lastMessage?.sentAt as Timestamp}
-            unread={0}
+            isUnRead={chat.lastMessage?.unRead as boolean}
+            sentBy={chat.lastMessage?.sentBy as string}
             onStartChatting={() => onStartChatting(chat)}
           />
         ))}

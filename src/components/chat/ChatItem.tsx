@@ -3,26 +3,34 @@ import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 
 import { formatDate } from "@models/chat";
+import { useAuthContext } from "@context/auth";
 
 interface ChatItemProps {
+  sentBy: string;
   avatar: string;
   title: string;
   subtitle: string;
   sentAt: Timestamp;
-  unread: number;
+  isUnRead: boolean;
   onStartChatting: () => void;
 }
 
 export const ChatItem = ({
+  sentBy,
   avatar,
   title,
   subtitle,
-  unread,
+  isUnRead,
   sentAt,
   onStartChatting,
 }: ChatItemProps) => {
+  const { user: currentUser } = useAuthContext();
+
   const formattedDateToNow = formatDate(sentAt);
 
+  const isCurrentUserSender = sentBy === currentUser?.id;
+
+  console.log(sentBy, currentUser?.id);
   return (
     <li
       onClick={() => onStartChatting()}
@@ -40,7 +48,16 @@ export const ChatItem = ({
 
         <div className="ml-2">
           <strong>{title}</strong>
-          <p className="truncate max-w-[250px]">{subtitle}</p>
+          <p
+            className={classNames(
+              !isCurrentUserSender && isUnRead
+                ? "text-primary"
+                : "text-zinc-600",
+              "truncate max-w-[250px]"
+            )}
+          >
+            {subtitle}
+          </p>
         </div>
       </section>
 
@@ -49,11 +66,11 @@ export const ChatItem = ({
 
         <span
           className={classNames(
-            unread > 0 ? "not-sr-only" : "sr-only",
+            !isCurrentUserSender && isUnRead ? "not-sr-only" : "sr-only",
             "bg-primary w-4 h-w-4 text-center text-white rounded-full text-xs"
           )}
         >
-          {unread}
+          1
         </span>
       </section>
     </li>

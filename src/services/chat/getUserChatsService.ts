@@ -31,8 +31,10 @@ export async function getUserChatsService(
     return {
       id: chat.id,
       lastMessage: {
-        message: chat.lastMessage?.message,
-        sentAt: chat.lastMessage?.sentAt,
+        message: chat.lastMessage.message,
+        sentAt: chat.lastMessage.sentAt,
+        sentBy: chat.lastMessage.sentBy,
+        unRead: chat.lastMessage.unRead,
       },
       user: userChatWith,
     };

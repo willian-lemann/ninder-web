@@ -12,8 +12,7 @@ interface UserListProps {
 }
 
 export const UserList = ({ toggleMap, searchFilter }: UserListProps) => {
-  const { user: currentUser } = useAuthContext();
-  const { users, isLoading, isEmpty } = useUsers();
+  const { users, isLoading, isEmpty } = useUsers(searchFilter);
 
   if (isLoading) {
     return <Skeleton />;
@@ -28,13 +27,6 @@ export const UserList = ({ toggleMap, searchFilter }: UserListProps) => {
     );
   }
 
-  const data =
-    searchFilter.length > 0
-      ? users?.filter((user) =>
-          user.name.toLowerCase().includes(searchFilter.toLowerCase())
-        )
-      : users;
-
   return (
     <section
       className={classNames(
@@ -48,11 +40,9 @@ export const UserList = ({ toggleMap, searchFilter }: UserListProps) => {
           "md:grid gap-4 justify-items-center"
         )}
       >
-        {data.map((user) => {
-          if (user.id === currentUser?.id) return null;
-
-          return <UserCard key={user.id} user={user} toggleMap={toggleMap} />;
-        })}
+        {users.map((user) => (
+          <UserCard key={user.id} user={user} toggleMap={toggleMap} />
+        ))}
       </ul>
     </section>
   );

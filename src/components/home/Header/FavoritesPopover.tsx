@@ -1,13 +1,13 @@
 import Image from "next/image";
+import Router from "next/router";
 import { classNames } from "@utils/classNames";
 
 import { BookmarkIcon } from "@heroicons/react/24/solid";
 import { BookmarkIcon as OutlinedBookmarkIcon } from "@heroicons/react/24/outline";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { useUsers } from "@context/users/useUsers";
-import { useAuthContext } from "@context/auth";
-import { User } from "@models/user";
+
+import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
 
 interface FavoritesPopoverProps {
   numberOfFavorites: number;
@@ -16,18 +16,12 @@ interface FavoritesPopoverProps {
 export const FavoritesPopover = ({
   numberOfFavorites,
 }: FavoritesPopoverProps) => {
-  const { user } = useAuthContext();
-  const { users: favorites } = useUsers();
+  const { favoriteUsers, favorite, isEmpty, checkUserIsFavorited } =
+    useFavoriteUsers();
 
-  const favoriteUsers = user?.favorites?.map((userFavorite) => {
-    const mappedFavoriteUser = favorites.find(
-      (favorite) => favorite.id === userFavorite
-    ) as User;
-
-    return mappedFavoriteUser;
-  });
-
-  console.log(user);
+  const handleNavigate = (path: string) => {
+    Router.push(path);
+  };
 
   return (
     <Popover className="relative">
@@ -47,45 +41,59 @@ export const FavoritesPopover = ({
           ) : null}
         </span>
       </Popover.Button>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-200"
-        enterFrom="opacity-0 translate-y-1"
-        enterTo="opacity-100 translate-y-0"
-        leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 translate-y-0"
-        leaveTo="opacity-0 translate-y-1"
-      >
-        <Popover.Panel className="absolute z-10 -left-[135%]">
-          <div className="bg-white h-auto w-64 rounded-md py-4 px-6">
-            <ul>
-              {favoriteUsers?.map((favoriteUser) => (
-                <li
-                  key={favoriteUser?.id}
-                  className="flex justify-between group mb-4 last:mb-0 cursor-pointer"
-                >
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 relative">
-                      <Image src="/icons/avatar.svg" alt="user avatar" fill />
+
+      {isEmpty ? null : (
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-200"
+          enterFrom="opacity-0 translate-y-1"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition ease-in duration-150"
+          leaveFrom="opacity-100 translate-y-0"
+          leaveTo="opacity-0 translate-y-1"
+        >
+          <Popover.Panel className="absolute z-10 -left-[135%]">
+            <div className="bg-white h-auto w-64 rounded-md py-4 px-6">
+              <ul>
+                {favoriteUsers?.map((favoriteUser) => (
+                  <li
+                    key={favoriteUser?.id}
+                    className="flex justify-between group mb-4 last:mb-0 cursor-pointer"
+                    onClick={() => handleNavigate(`/user/${favoriteUser.id}`)}
+                  >
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 relative">
+                        <Image src="/icons/avatar.svg" alt="user avatar" fill />
+                      </div>
+
+                      <div className="leading-5 pl-2">
+                        <strong>{favoriteUser?.name}</strong>
+                        <p className="">{favoriteUser?.hometown}</p>
+                      </div>
                     </div>
 
-                    <div className="leading-5 pl-2">
-                      <strong>{favoriteUser?.name}</strong>
-                      <p className="">{favoriteUser?.hometown}</p>
-                    </div>
-                  </div>
-
-                  {true ? (
-                    <BookmarkIcon className="h-4 w-4 cursor-pointer" />
-                  ) : (
-                    <OutlinedBookmarkIcon className="h-4 w-4 cursor-pointer" />
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Popover.Panel>
-      </Transition>
+                    {checkUserIsFavorited(favoriteUser.id as string) ? (
+                      <BookmarkIcon
+                        className="h-4 w-4 cursor-pointer text-primary"
+                        onClick={(event) =>
+                          favorite(event, favoriteUser.id as string)
+                        }
+                      />
+                    ) : (
+                      <OutlinedBookmarkIcon
+                        className="h-4 w-4 cursor-pointer"
+                        onClick={(event) =>
+                          favorite(event, favoriteUser.id as string)
+                        }
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Popover.Panel>
+        </Transition>
+      )}
     </Popover>
   );
 };

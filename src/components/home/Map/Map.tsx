@@ -20,7 +20,7 @@ interface MapProps {
 const Map = ({ toggleMap, searchFilter }: MapProps) => {
   const currentLocation = useGeoLocation();
   const { user } = useAuthContext();
-  const { users, isLoading } = useUsers();
+  const { users, isLoading } = useUsers(searchFilter);
 
   if (!currentLocation || isLoading) {
     return (
@@ -29,13 +29,6 @@ const Map = ({ toggleMap, searchFilter }: MapProps) => {
       </div>
     );
   }
-
-  const data =
-    searchFilter.length > 0
-      ? users.filter((user) =>
-          user.name.toLowerCase().includes(searchFilter.toLowerCase())
-        )
-      : users;
 
   return (
     <div
@@ -54,30 +47,26 @@ const Map = ({ toggleMap, searchFilter }: MapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {data.map((nearUser) => {
-          if (nearUser.id === user?.id) return null;
-
-          return (
-            <Marker
-              key={nearUser.id}
-              iconUrl={nearUser.avatar as string}
-              position={[
-                Number(nearUser.location?.latitude),
-                Number(nearUser.location?.longitude),
-              ]}
-            >
-              <Popup
-                userInfo={{
-                  id: nearUser.id as string,
-                  avatar: nearUser.avatar as string,
-                  name: nearUser.name,
-                  birthday: nearUser.birthday as Date,
-                  hometown: nearUser.hometown as string,
-                }}
-              />
-            </Marker>
-          );
-        })}
+        {users.map((nearUser) => (
+          <Marker
+            key={nearUser.id}
+            iconUrl={nearUser.avatar as string}
+            position={[
+              Number(nearUser.location?.latitude),
+              Number(nearUser.location?.longitude),
+            ]}
+          >
+            <Popup
+              userInfo={{
+                id: nearUser.id as string,
+                avatar: nearUser.avatar as string,
+                name: nearUser.name as string,
+                birthday: nearUser.birthday as Date,
+                hometown: nearUser.hometown as string,
+              }}
+            />
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   );

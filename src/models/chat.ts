@@ -4,6 +4,8 @@ import { differenceInHours, format, formatDistanceToNow } from "date-fns";
 interface LastMessage {
   message: string;
   sentAt: Timestamp;
+  sentBy: string;
+  unRead: boolean;
 }
 
 export interface User {
@@ -15,7 +17,7 @@ export interface User {
 export interface Chat {
   id: string;
   users: User[];
-  lastMessage: LastMessage | null;
+  lastMessage: LastMessage;
 }
 
 export interface ChatModel extends Omit<Chat, "users"> {

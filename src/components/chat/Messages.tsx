@@ -1,7 +1,14 @@
-import { useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { uuid } from "@utils/uniqueId";
 
-import { useUserMessages } from "@context/chat/useUserMessages";
+import { useUserMessages } from "@context/messages/useUserMessages";
 
 import { PaperAirplaneIcon as SendIconOutlined } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
@@ -16,6 +23,8 @@ import { Timestamp } from "firebase/firestore";
 import { useAuthContext } from "@context/auth";
 import Image from "next/image";
 import { Loading } from "@components/shared/Loading";
+import { useMessagesContext } from "@context/messages";
+import { useBottomScroll } from "@hooks/useBottomScroll";
 
 interface MessagesProps {
   chat: ChatModel | null;
@@ -23,11 +32,11 @@ interface MessagesProps {
 
 export const Messages = ({ chat }: MessagesProps) => {
   const { user: currentUser } = useAuthContext();
-  console.log("caiu aqui", chat?.id);
-  const { messages, isLoading, mutate, isEmpty } = useUserMessages({
-    chatId: chat?.id || "",
-  });
+  const { messages, isLoading, isEmpty, loadMessages } = useMessagesContext();
   const [messageText, setMessageText] = useState("");
+  const { ElementToBeScrolled } = useBottomScroll({
+    listener: messages,
+  });
 
   const handleSendMessage = async () => {
     const newMessage: SendMessageDto = {
@@ -42,23 +51,25 @@ export const Messages = ({ chat }: MessagesProps) => {
       sentAt: Timestamp.fromDate(new Date()),
     };
 
-    if (messages) {
-      mutate(
-        [
-          ...messages,
-          {
-            id: uuid(),
-            ...newMessage,
-          },
-        ],
-        false
-      );
-    }
-
     setMessageText("");
 
     await sendMessageService(newMessage);
   };
+
+  const handleSendMessageByEnterKey = async (
+    event: KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      await handleSendMessage();
+    }
+  };
+
+  useEffect(() => {
+    if (chat?.id) {
+      loadMessages(chat?.id as string);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chat?.id]);
 
   if (isLoading) {
     return (
@@ -71,7 +82,7 @@ export const Messages = ({ chat }: MessagesProps) => {
     );
   }
 
-  if (isEmpty || !chat) {
+  if (!chat?.id) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -79,7 +90,7 @@ export const Messages = ({ chat }: MessagesProps) => {
             <Image src="/icons/empty.svg" alt="empty icon" fill />
           </div>
 
-          <h1 className="text-zinc-400 text-lg">No result.</h1>
+          <h1 className="text-zinc-400 text-lg">Start chat with someone</h1>
         </div>
       </div>
     );
@@ -92,29 +103,41 @@ export const Messages = ({ chat }: MessagesProps) => {
       </div>
 
       <div className="h-full w-full flex flex-col divide-y relative">
-        <ul className="h-full overflow-auto flex flex-col px-10">
-          {messages?.map((message) => (
-            <MessageItem
-              key={message.id}
-              message={{
-                id: message?.id as string,
-                avatar: chat?.user?.avatar as string,
-                name: chat?.user.name as string,
-                sentBy: message.sentBy,
-                date: message.sentAt,
-                messageText: message.messageText,
-              }}
-            />
-          ))}
-        </ul>
+        {isEmpty ? (
+          <div className="h-full flex items-center justify-center overflow-auto flex-col px-10">
+            <h1 className="text-zinc-400">
+              No messages yet with {chat.user.name}
+            </h1>
+          </div>
+        ) : (
+          <ul className="h-full overflow-auto flex flex-col px-10">
+            {messages?.map((message) => (
+              <MessageItem
+                key={message.id}
+                message={{
+                  id: message?.id as string,
+                  avatar: chat?.user?.avatar as string,
+                  name: chat?.user.name as string,
+                  sentBy: message.sentBy,
+                  date: message.sentAt,
+                  messageText: message.messageText,
+                }}
+              />
+            ))}
+
+            <ElementToBeScrolled />
+          </ul>
+        )}
 
         <div className="py-4 flex flex-col justify-center mx-4">
           <div className="flex items-center">
             <input
+              type="text"
               placeholder="Type here"
               className="rounded-full flex-1 h-[45px] px-5 outline-none bg-zinc-100"
               value={messageText}
               onChange={({ target }) => setMessageText(target.value)}
+              onKeyUp={handleSendMessageByEnterKey}
             />
 
             {messageText ? (

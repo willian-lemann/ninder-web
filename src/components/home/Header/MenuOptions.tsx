@@ -6,9 +6,11 @@ import Image from "next/image";
 import { classNames } from "@utils/classNames";
 
 import { FavoritesPopover } from "./FavoritesPopover";
+import { useChatsContext } from "@context/chat";
 
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
+  const { chats, numberOfUnReadChats } = useChatsContext();
 
   function handleNavigate(path: string) {
     Router.push(path);
@@ -46,6 +48,7 @@ export const MenuOptions = () => {
           <Menu.Item>
             {({ active }) => (
               <button
+                onClick={() => handleNavigate("/chats")}
                 className={classNames(
                   active ? "bg-gray-100" : "",
                   "block px-4 py-2 text-sm text-gray-700 text-left w-full"
@@ -53,7 +56,9 @@ export const MenuOptions = () => {
               >
                 <span className="relative">
                   Messages
-                  <span className="absolute -right-3 -top-1 bg-primary rounded-full w-3 h-3 text-white text-sm flex items-center justify-center"></span>
+                  <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-white text-xs flex items-center justify-center">
+                    {numberOfUnReadChats}
+                  </span>
                 </span>
               </button>
             )}

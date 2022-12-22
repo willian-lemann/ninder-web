@@ -17,7 +17,7 @@ export const Popup = ({ userInfo }: PopupProps) => {
   const router = useRouter();
 
   return (
-    <LPopup>
+    <LPopup closeButton={false}>
       <div className="h-44 flex flex-col justify-end">
         <div className="w-full h-[100px] absolute right-0 top-0">
           <Image

@@ -3,6 +3,7 @@ import { formatDate } from "@models/chat";
 import { classNames } from "@utils/classNames";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
+import { memo } from "react";
 
 interface MessageItemProps {
   message: {
@@ -15,7 +16,7 @@ interface MessageItemProps {
   };
 }
 
-export const MessageItem = ({ message }: MessageItemProps) => {
+export const MessageItem = memo(({ message }: MessageItemProps) => {
   const { user: currentUser } = useAuthContext();
 
   const isCurrentUserSender = message?.sentBy === currentUser?.id;
@@ -66,4 +67,4 @@ export const MessageItem = ({ message }: MessageItemProps) => {
       </div>
     </li>
   );
-};
+});
