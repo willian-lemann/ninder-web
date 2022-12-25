@@ -6,24 +6,30 @@ import {
 } from "next-auth/react";
 import { destroyCookie, setCookie } from "nookies";
 
-import { User } from "@models/user";
+import { User } from "@data/entities/user";
 
 import { SignInCredencials } from "@dtos/login/SignInCredencials";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 import { useGeoLocation } from "@hooks/useGeoLocation";
 
-import { signInService } from "@services/auth/signInService";
-import { signUpService } from "@services/auth/signUpService";
-import { logoutService } from "@services/auth/logoutService";
+import {
+  signInUseCase,
+  signUpUseCase,
+  logoutUseCase,
+} from "@data/useCases/auth";
 
 import { STORAGE_KEY } from "src/constants/login/auth";
 import { useGoogleContext } from ".";
 
-import { createGoogleUserService } from "@services/user/createGoogleUserService";
-import { getUserByEmailService } from "@services/user/getUserByEmailService";
+import {
+  createGoogleUserUseCase,
+  getUserUseCase,
+  getUserByEmailUseCase,
+} from "@data/useCases/user";
+
 import { Provider } from "@constants/login/provider";
 import { addErrorNotification } from "@components/shared/alert";
-import { getUserService } from "@services/user/getUserService";
+
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@config/firebase";
 
@@ -44,7 +50,7 @@ export function useAuth(): InitialState {
   let authChannel: BroadcastChannel;
 
   async function signIn({ email, password }: SignInCredencials) {
-    const response = await signInService({
+    const response = await signInUseCase({
       email,
       password,
     });
@@ -72,7 +78,7 @@ export function useAuth(): InitialState {
   }
 
   async function signUp(signUpData: SignUpCredencials) {
-    const { token, user } = await signUpService({
+    const { token, user } = await signUpUseCase({
       ...signUpData,
       location,
     });
@@ -94,7 +100,7 @@ export function useAuth(): InitialState {
   }
 
   async function signOut() {
-    await logoutService();
+    await logoutUseCase();
     setUser(null);
     destroyCookie(undefined, STORAGE_KEY);
 
@@ -121,7 +127,7 @@ export function useAuth(): InitialState {
       console.log("state user", stateUser);
       if (!stateUser) return;
 
-      getUserService(stateUser?.uid as string).then((recoveredUser) =>
+      getUserUseCase(stateUser?.uid as string).then((recoveredUser) =>
         setUser(recoveredUser)
       );
     });
@@ -137,11 +143,11 @@ export function useAuth(): InitialState {
           provider: Provider.Google,
         };
 
-        const hasUser = await getUserByEmailService(sessionUser.email);
+        const hasUser = await getUserByEmailUseCase(sessionUser.email);
 
         if (hasUser) return setUser({ ...hasUser, location });
 
-        await createGoogleUserService({ ...sessionUser, location });
+        await createGoogleUserUseCase({ ...sessionUser, location });
 
         setUser(sessionUser);
       }

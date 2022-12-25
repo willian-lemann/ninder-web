@@ -1,16 +1,28 @@
 import { Loading } from "@components/shared/Loading";
 
-import { ChatModel } from "@models/chat";
+import { ChatDTO } from "@data/dtos/chat";
 import { Timestamp } from "firebase/firestore";
 import { ChatItem } from "./ChatItem";
 import { useChatsContext } from "@context/chat";
+import { useEffect, useMemo, useState } from "react";
 
 interface ChatsProps {
-  onStartChatting: (chat: ChatModel) => void;
+  onStartChatting: (chat: ChatDTO) => void;
 }
 
 export const Chats = ({ onStartChatting }: ChatsProps) => {
   const { chats, isLoading } = useChatsContext();
+  const [selectedChat, setSelectedChat] = useState("");
+
+  const isSelected = useMemo(() => {
+    const firstChat = chats.at(0)?.id;
+    return selectedChat || firstChat;
+  }, [chats, selectedChat]);
+
+  const handleSelectChat = (chat: ChatDTO) => {
+    setSelectedChat(chat.id as string);
+    onStartChatting(chat);
+  };
 
   if (isLoading) {
     return (
@@ -23,6 +35,7 @@ export const Chats = ({ onStartChatting }: ChatsProps) => {
     );
   }
 
+  console.log("render");
   return (
     <>
       <div className="h-12 flex items-center">
@@ -33,13 +46,17 @@ export const Chats = ({ onStartChatting }: ChatsProps) => {
         {chats.map((chat) => (
           <ChatItem
             key={chat?.id}
-            avatar={chat.user?.avatar}
-            title={chat.user?.name}
-            subtitle={chat.lastMessage?.message as string}
-            sentAt={chat.lastMessage?.sentAt as Timestamp}
-            isUnRead={chat.lastMessage?.unRead as boolean}
-            sentBy={chat.lastMessage?.sentBy as string}
-            onStartChatting={() => onStartChatting(chat)}
+            chat={{
+              id: chat.id,
+              avatar: chat.user?.avatar,
+              title: chat.user?.name,
+              subtitle: chat.lastMessage?.message as string,
+              sentAt: chat.lastMessage?.sentAt as Timestamp,
+              isUnRead: chat.lastMessage?.unRead as boolean,
+              sentBy: chat.lastMessage?.sentBy as string,
+            }}
+            isSelected={isSelected === chat.id}
+            onSelectChat={() => handleSelectChat(chat)}
           />
         ))}
       </ul>

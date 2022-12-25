@@ -1,99 +1,34 @@
-import { useUserDetails } from "@context/users";
-import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
-import { getGender, User } from "@models/user";
-import { createChatService } from "@services/chat/createChatService";
+import { getGender } from "@functions/formatGender";
 
-import { CreateChatDto } from "@dtos/chat/create-chat-dto";
+import { useUserDetails } from "@context/users";
 import { useAuthContext } from "@context/auth";
-
-import { useCallback, useState } from "react";
-import { Timestamp } from "firebase/firestore";
 import { useChatsContext } from "@context/chat";
-import { sendMessageService } from "@services/chat/sendMessageService";
-import { SendMessageDto } from "@dtos/chat/send-message-dto";
-import { Loading } from "@components/shared/Loading";
 
-interface StarConversationParams {
-  id: string;
-  name: string;
-  avatar: string;
-}
+import { Loading } from "@components/shared/Loading";
+import { UserDTO } from "@data/dtos";
 
 export default function UserDetails() {
   const { user: currentUser } = useAuthContext();
-  const { query, push } = useRouter();
+  const { query } = useRouter();
   const { user, isLoading } = useUserDetails(query.id as string);
-  const { hasChatWith } = useChatsContext();
+  const { startChat } = useChatsContext();
   const [messageText, setMessageText] = useState("");
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
-  const handleStartConversation = async (
-    talkingUser: StarConversationParams
-  ) => {
-    const chatId = hasChatWith(user.id as string);
-
-    const sentAt = Timestamp.fromDate(new Date());
-
-    if (chatId) {
-      setIsSendingMessage(true);
-
-      const newMessage: SendMessageDto = {
-        chatId,
-        messageText,
-        sentAt,
-        sentBy: currentUser?.id as string,
-        user: talkingUser,
-      };
-
-      await sendMessageService(newMessage);
-
-      setIsSendingMessage(false);
-
-      return push(`/chat/${user.id}`);
-    }
-
-    if (!messageText) return;
-
+  const handleStartConversation = async (talkingUser: UserDTO) => {
     setIsSendingMessage(true);
 
-    try {
-      const newChat: CreateChatDto = {
-        users: [
-          {
-            id: currentUser?.id as string,
-            name: currentUser?.name as string,
-            avatar: currentUser?.avatar as string,
-          },
-          talkingUser,
-        ],
-        lastMessage: {
-          message: messageText,
-          sentAt,
-          unRead: false,
-          sentBy: currentUser?.id as string,
-        },
-      };
+    await startChat({
+      userId: currentUser?.id as string,
+      messageText,
+      talkingUser,
+    });
 
-      const chatId = await createChatService(newChat);
-
-      const newMessage: SendMessageDto = {
-        chatId,
-        messageText,
-        sentAt,
-        sentBy: currentUser?.id as string,
-        user: talkingUser,
-      };
-
-      await sendMessageService(newMessage);
-
-      setIsSendingMessage(false);
-
-      push(`/chat/${user.id}`);
-    } catch (error) {
-      alert(error);
-    }
+    setIsSendingMessage(false);
   };
 
   if (isLoading) return <p>loading...</p>;

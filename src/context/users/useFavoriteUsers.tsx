@@ -1,6 +1,6 @@
 import { useAuthContext } from "@context/auth";
-import { User } from "@models/user";
-import { updateUserService } from "@services/user/updateUserService";
+import { User } from "@data/entities/user";
+import { updateUserUseCase } from "@data/useCases/user";
 import { MouseEvent } from "react";
 import { useUsers } from "./useUsers";
 
@@ -41,7 +41,7 @@ export function useFavoriteUsers() {
       }));
 
       try {
-        await updateUserService(currentUser?.id as string, {
+        await updateUserUseCase(currentUser?.id as string, {
           favorites: removedFavorites,
         });
       } catch (error) {
@@ -59,7 +59,7 @@ export function useFavoriteUsers() {
     setUser((state) => ({ ...(state as User), favorites: newFavorites }));
 
     try {
-      await updateUserService(currentUser?.id as string, {
+      await updateUserUseCase(currentUser?.id as string, {
         favorites: newFavorites,
       });
     } catch (error) {

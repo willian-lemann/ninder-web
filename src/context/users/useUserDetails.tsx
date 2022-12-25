@@ -1,11 +1,11 @@
 import { useChatsContext } from "@context/chat";
-import { User } from "@models/user";
-import { getUserService } from "@services/user/getUserService";
+import { User } from "@data/entities/user";
+import { getUserUseCase } from "@data/useCases/user";
 import useSWR from "swr";
 
 export const useUserDetails = (id: string) => {
   const userData = useSWR(`/users/${id}`, () =>
-    getUserService(id).then((user) => user)
+    getUserUseCase(id).then((user) => user)
   );
 
   const isLoading = !userData.data;

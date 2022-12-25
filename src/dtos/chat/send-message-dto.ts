@@ -1,6 +1,6 @@
-import { User } from "@models/chat";
-import { Message } from "@models/message";
+import { UserDTO } from "@data/dtos";
+import { Message } from "@data/entities";
 
-export interface SendMessageDto extends Omit<Message, "id"> {
-  user: User;
+export interface SendMessageDto extends Omit<Message, "id" | "sentAt"> {
+  user: UserDTO;
 }

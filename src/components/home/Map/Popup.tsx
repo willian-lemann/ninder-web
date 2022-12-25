@@ -1,4 +1,4 @@
-import { formatAge } from "@models/user";
+import { formatAge } from "@functions/formatAge";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Popup as LPopup } from "react-leaflet";

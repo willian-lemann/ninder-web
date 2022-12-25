@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Image from "next/image";
 
+import { LoginTypes } from "@constants/login/LoginTypes";
+
+import { withSSRGuest } from "../utils/withSSRGuest";
+
 import { SignInForm } from "@components/login/SignInForm";
 import { MultiStepSignup } from "../components/login/MultiStepSignup";
-import { withSSRGuest } from "../utils/withSSRGuest";
-import { LoginTypes } from "@constants/login/LoginTypes";
 
 export default function Login() {
   const [loginType, setLoginType] = useState<LoginTypes>("signin");

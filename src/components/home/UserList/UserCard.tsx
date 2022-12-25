@@ -1,9 +1,9 @@
-import { memo, MouseEvent } from "react";
+import { memo } from "react";
 import Router from "next/router";
 
 import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
 
-import { formatAge, User } from "@models/user";
+import { User } from "@data/entities/user";
 
 import { HeartIcon as OutlinedHeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as FilledHeartIcon } from "@heroicons/react/24/solid";
@@ -12,8 +12,9 @@ import Image from "next/image";
 import { useAuthContext } from "@context/auth";
 
 import { classNames } from "@utils/classNames";
-import { updateUserService } from "@services/user/updateUserService";
+
 import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
+import { formatAge } from "@functions/formatAge";
 
 interface UserCardProps {
   user: User;
@@ -21,7 +22,7 @@ interface UserCardProps {
 }
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
-  const { user: currentUser, setUser } = useAuthContext();
+  const { user: currentUser } = useAuthContext();
   const { favorite } = useFavoriteUsers();
 
   const handleSeeUserDetails = (id: string) => {

@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import { useAuthContext } from "@context/auth";
-import { User } from "@models/user";
-import { getUsersService } from "@services/user/getUsersService";
+import { User } from "@data/entities/user";
+import { getUsersUseCase } from "@data/useCases/user";
 import { useMemo } from "react";
 
 import useSWR from "swr";
@@ -10,7 +10,7 @@ import useSWR from "swr";
 export const useUsers = (queryFilter = "") => {
   const { user: currentUser } = useAuthContext();
   const usersData = useSWR("/users", () =>
-    getUsersService().then((response) => response.data.result)
+    getUsersUseCase().then((response) => response.data.result)
   );
 
   const isLoading = !usersData.data;

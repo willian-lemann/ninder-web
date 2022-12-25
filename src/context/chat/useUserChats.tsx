@@ -1,6 +1,3 @@
-import { collection, onSnapshot, Unsubscribe } from "firebase/firestore";
-import { firestore } from "@config/firebase";
-
 import {
   Dispatch,
   SetStateAction,
@@ -9,46 +6,68 @@ import {
   useRef,
   useState,
 } from "react";
-import useSWR from "swr";
-import { getUserChatsService } from "@services/chat/getUserChatsService";
-import { Chat, ChatModel, User } from "@models/chat";
-import { User as CurrentUser } from "@models/user";
+import Router from "next/router";
+
+import { collection, onSnapshot, Unsubscribe } from "firebase/firestore";
+import { firestore } from "@config/firebase";
+
+import { getChatsUseCase, startChatUseCase } from "@data/useCases/chat";
+
+import { isEmpty } from "@functions/asserts/isEmpty";
+
+import { Chat, User as CurrentUser } from "@data/entities";
 import { useAuthContext } from "@context/auth";
+import { ChatDTO, UserDTO } from "@data/dtos";
+import { StartChatDto } from "@dtos/chat/start-chat-dto";
 
 export interface InitialState {
-  chats: ChatModel[];
+  chats: ChatDTO[];
   numberOfUnReadChats: number;
   isEmpty: boolean;
   isLoading: boolean;
-  mutate: Dispatch<SetStateAction<ChatModel[]>>;
-  hasChatWith: (userId: string) => string;
+  mutate: Dispatch<SetStateAction<ChatDTO[]>>;
+  startChat: (params: StartChatDto) => Promise<void>;
 }
 
-function getUserChatWith(currentUser: CurrentUser, users: User[]) {
+function getUserChatWith(currentUser: CurrentUser, users: UserDTO[]) {
   const userChatWith = users.find((user) => user.id !== currentUser.id);
-  return userChatWith as User;
+  return userChatWith as UserDTO;
 }
 
 export const useUserChats = (): InitialState => {
+  const { user: currentUser } = useAuthContext();
   const unsubscribeRef = useRef<Unsubscribe>();
-  const { user } = useAuthContext();
-  const [chats, setChats] = useState<ChatModel[]>([]);
+  const [chats, setChats] = useState<ChatDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const isEmpty = chats.length === 0 && !isLoading;
 
   const numberOfUnReadChats = useMemo(
     () => chats.filter((chat) => chat.lastMessage.unRead).length,
     [chats]
   );
 
-  const hasChatWith = (userId: string) => {
-    const chat = chats?.find((chat) => chat.user.id === userId);
-    return chat?.id as string;
+  const startChat = async ({
+    userId,
+    messageText,
+    talkingUser,
+  }: StartChatDto) => {
+    if (isEmpty(messageText)) return;
+
+    await startChatUseCase({
+      currentUser: {
+        id: currentUser?.id as string,
+        name: currentUser?.name as string,
+        avatar: currentUser?.avatar as string,
+      },
+      messageText,
+      talkingUser,
+      userId,
+    });
+
+    Router.push(`/chats`);
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
 
@@ -56,13 +75,13 @@ export const useUserChats = (): InitialState => {
       const data = docSnap.docs.map((doc) => {
         const newChatData = { ...doc.data(), id: doc.id } as Chat;
 
-        const userChatWith = getUserChatWith(user, newChatData.users);
+        const userChatWith = getUserChatWith(currentUser, newChatData.users);
 
         const newChat = {
           ...newChatData,
           user: userChatWith,
           lastMessage: { ...newChatData.lastMessage, unRead: true },
-        } as ChatModel;
+        } as ChatDTO;
 
         return newChat;
       });
@@ -75,31 +94,31 @@ export const useUserChats = (): InitialState => {
     return () => {
       unsubscribeRef.current?.();
     };
-  }, [user]);
+  }, [currentUser]);
 
   useEffect(() => {
     const loadChats = async () => {
-      const chats = await getUserChatsService({
-        id: user?.id as string,
-        name: user?.name as string,
-        avatar: user?.avatar as string,
+      const chats = await getChatsUseCase({
+        id: currentUser?.id as string,
+        name: currentUser?.name as string,
+        avatar: currentUser?.avatar as string,
       });
 
       setChats(chats);
     };
 
-    if (user) {
+    if (currentUser) {
       loadChats().finally(() => setIsLoading(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [currentUser]);
 
   return {
-    isEmpty,
+    isEmpty: chats.length === 0 && !isLoading,
     isLoading,
     numberOfUnReadChats,
     chats,
+    startChat,
     mutate: setChats,
-    hasChatWith,
   };
 };

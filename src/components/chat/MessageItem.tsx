@@ -1,5 +1,6 @@
 import { useAuthContext } from "@context/auth";
-import { formatDate } from "@models/chat";
+import { formatDate } from "@functions/formatDate";
+
 import { classNames } from "@utils/classNames";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";

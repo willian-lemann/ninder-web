@@ -1,6 +1,6 @@
 import Router from "next/router";
 import { useAuthContext } from "@context/auth";
-import { updateUserService } from "@services/user/updateUserService";
+import { updateUserUseCase } from "@data/useCases/user";
 
 import { useState } from "react";
 import { classNames } from "@utils/classNames";
@@ -20,9 +20,8 @@ export default function Regulations() {
 
     const id = user?.id as string;
 
-    console.log(id);
     try {
-      await updateUserService(id, { hasConfirmedRegulation: true });
+      await updateUserUseCase(id, { hasConfirmedRegulation: true });
 
       Router.push("/");
     } catch (error) {

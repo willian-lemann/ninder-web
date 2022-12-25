@@ -13,9 +13,7 @@ import { useUserMessages } from "@context/messages/useUserMessages";
 import { PaperAirplaneIcon as SendIconOutlined } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
 
-import { sendMessageService } from "@services/chat/sendMessageService";
-
-import { ChatModel } from "@models/chat";
+import { sendMessageUseCase } from "@data/useCases/chat";
 
 import { MessageItem } from "./MessageItem";
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
@@ -25,21 +23,23 @@ import Image from "next/image";
 import { Loading } from "@components/shared/Loading";
 import { useMessagesContext } from "@context/messages";
 import { useBottomScroll } from "@hooks/useBottomScroll";
+import { ChatDTO } from "@data/dtos";
 
 interface MessagesProps {
-  chat: ChatModel | null;
+  chat: ChatDTO | null;
 }
 
 export const Messages = ({ chat }: MessagesProps) => {
   const { user: currentUser } = useAuthContext();
-  const { messages, isLoading, isEmpty, loadMessages } = useMessagesContext();
+  const { messages, isLoading, isEmpty, loadMessages, sendMessage } =
+    useMessagesContext();
   const [messageText, setMessageText] = useState("");
   const { ElementToBeScrolled } = useBottomScroll({
     listener: messages,
   });
 
   const handleSendMessage = async () => {
-    const newMessage: SendMessageDto = {
+    const message: SendMessageDto = {
       chatId: chat?.id as string,
       messageText,
       user: {
@@ -48,12 +48,11 @@ export const Messages = ({ chat }: MessagesProps) => {
         avatar: chat?.user.avatar as string,
       },
       sentBy: currentUser?.id as string,
-      sentAt: Timestamp.fromDate(new Date()),
     };
 
     setMessageText("");
 
-    await sendMessageService(newMessage);
+    await sendMessage(message);
   };
 
   const handleSendMessageByEnterKey = async (
