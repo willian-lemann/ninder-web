@@ -10,7 +10,7 @@ import { useChatsContext } from "@context/chat";
 
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
-  const { chats, numberOfUnReadChats } = useChatsContext();
+  const { numberOfUnReadChats } = useChatsContext();
 
   function handleNavigate(path: string) {
     Router.push(path);
@@ -56,9 +56,11 @@ export const MenuOptions = () => {
               >
                 <span className="relative">
                   Messages
-                  <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-white text-xs flex items-center justify-center">
-                    {numberOfUnReadChats}
-                  </span>
+                  {numberOfUnReadChats > 0 ? (
+                    <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-white text-xs flex items-center justify-center">
+                      {numberOfUnReadChats}
+                    </span>
+                  ) : null}
                 </span>
               </button>
             )}
