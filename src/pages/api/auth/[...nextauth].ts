@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string;
 const CLIENT_SECRET = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET as string;
+const SECRET = process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string;
 
 export default NextAuth({
   providers: [
@@ -14,4 +15,5 @@ export default NextAuth({
   pages: {
     signIn: "/login",
   },
+  secret: SECRET,
 });
