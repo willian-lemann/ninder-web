@@ -5,7 +5,7 @@ import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
 import { RegisterForm } from "@dtos/login/RegisterForm";
 
 import { createUserUseCase } from "@data/useCases/user/createUserUseCase";
-import { User } from "@models/user";
+import { User } from "@data/entities/user";
 import { Provider } from "@constants/login/provider";
 
 export async function signUpUseCase(signUpData: RegisterForm) {
