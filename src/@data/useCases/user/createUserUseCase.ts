@@ -2,7 +2,7 @@ import { firestore, storage } from "@config/firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
 
-import { User } from "@models/user";
+import { User } from "@data/entities/user";
 
 export async function createUserUseCase(id: string, user: User) {
   const docRef = doc(firestore, "users", id);

@@ -1,5 +1,5 @@
 import { firestore } from "@config/firebase";
-import { User } from "@models/user";
+import { User } from "@data/entities/user";
 import { doc, getDoc } from "firebase/firestore";
 
 export async function getUserUseCase(id: string) {
