@@ -26,7 +26,8 @@
       "@context/*": ["src/context/*"],
       "@constants/*": ["src/constants/*"],
       "@hooks/*": ["src/hooks/*"],
-      "@functions/*": ["src/functions/*"]
+      "@functions/*": ["src/functions/*"],
+      "@validators/*": ["src/validators/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

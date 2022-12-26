@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { firebase } from "@config/firebase-admin";
 import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
-import { User } from "@models/user";
+import { User } from "@data/entities/user";
+
 import { withAuth } from "@utils/withAuth";
 
 type Methods = "GET" | "POST";

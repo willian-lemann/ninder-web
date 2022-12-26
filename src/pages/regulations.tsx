@@ -1,9 +1,8 @@
+import { useState } from "react";
 import Router from "next/router";
 import { useAuthContext } from "@context/auth";
 import { updateUserUseCase } from "@data/useCases/user";
 
-import { useState } from "react";
-import { classNames } from "@utils/classNames";
 import { addErrorNotification } from "@components/shared/alert";
 import { Loading } from "@components/shared/Loading";
 
