@@ -35,7 +35,6 @@ export const Chats = ({ onStartChatting }: ChatsProps) => {
     );
   }
 
-  console.log("render");
   return (
     <>
       <div className="h-12 flex items-center">

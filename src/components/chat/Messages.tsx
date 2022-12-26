@@ -1,29 +1,23 @@
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
+
+import { EmojiPicker, EmojiClickData, Handles } from "./EmojiPIcker";
+
 import {
-  ChangeEvent,
-  KeyboardEvent,
-  MouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { uuid } from "@utils/uniqueId";
-
-import { useUserMessages } from "@context/messages/useUserMessages";
-
-import { PaperAirplaneIcon as SendIconOutlined } from "@heroicons/react/24/outline";
+  PaperAirplaneIcon as SendIconOutlined,
+  FaceSmileIcon,
+} from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
-
-import { sendMessageUseCase } from "@data/useCases/chat";
 
 import { MessageItem } from "./MessageItem";
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
-import { Timestamp } from "firebase/firestore";
+
 import { useAuthContext } from "@context/auth";
 import Image from "next/image";
 import { Loading } from "@components/shared/Loading";
 import { useMessagesContext } from "@context/messages";
 import { useBottomScroll } from "@hooks/useBottomScroll";
 import { ChatDTO } from "@data/dtos";
+import { isEmptyString } from "@functions/asserts/isEmpty";
 
 interface MessagesProps {
   chat: ChatDTO | null;
@@ -33,10 +27,34 @@ export const Messages = ({ chat }: MessagesProps) => {
   const { user: currentUser } = useAuthContext();
   const { messages, isLoading, isEmpty, loadMessages, sendMessage } =
     useMessagesContext();
+  const emojiRef = useRef<Handles>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [messageText, setMessageText] = useState("");
+
   const { ElementToBeScrolled } = useBottomScroll({
     listener: messages,
   });
+
+  const handleOpenEmoji = () => {
+    emojiRef.current?.openEmojiPicker();
+  };
+
+  const handleChangeEmoji = (
+    emojiData: EmojiClickData,
+    event: globalThis.MouseEvent
+  ) => {
+    const startPosition = Number(inputRef.current?.selectionStart);
+    const endPosition = Number(inputRef.current?.selectionEnd);
+
+    const messageText = inputRef.current?.value as string;
+
+    const messageTextConcatedWithEmoji =
+      messageText.slice(0, startPosition) +
+      emojiData.emoji +
+      messageText.slice(startPosition);
+
+    setMessageText(messageTextConcatedWithEmoji);
+  };
 
   const handleSendMessage = async () => {
     const message: SendMessageDto = {
@@ -129,28 +147,40 @@ export const Messages = ({ chat }: MessagesProps) => {
         )}
 
         <div className="py-4 flex flex-col justify-center mx-4">
-          <div className="flex items-center">
-            <input
-              type="text"
-              placeholder="Type here"
-              className="rounded-full flex-1 h-[45px] px-5 outline-none bg-zinc-100"
-              value={messageText}
-              onChange={({ target }) => setMessageText(target.value)}
-              onKeyUp={handleSendMessageByEnterKey}
-            />
+          <EmojiPicker ref={emojiRef} onEmojiClick={handleChangeEmoji} />
 
-            {messageText ? (
+          <div className="flex items-center">
+            <div className="relative flex items-center rounded-full flex-1 h-[45px]">
+              <FaceSmileIcon
+                height={30}
+                width={30}
+                className="absolute mx-4 cursor-pointer"
+                onClick={handleOpenEmoji}
+              />
+
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Message..."
+                className="flex-1 px-14 outline-none h-full rounded-full bg-zinc-100"
+                value={messageText}
+                onChange={({ target }) => setMessageText(target.value)}
+                onKeyUp={handleSendMessageByEnterKey}
+              />
+            </div>
+
+            {isEmptyString(messageText) ? (
+              <SendIconOutlined
+                height={24}
+                width={24}
+                className="cursor-default ml-1 opacity-75 text-primary animate-fadeIn"
+              />
+            ) : (
               <SendIconSolid
                 height={24}
                 width={24}
                 className="cursor-pointer ml-1 opacity-100 text-primary animate-fadeIn"
                 onClick={handleSendMessage}
-              />
-            ) : (
-              <SendIconOutlined
-                height={24}
-                width={24}
-                className="cursor-default ml-1 opacity-75 text-primary animate-fadeIn"
               />
             )}
           </div>

@@ -1,11 +1,22 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
-import { collection, onSnapshot, query, Unsubscribe } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  Timestamp,
+  Unsubscribe,
+} from "firebase/firestore";
 import { firestore } from "@config/firebase";
 
-import { getMessagesUseCase, sendMessageUseCase } from "@data/useCases/chat";
+import {
+  getMessagesUseCase,
+  sendMessageUseCase,
+  updateChatUseCase,
+} from "@data/useCases/chat";
 import { Message } from "@data/entities/message";
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
+import { isEmptyString } from "@functions/asserts/isEmpty";
 
 export interface InitialState {
   isLoading: boolean;
@@ -23,12 +34,22 @@ export const useUserMessages = (): InitialState => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
-  const isEmpty = messages?.length === 0 && !isLoading;
-
   const sendMessage = async (params: SendMessageDto) => {
     setIsSendingMessage(true);
 
+    if (isEmptyString(params.messageText)) return;
+
     await sendMessageUseCase(params);
+
+    await updateChatUseCase({
+      id: params.chatId,
+      lastMessage: {
+        message: params.messageText,
+        sentBy: params.sentBy,
+        unRead: false,
+        sentAt: Timestamp.fromDate(new Date()),
+      },
+    });
 
     setIsSendingMessage(false);
   };
@@ -74,7 +95,7 @@ export const useUserMessages = (): InitialState => {
 
   return {
     mutate: setMessages,
-    isEmpty,
+    isEmpty: messages?.length === 0 && !isLoading,
     isSendingMessage,
     isLoading,
     messages,

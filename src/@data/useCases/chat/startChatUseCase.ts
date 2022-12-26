@@ -8,6 +8,7 @@ import { CreateChatDto } from "@dtos/chat/create-chat-dto";
 
 import { getChatsUseCase } from "./";
 import { Message } from "@data/entities";
+import { isEmptyString } from "@functions/asserts/isEmpty";
 
 interface Params {
   messageText: string;
@@ -22,6 +23,8 @@ export async function startChatUseCase({
   talkingUser,
   currentUser,
 }: Params) {
+  if (isEmptyString(messageText)) return;
+
   const chats = await getChatsUseCase({
     id: currentUser.id as string,
     name: currentUser.name as string,

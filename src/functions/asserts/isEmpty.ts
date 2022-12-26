@@ -1,7 +1,7 @@
-export function isEmpty(value: string) {
-  const regex = RegExp(/^(\w+\S+)$/);
+export function isEmptyString(value: string) {
+  const regex = RegExp(/^\s*$/);
 
   const isValid = regex.test(value);
 
-  return !isValid;
+  return isValid;
 }

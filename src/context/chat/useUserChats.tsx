@@ -13,7 +13,7 @@ import { firestore } from "@config/firebase";
 
 import { getChatsUseCase, startChatUseCase } from "@data/useCases/chat";
 
-import { isEmpty } from "@functions/asserts/isEmpty";
+import { isEmptyString } from "@functions/asserts/isEmpty";
 
 import { Chat, User as CurrentUser } from "@data/entities";
 import { useAuthContext } from "@context/auth";
@@ -50,8 +50,6 @@ export const useUserChats = (): InitialState => {
     messageText,
     talkingUser,
   }: StartChatDto) => {
-    if (isEmpty(messageText)) return;
-
     await startChatUseCase({
       currentUser: {
         id: currentUser?.id as string,

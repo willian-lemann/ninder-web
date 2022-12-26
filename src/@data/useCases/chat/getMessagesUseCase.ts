@@ -1,5 +1,5 @@
 import { firestore } from "@config/firebase";
-import { Message } from "@models/message";
+import { Message } from "@data/entities/message";
 
 import { collection, query, getDocs, where } from "firebase/firestore";
 
