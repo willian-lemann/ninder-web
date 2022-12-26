@@ -47,18 +47,6 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       onClick={() => handleSeeUserDetails(user.id as string)}
     >
       <div className="w-full h-full relative rounded-md">
-        {isFavorite ? (
-          <FilledHeartIcon
-            onClick={(event) => favorite(event, user.id as string)}
-            className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-primary"
-          />
-        ) : (
-          <OutlinedHeartIcon
-            onClick={(event) => favorite(event, user.id as string)}
-            className="h-8 w-8 z-20 absolute right-2 top-2 cursor-pointer text-zinc-200"
-          />
-        )}
-
         <Image
           className="rounded-md object-cover"
           src={user.avatar as string}
@@ -67,15 +55,29 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
         />
       </div>
 
-      <div className="mt-2">
-        <div>
-          <strong className="m-0">{user.name},</strong>
-          <span>{formatAge(user.birthday)}</span>
+      <div className="mt-2 flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <div>
+            <strong className="m-0">{user.name},</strong>
+            <span>{formatAge(user.birthday)}</span>
+          </div>
+
+          <p className="m-0 text-sm leading-3 text-zinc-400">
+            {distance} kilometers away
+          </p>
         </div>
 
-        <p className="m-0 text-sm leading-3 text-zinc-400">
-          {distance} kilometers away
-        </p>
+        {isFavorite ? (
+          <FilledHeartIcon
+            onClick={(event) => favorite(event, user.id as string)}
+            className="h-8 w-8 z-20 cursor-pointer text-primary animate-fadeIn"
+          />
+        ) : (
+          <OutlinedHeartIcon
+            onClick={(event) => favorite(event, user.id as string)}
+            className="h-8 w-8 z-20 cursor-pointer text-zinc-600 animate-fadeIn"
+          />
+        )}
       </div>
     </li>
   );

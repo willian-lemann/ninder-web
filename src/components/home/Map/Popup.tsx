@@ -38,7 +38,7 @@ export const Popup = ({ userInfo }: PopupProps) => {
 
         <button
           className="mt-2 border-none bg-primary rounded-md text-white px-2 py-2"
-          onClick={() => router.push(`/chat/${userInfo.id}`)}
+          onClick={() => router.push(`/user/${userInfo.id}`)}
         >
           Start a conversation
         </button>
