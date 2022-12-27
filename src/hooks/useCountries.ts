@@ -2,12 +2,6 @@
 import { api } from "@config/axios";
 import useSWR, { SWRResponse } from "swr";
 
-interface Data {
-  name: {
-    common: string;
-  };
-}
-
 interface Country {
   label: string;
   value: string;
@@ -19,11 +13,11 @@ const fetcher = async () => {
 };
 
 export const useCountries = () => {
-  const countriesData = useSWR<Data[]>("/countries", fetcher);
+  const countriesData = useSWR<string[]>("/countries", fetcher);
 
   const mappedCountries = countriesData.data?.map((country) => ({
-    label: country.name.common,
-    value: country.name.common,
+    label: country,
+    value: country,
   })) as Country[];
 
   return {

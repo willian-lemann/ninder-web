@@ -33,6 +33,8 @@ export async function signUpUseCase(signUpData: RegisterForm) {
     provider: Provider.Internal,
   };
 
+  console.log(payload);
+
   const registeredUser = await createUserUseCase(user.uid, payload);
 
   return { token, user: registeredUser };
