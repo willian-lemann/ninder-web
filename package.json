@@ -16,6 +16,7 @@
     "emoji-picker-react": "^4.4.7",
     "firebase": "^9.6.10",
     "firebase-admin": "^11.3.0",
+    "geofire-common": "^6.0.0",
     "leaflet": "^1.9.1",
     "next": "^13.0.0",
     "next-auth": "^4.12.3",

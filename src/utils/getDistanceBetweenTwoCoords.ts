@@ -1,3 +1,5 @@
+import { distanceBetween } from "geofire-common";
+
 interface Location {
   latitude: number;
   longitude: number;
@@ -14,39 +16,49 @@ export const getDistanceBetweenTwoCoords = ({
   currentLocation,
   targetLocation,
 }: Params) => {
-  const toRadius = (value: number) => {
-    return (value * Math.PI) / 180;
-  };
-
   if (!currentLocation || !targetLocation) return null;
 
-  const targetLatitude = targetLocation.latitude;
-  const targetLongitude = targetLocation.longitude;
-  const currentLatitude = currentLocation.latitude;
-  const currentLongitude = currentLocation.longitude;
+  const distanceInKM = distanceBetween(
+    [currentLocation.latitude, currentLocation.longitude],
+    [targetLocation.latitude, targetLocation.longitude]
+  );
+  const distanceInMeters = distanceInKM * 1000;
 
-  const EARTH_RADIUS_IN_KM = 6371; // km
+  return distanceInMeters;
 
-  const differenceBetweenLatitudes = targetLatitude - currentLatitude;
-  const distanceInLatitude = toRadius(differenceBetweenLatitudes);
+  // const toRadius = (value: number) => {
+  //   return (value * Math.PI) / 180;
+  // };
 
-  const differenceBetweenLongitudes = targetLongitude - currentLongitude;
-  const distancenInLongitude = toRadius(differenceBetweenLongitudes);
+  // if (!currentLocation || !targetLocation) return null;
 
-  const a =
-    Math.sin(distanceInLatitude / 2) * Math.sin(distanceInLatitude / 2) +
-    Math.cos(toRadius(currentLatitude)) *
-      Math.cos(toRadius(targetLatitude)) *
-      Math.sin(distancenInLongitude / 2) *
-      Math.sin(distancenInLongitude / 2);
+  // const targetLatitude = targetLocation.latitude;
+  // const targetLongitude = targetLocation.longitude;
+  // const currentLatitude = currentLocation.latitude;
+  // const currentLongitude = currentLocation.longitude;
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  // const EARTH_RADIUS_IN_KM = 6371; // km
 
-  let distance = EARTH_RADIUS_IN_KM * c;
+  // const differenceBetweenLatitudes = targetLatitude - currentLatitude;
+  // const distanceInLatitude = toRadius(differenceBetweenLatitudes);
 
-  if (isMiles) {
-    distance /= 1.60934;
-  }
+  // const differenceBetweenLongitudes = targetLongitude - currentLongitude;
+  // const distancenInLongitude = toRadius(differenceBetweenLongitudes);
 
-  return Number(distance.toFixed(2));
+  // const a =
+  //   Math.sin(distanceInLatitude / 2) * Math.sin(distanceInLatitude / 2) +
+  //   Math.cos(toRadius(currentLatitude)) *
+  //     Math.cos(toRadius(targetLatitude)) *
+  //     Math.sin(distancenInLongitude / 2) *
+  //     Math.sin(distancenInLongitude / 2);
+
+  // const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  // let distance = EARTH_RADIUS_IN_KM * c;
+
+  // if (isMiles) {
+  //   distance /= 1.60934;
+  // }
+
+  // return Number(distance.toFixed(2));
 };

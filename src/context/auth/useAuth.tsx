@@ -1,4 +1,10 @@
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+} from "react";
 import Router from "next/router";
 import {
   signIn as NextAuthSignIn,
@@ -42,12 +48,12 @@ export interface InitialState {
   signOut(): Promise<void>;
 }
 
+let authChannel: BroadcastChannel;
+
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
   const [user, setUser] = useState<User | null>(null);
   const location = useGeoLocation();
-
-  let authChannel: BroadcastChannel;
 
   async function signIn({ email, password }: SignInCredencials) {
     const response = await signInUseCase({
@@ -83,8 +89,6 @@ export function useAuth(): InitialState {
       location,
     });
 
-    console.log("user", user);
-
     setUser(user);
 
     setCookie(undefined, STORAGE_KEY, token, {
@@ -99,7 +103,7 @@ export function useAuth(): InitialState {
     await NextAuthSignIn("google");
   }
 
-  async function signOut() {
+  const signOut = useCallback(async () => {
     await logoutUseCase();
     setUser(null);
     destroyCookie(undefined, STORAGE_KEY);
@@ -111,10 +115,9 @@ export function useAuth(): InitialState {
     authChannel?.postMessage("signOut");
 
     Router.replace("/login");
-  }
+  }, [session]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     authChannel = new BroadcastChannel("auth");
 
     authChannel.onmessage = (message) => {
@@ -124,14 +127,16 @@ export function useAuth(): InitialState {
     };
 
     onAuthStateChanged(auth, (stateUser) => {
-      console.log("state user", stateUser);
-      if (!stateUser) return;
-
-      getUserUseCase(stateUser?.uid as string).then((recoveredUser) =>
-        setUser(recoveredUser)
-      );
+      if (!stateUser) {
+        setUser(null);
+        destroyCookie(undefined, STORAGE_KEY);
+      } else {
+        getUserUseCase(stateUser?.uid as string).then((recoveredUser) =>
+          setUser(recoveredUser)
+        );
+      }
     });
-  }, []);
+  }, [signOut]);
 
   useEffect(() => {
     async function loadGoogleSession() {
