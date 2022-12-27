@@ -1,18 +1,23 @@
 import { UserCard } from "./UserCard";
 
 import { Skeleton } from "./Skeleton";
-import { useAuthContext } from "@context/auth";
 import { classNames } from "@utils/classNames";
 
 import { useUsers } from "@context/users/useUsers";
+import { Location } from "@dtos/users/location";
 
 interface UserListProps {
   toggleMap: boolean;
   searchFilter: string;
+  filterLocation: Location | null;
 }
 
-export const UserList = ({ toggleMap, searchFilter }: UserListProps) => {
-  const { users, isLoading, isEmpty } = useUsers(searchFilter);
+export const UserList = ({
+  toggleMap,
+  searchFilter,
+  filterLocation,
+}: UserListProps) => {
+  const { users, isLoading, isEmpty } = useUsers(searchFilter, filterLocation);
 
   if (isLoading) {
     return <Skeleton />;

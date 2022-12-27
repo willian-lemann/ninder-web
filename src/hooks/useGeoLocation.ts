@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { addErrorNotification } from "@components/shared/alert";
-
-interface Location {
-  latitude: number;
-  longitude: number;
-}
+import { Location } from "@dtos/users/location";
 
 export const useGeoLocation = () => {
   const [location, setLocation] = useState<Location | null>(null);

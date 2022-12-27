@@ -3,14 +3,17 @@
 import { useAuthContext } from "@context/auth";
 import { User } from "@data/entities/user";
 import { getUsersUseCase } from "@data/useCases/user";
+import { Location } from "@dtos/users/location";
+
 import { useMemo } from "react";
 
 import useSWR from "swr";
 
-export const useUsers = (queryFilter = "") => {
+export const useUsers = (queryFilter = "", location?: Location | null) => {
   const { user: currentUser } = useAuthContext();
+
   const usersData = useSWR("/users", () =>
-    getUsersUseCase().then((response) => response.data.result)
+    getUsersUseCase(location).then((response) => response.data.result)
   );
 
   const isLoading = !usersData.data;

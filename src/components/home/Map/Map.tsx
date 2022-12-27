@@ -1,27 +1,47 @@
 import "leaflet/dist/leaflet.css";
 
-import { useAuthContext } from "@context/auth";
-
 import { useGeoLocation } from "@hooks/useGeoLocation";
 
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 
 import { Marker } from "./Marker";
 import { Loading } from "@components/shared/Loading";
 import { classNames } from "@utils/classNames";
 import { useUsers } from "@context/users/useUsers";
 import { Popup } from "./Popup";
+import { useState } from "react";
+import { Location } from "@dtos/users/location";
+import { useSWRConfig } from "swr";
 
 interface MapProps {
   toggleMap: boolean;
   searchFilter: string;
+  filterLocation: Location | null;
+  onFilterLocation: (location: Location) => void;
 }
 
-const Map = ({ toggleMap, searchFilter }: MapProps) => {
-  const currentLocation = useGeoLocation();
-  const { user } = useAuthContext();
-  const { users, isLoading } = useUsers(searchFilter);
+interface MapEventHandlersProps {
+  onUpdateLocation(location: Location): void;
+}
 
+const MapEventHandlers = ({ onUpdateLocation }: MapEventHandlersProps) => {
+  const map = useMapEvents({
+    moveend: () => {
+      const { lat, lng } = map.getCenter();
+      onUpdateLocation({ latitude: lat, longitude: lng });
+    },
+  });
+
+  return null;
+};
+
+const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
+  const currentLocation = useGeoLocation();
+  const [handlerLocation, setHandlerLocation] = useState<Location | null>(null);
+
+  const { users, isLoading, mutate } = useUsers(searchFilter, handlerLocation);
+
+  console.log(users);
   if (!currentLocation || isLoading) {
     return (
       <div className="w-[53%] h-[100%] flex items-center justify-center">
@@ -40,13 +60,22 @@ const Map = ({ toggleMap, searchFilter }: MapProps) => {
       <MapContainer
         center={[currentLocation.latitude, currentLocation.longitude]}
         zoom={13}
+        maxZoom={14}
         scrollWheelZoom
-        className="w-full h-full"
+        className="w-full h-full relative"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        <button
+          onClick={() => mutate()}
+          className="absolute z-[9999] text-base text-zinc-600 bg-white shadow-md rounded-full top-4 left-1/2 -translate-x-1/2 px-4 py-1 w-52"
+        >
+          Search in this area
+        </button>
+
         {users.map((nearUser) => (
           <Marker
             key={nearUser.id}
@@ -67,6 +96,13 @@ const Map = ({ toggleMap, searchFilter }: MapProps) => {
             />
           </Marker>
         ))}
+
+        <MapEventHandlers
+          onUpdateLocation={(location) => {
+            setHandlerLocation(location);
+            onFilterLocation(location);
+          }}
+        />
       </MapContainer>
     </div>
   );

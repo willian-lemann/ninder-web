@@ -1,21 +1,37 @@
 import { auth, firestore } from "@config/firebase";
 import { User } from "@data/entities/user";
 import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
-import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
+import { getDocs, collection, query, orderBy } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { Location } from "@dtos/users/location";
 
 const DISTANCE = 10; // KM
 
-function getNearbyUsersByDistance(users: User[], currentUserId?: string) {
+function getNearbyUsersByDistance(
+  users: User[],
+  currentUserId?: string,
+  centerLocation?: Location | null
+) {
   const currentUser = users.find((item) => item.id === currentUserId) as User;
 
   const filteredUsersByDistance = users.filter((user) => {
     const distance = getDistanceBetweenTwoCoords({
-      currentLocation: currentUser?.location,
+      currentLocation: currentUser.location,
       targetLocation: user.location,
     });
 
-    if (Math.floor(Number(distance)) < DISTANCE) {
+    const distanceBetweenCurrentCenterAndCurrentLocation =
+      getDistanceBetweenTwoCoords({
+        currentLocation: centerLocation,
+        targetLocation: user.location,
+      });
+
+    console.log("newDistance", distanceBetweenCurrentCenterAndCurrentLocation);
+
+    if (
+      Math.floor(Number(distanceBetweenCurrentCenterAndCurrentLocation)) <
+      DISTANCE
+    ) {
       return {
         ...user,
       };
@@ -27,7 +43,7 @@ function getNearbyUsersByDistance(users: User[], currentUserId?: string) {
   return filteredUsersByDistance;
 }
 
-export async function getUsersUseCase() {
+export async function getUsersUseCase(location?: Location | null) {
   let currentUserId: string | undefined;
   onAuthStateChanged(auth, (response) => (currentUserId = response?.uid));
 
@@ -70,7 +86,8 @@ export async function getUsersUseCase() {
 
   const nearbyUsersByDistance = getNearbyUsersByDistance(
     mappedUsers,
-    currentUserId
+    currentUserId,
+    location
   );
 
   return {
