@@ -30,7 +30,7 @@ const controller = {
 
     const filteredUsersByDistance = users.filter((user) => {
       const distance = getDistanceBetweenTwoCoords({
-        currentLocation: currentUser.location,
+        sourceLocation: currentUser.location,
         targetLocation: user.location,
       });
 
