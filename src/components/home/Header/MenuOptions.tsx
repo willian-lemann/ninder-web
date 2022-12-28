@@ -7,6 +7,7 @@ import { classNames } from "@utils/classNames";
 
 import { FavoritesPopover } from "./FavoritesPopover";
 import { useChatsContext } from "@context/chat";
+import { Avatar } from "./Avatar";
 
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
@@ -17,24 +18,11 @@ export const MenuOptions = () => {
   }
 
   return (
-    <Menu as="div" className="relative ml-3">
-      <div>
-        <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-          <span className="sr-only">Open user menu</span>
+    <Menu as="div" className="relative ml-3 ">
+      <Menu.Button className="flex items-center">
+        <Avatar avatar={user?.avatar as string} />
+      </Menu.Button>
 
-          <div className="h-8 w-8">
-            {user?.avatar ? (
-              <Image
-                className="object-cover rounded-full"
-                src={user?.avatar as string}
-                alt="avatar image"
-                fill
-                loading="lazy"
-              />
-            ) : null}
-          </div>
-        </Menu.Button>
-      </div>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"

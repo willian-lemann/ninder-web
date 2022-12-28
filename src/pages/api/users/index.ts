@@ -50,7 +50,7 @@ const controller = {
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
-  return controller[req.method as Methods](req, res);
+  // return controller[req.method as Methods](req, res);
 };
 
 export default withAuth(handler);

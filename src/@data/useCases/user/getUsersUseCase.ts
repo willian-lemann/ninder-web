@@ -11,17 +11,17 @@ import {
   startAt,
   endAt,
 } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+
 import { Location } from "@dtos/users/location";
 import { getUserUseCase } from "./getUserUseCase";
 
 const DISTANCE = 10; // KM
 const RADIUS_IN_METERS = DISTANCE * 1000;
 
-export async function getUsersUseCase(location?: Location | null) {
-  let currentUserId: string | undefined;
-  onAuthStateChanged(auth, (response) => (currentUserId = response?.uid));
-
+export async function getUsersUseCase(
+  currentUserId: string,
+  location?: Location | null
+) {
   const bounds = geohashQueryBounds(
     [Number(location?.latitude), Number(location?.longitude)],
     RADIUS_IN_METERS
@@ -33,7 +33,7 @@ export async function getUsersUseCase(location?: Location | null) {
     const usersRef = collection(firestore, "users");
     const docsSnap = query(
       usersRef,
-      orderBy("name"),
+      orderBy("location.geohash"),
       startAt(bound[0]),
       endAt(bound[1])
     );
@@ -51,8 +51,8 @@ export async function getUsersUseCase(location?: Location | null) {
         const location = doc.get("location");
 
         const distance = getDistanceBetweenTwoCoords({
-          currentLocation: currentUser?.location,
-          targetLocation: location,
+          sourceLocation: location,
+          targetLocation: currentUser?.location,
         });
 
         if (Number(distance) <= RADIUS_IN_METERS) {

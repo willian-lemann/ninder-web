@@ -13,7 +13,9 @@ export const useUsers = (queryFilter = "", location?: Location | null) => {
   const { user: currentUser } = useAuthContext();
 
   const usersData = useSWR("/users", () =>
-    getUsersUseCase(location).then((response) => response.data.result)
+    getUsersUseCase(currentUser?.id as string, location).then(
+      (response) => response.data.result
+    )
   );
 
   const isLoading = !usersData.data;

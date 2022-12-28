@@ -128,15 +128,16 @@ export function useAuth(): InitialState {
 
     onAuthStateChanged(auth, (stateUser) => {
       if (!stateUser) {
-        setUser(null);
         destroyCookie(undefined, STORAGE_KEY);
       } else {
+        console.log("caiu aqui", stateUser.uid);
         getUserUseCase(stateUser?.uid as string).then((recoveredUser) =>
           setUser(recoveredUser)
         );
       }
     });
-  }, [signOut]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     async function loadGoogleSession() {

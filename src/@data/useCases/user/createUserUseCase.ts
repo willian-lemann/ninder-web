@@ -27,7 +27,9 @@ export async function createUserUseCase(id: string, user: User) {
     }
   }
 
-  await setDoc(docRef, { ...user, id });
+  const newUser: User = { ...user, id };
 
-  return user as User;
+  await setDoc(docRef, newUser);
+
+  return newUser;
 }

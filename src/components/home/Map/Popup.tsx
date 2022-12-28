@@ -1,4 +1,5 @@
 import { formatAge } from "@functions/formatAge";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Popup as LPopup } from "react-leaflet";
@@ -21,11 +22,12 @@ export const Popup = ({ userInfo }: PopupProps) => {
       <div className="h-44 flex flex-col justify-end">
         <div className="w-full h-[100px] absolute right-0 top-0">
           <Image
-            src={userInfo.avatar}
+            src={userInfo.avatar ?? "/icons/avatar.svg"}
             className="object-cover rounded-t-md"
             alt="user avatar"
             fill
           />
+          )
         </div>
 
         <div className="flex flex-col">

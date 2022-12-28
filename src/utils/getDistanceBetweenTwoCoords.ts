@@ -7,19 +7,19 @@ interface Location {
 
 interface Params {
   isMiles?: boolean;
-  currentLocation: Location | null | undefined;
+  sourceLocation: Location | null | undefined;
   targetLocation: Location | null | undefined;
 }
 
 export const getDistanceBetweenTwoCoords = ({
   isMiles = false,
-  currentLocation,
+  sourceLocation,
   targetLocation,
 }: Params) => {
-  if (!currentLocation || !targetLocation) return null;
+  if (!sourceLocation || !targetLocation) return null;
 
   const distanceInKM = distanceBetween(
-    [currentLocation.latitude, currentLocation.longitude],
+    [sourceLocation.latitude, sourceLocation.longitude],
     [targetLocation.latitude, targetLocation.longitude]
   );
   const distanceInMeters = distanceInKM * 1000;

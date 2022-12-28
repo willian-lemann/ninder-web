@@ -11,7 +11,6 @@ import { useUsers } from "@context/users/useUsers";
 import { Popup } from "./Popup";
 import { useState } from "react";
 import { Location } from "@dtos/users/location";
-import { useSWRConfig } from "swr";
 
 interface MapProps {
   toggleMap: boolean;
@@ -37,11 +36,13 @@ const MapEventHandlers = ({ onUpdateLocation }: MapEventHandlersProps) => {
 
 const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
   const currentLocation = useGeoLocation();
-  const [handlerLocation, setHandlerLocation] = useState<Location | null>(null);
 
-  const { users, isLoading, mutate } = useUsers(searchFilter, handlerLocation);
+  const [handlerLocation, setHandlerLocation] = useState<Location | null>(
+    currentLocation
+  );
 
-  console.log(users);
+  const { users, isLoading, mutate } = useUsers(searchFilter, currentLocation);
+
   if (!currentLocation || isLoading) {
     return (
       <div className="w-[53%] h-[100%] flex items-center justify-center">
@@ -76,26 +77,28 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
           Search in this area
         </button>
 
-        {users.map((nearUser) => (
-          <Marker
-            key={nearUser.id}
-            iconUrl={nearUser.avatar as string}
-            position={[
-              Number(nearUser.location?.latitude),
-              Number(nearUser.location?.longitude),
-            ]}
-          >
-            <Popup
-              userInfo={{
-                id: nearUser.id as string,
-                avatar: nearUser.avatar as string,
-                name: nearUser.name as string,
-                birthday: nearUser.birthday as Date,
-                hometown: nearUser.hometown as string,
-              }}
-            />
-          </Marker>
-        ))}
+        {users.map((nearUser) => {
+          return (
+            <Marker
+              key={nearUser.id}
+              iconUrl={nearUser.avatar as string}
+              position={[
+                Number(nearUser.location?.latitude),
+                Number(nearUser.location?.longitude),
+              ]}
+            >
+              <Popup
+                userInfo={{
+                  id: nearUser.id as string,
+                  avatar: nearUser.avatar as string,
+                  name: nearUser.name as string,
+                  birthday: nearUser.birthday as Date,
+                  hometown: nearUser.hometown as string,
+                }}
+              />
+            </Marker>
+          );
+        })}
 
         <MapEventHandlers
           onUpdateLocation={(location) => {
