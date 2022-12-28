@@ -4,6 +4,8 @@ import Image from "next/image";
 
 import { formatDate } from "@functions/formatDate";
 import { useAuthContext } from "@context/auth";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { Avatar } from "./Avatar";
 
 interface ChatItemProps {
   chat: {
@@ -35,14 +37,7 @@ export const ChatItem = ({ chat, isSelected, onSelectChat }: ChatItemProps) => {
       )}
     >
       <section className="flex items-center">
-        <div className="h-10 w-10 relative rounded-full">
-          <Image
-            src={chat.avatar}
-            alt="avatar image"
-            fill
-            className="rounded-full object-cover"
-          />
-        </div>
+        <Avatar image={chat.avatar} />
 
         <div className="ml-2">
           <strong>{chat.title}</strong>

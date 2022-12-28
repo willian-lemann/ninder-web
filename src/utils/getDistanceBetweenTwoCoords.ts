@@ -11,6 +11,8 @@ interface Params {
   targetLocation: Location | null | undefined;
 }
 
+const KM_IN_METERS = 1000;
+
 export const getDistanceBetweenTwoCoords = ({
   isMiles = false,
   sourceLocation,
@@ -22,9 +24,13 @@ export const getDistanceBetweenTwoCoords = ({
     [sourceLocation.latitude, sourceLocation.longitude],
     [targetLocation.latitude, targetLocation.longitude]
   );
-  const distanceInMeters = distanceInKM * 1000;
+  const distanceInMeters = distanceInKM * KM_IN_METERS;
 
-  return distanceInMeters;
+  if (distanceInMeters > KM_IN_METERS) {
+    return Number(distanceInKM.toFixed(0));
+  }
+
+  return Number(distanceInMeters.toFixed(0));
 
   // const toRadius = (value: number) => {
   //   return (value * Math.PI) / 180;

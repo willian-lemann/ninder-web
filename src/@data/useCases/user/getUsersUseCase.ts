@@ -66,25 +66,13 @@ export async function getUsersUseCase(
     return matchingDocs;
   });
 
-  console.log("users");
-  // const filteredUsersByDistance = mappedUsers.filter((user) => {
-  //   const distance = getDistanceBetweenTwoCoords({
-  //     currentLocation: currentUser.location,
-  //     targetLocation: user.location,
-  //   });
-
-  //   if (Number(distance) <= RADIUS_IN_METERS) {
-  //     return {
-  //       ...user,
-  //     };
-  //   }
-
-  //   return null;
-  // });
+  const filteredUsersByNotMe = users.filter(
+    (user) => user.id !== currentUserId
+  );
 
   return {
     data: {
-      result: users,
+      result: filteredUsersByNotMe,
     },
   };
 }

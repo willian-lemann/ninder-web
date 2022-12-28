@@ -43,6 +43,11 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
 
   const { users, isLoading, mutate } = useUsers(searchFilter, currentLocation);
 
+  const handleSearchNearArea = () => {
+    mutate();
+    setHandlerLocation(null);
+  };
+
   if (!currentLocation || isLoading) {
     return (
       <div className="w-[53%] h-[100%] flex items-center justify-center">
@@ -70,12 +75,14 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <button
-          onClick={() => mutate()}
-          className="absolute z-[9999] text-base text-zinc-600 bg-white shadow-md rounded-full top-4 left-1/2 -translate-x-1/2 px-4 py-1 w-52"
-        >
-          Search in this area
-        </button>
+        {handlerLocation ? (
+          <button
+            onClick={handleSearchNearArea}
+            className="absolute z-[9999] animate-fadeIn text-base text-zinc-600 font-semibold bg-white shadow-md rounded-full top-4 left-1/2 -translate-x-1/2 px-4 py-1 w-52"
+          >
+            Search in this area
+          </button>
+        ) : null}
 
         {users.map((nearUser) => {
           return (

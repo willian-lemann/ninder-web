@@ -15,6 +15,7 @@ import { classNames } from "@utils/classNames";
 
 import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
 import { formatAge } from "@functions/formatAge";
+import { Thumbnail } from "@components/Thumbnail";
 
 interface UserCardProps {
   user: User;
@@ -31,7 +32,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
 
   const distance = getDistanceBetweenTwoCoords({
     isMiles: false,
-    currentLocation: currentUser?.location,
+    sourceLocation: currentUser?.location,
     targetLocation: user.location,
   });
 
@@ -46,14 +47,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
       )}
       onClick={() => handleSeeUserDetails(user.id as string)}
     >
-      <div className="w-full h-full relative rounded-md">
-        <Image
-          className="rounded-md object-cover"
-          src={user.avatar as string}
-          alt="user avatar"
-          fill
-        />
-      </div>
+      <Thumbnail image={user.avatar as string} />
 
       <div className="mt-2 flex items-center justify-between">
         <div className="flex flex-col gap-1">

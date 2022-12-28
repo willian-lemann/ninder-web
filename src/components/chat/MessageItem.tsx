@@ -1,10 +1,12 @@
 import { useAuthContext } from "@context/auth";
 import { formatDate } from "@functions/formatDate";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 import { classNames } from "@utils/classNames";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useCallback } from "react";
+import { Avatar } from "./Avatar";
 
 interface MessageItemProps {
   message: {
@@ -22,11 +24,19 @@ export const MessageItem = memo(({ message }: MessageItemProps) => {
 
   const isCurrentUserSender = message?.sentBy === currentUser?.id;
 
+  const renderMessageImage = useCallback(() => {
+    if (isCurrentUserSender) {
+      return <Avatar image={currentUser.avatar as string} />;
+    }
+
+    return <Avatar image={message.avatar} />;
+  }, [currentUser?.avatar, isCurrentUserSender, message.avatar]);
+
   return (
     <li
       className={classNames(
         isCurrentUserSender ? "self-end" : "self-start",
-        "flex mb-10 first:mt-6 items-center"
+        "flex mb-10 first:mt-6 items-center animate-fadeIn"
       )}
     >
       <div
@@ -35,16 +45,7 @@ export const MessageItem = memo(({ message }: MessageItemProps) => {
           "h-12 w-12 relative rounded-full"
         )}
       >
-        <Image
-          src={
-            isCurrentUserSender
-              ? (currentUser?.avatar as string)
-              : (message.avatar as string)
-          }
-          alt="avatar image"
-          fill
-          className="rounded-full"
-        />
+        {renderMessageImage()}
       </div>
 
       <div className="px-2 flex-1">

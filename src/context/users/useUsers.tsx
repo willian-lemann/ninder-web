@@ -29,12 +29,8 @@ export const useUsers = (queryFilter = "", location?: Location | null) => {
           )
         : usersData.data;
 
-    const nearbyUsersWithoutMe = data?.filter(
-      (user) => user.id !== currentUser?.id
-    );
-
-    return nearbyUsersWithoutMe as User[];
-  }, [currentUser?.id, queryFilter, usersData.data]);
+    return data as User[];
+  }, [queryFilter, usersData.data]);
 
   return {
     ...usersData,

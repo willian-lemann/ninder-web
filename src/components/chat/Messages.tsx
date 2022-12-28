@@ -1,6 +1,6 @@
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
-import { EmojiPicker, EmojiClickData, Handles } from "./EmojiPIcker";
+import { EmojiPicker, EmojiClickData, Handles } from "./EmojiPicker";
 
 import {
   PaperAirplaneIcon as SendIconOutlined,
