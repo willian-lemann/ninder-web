@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
 
 import { addErrorNotification } from "@components/shared/alert";
 import { Location } from "@dtos/users/location";
@@ -15,7 +16,7 @@ export const useGeoLocation = () => {
     const location = { latitude: coords.latitude, longitude: coords.longitude };
 
     setLocation(location);
-    localStorage.setItem(storageKey, JSON.stringify(location));
+    setCookie(undefined, storageKey, JSON.stringify(location));
   };
 
   const onError = useCallback((_: GeolocationPositionError) => {
@@ -29,15 +30,15 @@ export const useGeoLocation = () => {
     }
 
     const loadFromStorage = () => {
-      const storagedLocation = JSON.parse(
-        localStorage.getItem(storageKey) || ""
-      );
+      const { [storageKey]: storagedLocation } = parseCookies(undefined);
 
       if (!storagedLocation) {
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        return navigator.geolocation.getCurrentPosition(onSuccess, onError);
       }
 
-      setLocation(storagedLocation);
+      const locationParsed = JSON.parse(storagedLocation);
+
+      setLocation(locationParsed);
     };
 
     loadFromStorage();
