@@ -8,6 +8,7 @@ import { classNames } from "@utils/classNames";
 import { FavoritesPopover } from "./FavoritesPopover";
 import { useChatsContext } from "@context/chat";
 import { Avatar } from "./Avatar";
+import { NotificationsPopover } from "./NotificationsPopover";
 
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
@@ -21,6 +22,7 @@ export const MenuOptions = () => {
     <Menu as="div" className="relative ml-3 ">
       <Menu.Button className="flex items-center relative">
         <Avatar avatar={user?.avatar as string} />
+
         <span
           className={classNames(
             numberOfUnReadChats > 0 ? "block animate-bounce" : "hidden",
@@ -61,20 +63,9 @@ export const MenuOptions = () => {
               </button>
             )}
           </Menu.Item>
+
           <Menu.Item>
-            {({ active }) => (
-              <button
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700 text-left w-full"
-                )}
-              >
-                <span className="relative">
-                  Notifications
-                  <span className="absolute -right-3 -top-1 bg-primary rounded-full w-3 h-3 text-sm text-white flex items-center justify-center"></span>
-                </span>
-              </button>
-            )}
+            <NotificationsPopover />
           </Menu.Item>
 
           <Menu.Item>

@@ -33,7 +33,7 @@ export const FavoritesPopover = ({
         )}
       >
         <span className="text-sm text-gray-700 relative">
-          Favorites
+          My Favorites
           {numberOfFavorites > 0 ? (
             <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-xs text-white flex items-center justify-center">
               {numberOfFavorites}

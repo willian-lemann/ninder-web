@@ -28,8 +28,6 @@ export const Header = ({ onSearchFilter }: HeaderProps) => {
                 <SearchUsers onSearchFilter={onSearchFilter} />
 
                 <div className="absolute flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                  <NotificationsPopover />
-
                   <MenuOptions />
                 </div>
               </div>

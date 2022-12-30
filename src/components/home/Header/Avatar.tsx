@@ -1,4 +1,4 @@
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon as UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
 interface AvatarProps {
@@ -7,7 +7,7 @@ interface AvatarProps {
 
 export const Avatar = ({ avatar }: AvatarProps) => {
   if (!avatar) {
-    return <UserCircleIcon className="h-8 w-8 text-zinc-600" />;
+    return <UserIcon className="h-10 w-10 text-title-opacity" />;
   }
 
   return (

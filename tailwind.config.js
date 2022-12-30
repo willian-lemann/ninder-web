@@ -18,11 +18,16 @@ module.exports = {
       },
       colors: {
         primary: "#6A3093",
+        secondary: "#D1D1E9",
+        "light-primary": "#A044FF",
         "title-opacity": "#B4B4B4",
+        black: "#333333",
+        "red-google": "#D93025",
+        "button-opacity": "#E2E2E2",
       },
       fonts: {
-        sans: ["Graphik", "sans-serif"],
-        serif: ["Merriweather", "serif"],
+        primary: ["Roboto"],
+        secondary: ["Inter"],
       },
 
       animation: {

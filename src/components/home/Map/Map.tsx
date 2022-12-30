@@ -36,12 +36,12 @@ const MapEventHandlers = ({ onUpdateLocation }: MapEventHandlersProps) => {
 
 const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
   const currentLocation = useGeoLocation();
-
   const [handlerLocation, setHandlerLocation] = useState<Location | null>(
     currentLocation
   );
-
   const { users, isLoading, mutate } = useUsers(searchFilter, currentLocation);
+
+  const showSearchAreaButton = !!handlerLocation;
 
   const handleSearchNearArea = () => {
     mutate();
@@ -50,8 +50,12 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
 
   if (!currentLocation || isLoading) {
     return (
-      <div className="w-[53%] h-[100%] flex items-center justify-center">
+      <div className="w-[53%] h-[100%] flex flex-col gap-4 items-center justify-center">
         <Loading size={8} />
+
+        <span className="text-title-opacity">
+          Setting near users on the map...
+        </span>
       </div>
     );
   }
@@ -75,10 +79,10 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {handlerLocation ? (
+        {showSearchAreaButton ? (
           <button
             onClick={handleSearchNearArea}
-            className="absolute z-[9999] animate-fadeIn text-base text-zinc-600 font-semibold bg-white shadow-md rounded-full top-4 left-1/2 -translate-x-1/2 px-4 py-1 w-52"
+            className="absolute z-[9999] bg-white animate-fadeIn font-sans text-base text-black font-semibold  shadow-md rounded-full top-4 left-1/2 -translate-x-1/2 px-4 py-1 w-52"
           >
             Search in this area
           </button>

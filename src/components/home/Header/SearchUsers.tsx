@@ -31,18 +31,14 @@ export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
     onSearchFilter("");
   };
 
-  // useEffect(() => {
-  //   handleSearch(filter);
-  // }, [filter, handleSearch]);
-
   return (
     <div className="hidden sm:block sm:w-1/2 md:w-1/4">
       <div className="relative flex items-center">
         <input
           type="text"
           id="default-search"
-          className="block p-3 pl-4 w-full shadow-sm hover:shadow-md transition-shadow duration-300 outline-none text-sm text-title-opacity  rounded-3xl border border-gray-300 "
-          placeholder="Type a name and then ENTER..."
+          className="block p-3 pl-4 w-full shadow-sm hover:shadow-md transition-shadow duration-300 outline-none text-sm text-title-opacity rounded-full border border-gray-300 "
+          placeholder="Search users..."
           value={searchValue}
           onChange={handleSearchFilter}
         />
@@ -57,7 +53,7 @@ export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
               onClick={handleReset}
             />
           ) : (
-            <SearchIcon className="text-title-opacity  h-6 w-6 relative animate-fadeIn" />
+            <SearchIcon className="text-title-opacity h-6 w-6 relative animate-fadeIn" />
           )}
         </button>
       </div>
