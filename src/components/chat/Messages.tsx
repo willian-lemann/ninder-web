@@ -18,6 +18,7 @@ import { useMessagesContext } from "@context/messages";
 import { useBottomScroll } from "@hooks/useBottomScroll";
 import { ChatDTO } from "@data/dtos";
 import { isEmptyString } from "@functions/asserts/isEmpty";
+import { FindUsersModal } from "./FindUsersModal";
 
 interface MessagesProps {
   chat: ChatDTO | null;
@@ -108,6 +109,11 @@ export const Messages = ({ chat }: MessagesProps) => {
           </div>
 
           <h1 className="text-zinc-400 text-lg">Start chat with someone</h1>
+          <p className="text-zinc-400 text-sm">
+            Send private photos and messages to a friend or group
+          </p>
+
+          <FindUsersModal />
         </div>
       </div>
     );
