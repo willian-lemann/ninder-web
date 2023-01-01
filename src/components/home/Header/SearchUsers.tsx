@@ -37,7 +37,7 @@ export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
         <input
           type="text"
           id="default-search"
-          className="block p-3 pl-4 w-full shadow-sm hover:shadow-md transition-shadow duration-300 outline-none text-sm text-title-opacity rounded-full border border-gray-300 "
+          className="block p-3 pl-4 w-full shadow-sm hover:shadow-md transition-shadow duration-300 outline-none text-base text-title-opacity rounded-full border border-gray-300 "
           placeholder="Search users..."
           value={searchValue}
           onChange={handleSearchFilter}
