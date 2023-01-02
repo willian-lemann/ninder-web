@@ -28,6 +28,8 @@ import { useAuthContext } from "@context/auth";
 import { ChatDTO, UserDTO } from "@data/dtos";
 import { StartChatDto } from "@dtos/chat/start-chat-dto";
 import { addErrorNotification } from "@components/shared/alert";
+import { getSortedChatsByRecent } from "@utils/getSortedChatsByRecent";
+import { useNotification } from "@hooks/useNotification";
 
 export interface InitialState {
   chats: ChatDTO[];
@@ -46,7 +48,10 @@ function getUserChatWith(currentUser: CurrentUser, users: UserDTO[]) {
   return userChatWith as UserDTO;
 }
 
+let notification: Notification;
+
 export const useUserChats = (): InitialState => {
+  const { notify } = useNotification();
   const { user: currentUser } = useAuthContext();
   const unsubscribeRef = useRef<Unsubscribe>();
   const [chats, setChats] = useState<ChatDTO[]>([]);
@@ -112,6 +117,7 @@ export const useUserChats = (): InitialState => {
   };
 
   useEffect(() => {
+    console.log(currentUser);
     if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
@@ -139,14 +145,23 @@ export const useUserChats = (): InitialState => {
         return newChat;
       });
 
-      setChats(data);
+      const orderedByRecent = getSortedChatsByRecent(data);
+
+      setChats(orderedByRecent);
+
+      notification = notify({
+        title: `New message from ${data[0].user.name}`,
+        options: { body: data[0].lastMessage.message },
+      });
     });
 
     unsubscribeRef.current = subscriber;
 
     return () => {
       unsubscribeRef.current?.();
+      notification.close();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   useEffect(() => {

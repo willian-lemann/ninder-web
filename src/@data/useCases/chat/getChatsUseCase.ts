@@ -1,6 +1,7 @@
 import { ChatDTO } from "@data/dtos";
 import { Chat } from "@data/entities";
 import { getChatsGateway } from "@data/gateways/chat/getChatsGateway";
+import { getSortedChatsByRecent } from "@utils/getSortedChatsByRecent";
 
 interface Params {
   id: string;
@@ -30,14 +31,7 @@ export async function getChatsUseCase(currentUser: Params) {
     };
   }) as ChatDTO[];
 
-  const mostRecentChatsSorted = chats.sort((a, b) => {
-    if (!a.lastMessage?.sentAt) return -1;
-
-    if (a.lastMessage.sentAt.seconds < Number(b.lastMessage?.sentAt.seconds))
-      return 1;
-
-    return -1;
-  });
+  const mostRecentChatsSorted = getSortedChatsByRecent(chats);
 
   return mostRecentChatsSorted;
 }

@@ -38,6 +38,7 @@ import { addErrorNotification } from "@components/shared/alert";
 
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@config/firebase";
+import { saveToStorageUseCase } from "@data/useCases/auth/saveToStorageUseCase";
 
 export interface InitialState {
   user: User | null;
@@ -56,10 +57,7 @@ export function useAuth(): InitialState {
   const location = useGeoLocation();
 
   async function signIn({ email, password }: SignInCredencials) {
-    const response = await signInUseCase({
-      email,
-      password,
-    });
+    const response = await signInUseCase(email, password);
 
     if (!response) {
       return addErrorNotification(
@@ -67,14 +65,11 @@ export function useAuth(): InitialState {
       );
     }
 
-    const { token, user } = response;
+    const { user, token } = response;
 
     setUser({ ...user, location });
 
-    setCookie(undefined, STORAGE_KEY, token, {
-      maxAge: 60 * 60 * 24 * 30, // 30 days,
-      path: "/",
-    });
+    saveToStorageUseCase(token);
 
     if (user.hasConfirmedRegulation) {
       Router.push("/");
@@ -91,10 +86,7 @@ export function useAuth(): InitialState {
 
     setUser(user);
 
-    setCookie(undefined, STORAGE_KEY, token, {
-      maxAge: 60 * 60 * 24 * 30, // 30 days,
-      path: "/",
-    });
+    saveToStorageUseCase(token);
 
     Router.push("/regulations");
   }

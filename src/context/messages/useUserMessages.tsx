@@ -9,11 +9,7 @@ import {
 } from "firebase/firestore";
 import { firestore } from "@config/firebase";
 
-import {
-  getMessagesUseCase,
-  sendMessageUseCase,
-  updateChatUseCase,
-} from "@data/useCases/chat";
+import { getMessagesUseCase, sendMessageUseCase } from "@data/useCases/message";
 import { Message } from "@data/entities/message";
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
 import { isEmptyString } from "@functions/asserts/isEmpty";

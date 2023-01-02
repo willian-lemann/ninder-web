@@ -8,6 +8,7 @@ import { RegisterForm } from "@dtos/login/RegisterForm";
 import { createUserUseCase } from "@data/useCases/user/createUserUseCase";
 import { User } from "@data/entities/user";
 import { Provider } from "@constants/login/provider";
+import { setCookie } from "nookies";
 
 export async function signUpUseCase(signUpData: RegisterForm) {
   const { email, password, confirmPassword, location, ...data } = signUpData;
@@ -32,8 +33,6 @@ export async function signUpUseCase(signUpData: RegisterForm) {
     hasConfirmedRegulation: false,
     provider: Provider.Internal,
   };
-
-  console.log(user.uid);
 
   const registeredUser = await createUserUseCase(user.uid, payload);
 

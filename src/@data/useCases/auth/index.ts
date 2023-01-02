@@ -1,3 +1,3 @@
-export { logoutUseCase } from "./logoutService";
-export { signInUseCase } from "./signInService";
-export { signUpUseCase } from "./signUpService";
+export { logoutUseCase } from "./logoutUseCase";
+export { signInUseCase } from "./signInUseCase";
+export { signUpUseCase } from "./signUpUseCase";

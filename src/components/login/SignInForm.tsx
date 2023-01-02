@@ -10,7 +10,7 @@ import Image from "next/image";
 import { useAuthContext } from "@context/auth";
 import { errors } from "@utils/errorHandler";
 import { FirebaseError } from "firebase/app";
-import { mutate, preload } from "swr";
+import { preload } from "swr";
 import { api } from "@config/axios";
 
 interface SignInFormProps {
@@ -43,8 +43,6 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
     event.preventDefault();
     setLoading(true);
 
-    console.log("render");
-
     const { email, password } = signInData;
 
     try {
@@ -66,21 +64,19 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
   return (
     <div className="m-auto max-w-md">
       <header className="flex items-center justify-between mt-16">
-        <section>
-          <h1 className="text-4xl">Ninder Logo</h1>
-        </section>
+        <div className="relative h-8 w-28">
+          <Image src="/logo.svg" alt="logo" fill />
+        </div>
 
-        <section>
-          <span>
-            Don't have an account?
-            <span
-              className=" cursor-pointer text-primary pl-1"
-              onClick={() => onLoginType("signup")}
-            >
-              Sign Up
-            </span>
+        <div>
+          <span>Don't have an account?</span>
+          <span
+            className=" cursor-pointer text-primary pl-1"
+            onClick={() => onLoginType("signup")}
+          >
+            Sign Up
           </span>
-        </section>
+        </div>
       </header>
 
       <form className="space-y-6 mt-16" onSubmit={handleSignIn}>

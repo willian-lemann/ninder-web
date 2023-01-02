@@ -1,13 +1,9 @@
 import { firestore } from "@config/firebase";
 import { Message } from "@data/entities/message";
-
-import { collection, query, getDocs, where } from "firebase/firestore";
+import { getMessagesGateway } from "@data/gateways/message/getMessagesGateway";
 
 export async function getMessagesUseCase(chatId: string) {
-  const messagesRef = collection(firestore, "messages");
-  const docsSnap = query(messagesRef, where("chatId", "==", chatId));
-
-  const docChats = await getDocs(docsSnap);
+  const docChats = await getMessagesGateway(chatId);
 
   const messages = docChats.docs.map((doc) => ({
     ...doc.data(),

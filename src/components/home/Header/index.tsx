@@ -5,7 +5,7 @@ import { MenuOptions } from "./MenuOptions";
 import { MobileMenuOptions } from "./MobileMenuOptions";
 import { MobileBarMenu } from "./MobileBarMenu";
 import { SearchUsers } from "./SearchUsers";
-import { NotificationsPopover } from "./NotificationsPopover";
+import Image from "next/image";
 
 interface HeaderProps {
   onSearchFilter: Dispatch<SetStateAction<string>>;
@@ -21,8 +21,8 @@ export const Header = ({ onSearchFilter }: HeaderProps) => {
               <MobileBarMenu open={open} />
 
               <div className="flex w-full items-center justify-center sm:items-center sm:justify-between">
-                <div className="flex flex-shrink-0 items-center">
-                  <span className="text-2xl text-primary">Ninder</span>
+                <div className="relative h-8 w-28">
+                  <Image src="/logo.svg" alt="logo" fill />
                 </div>
 
                 <SearchUsers onSearchFilter={onSearchFilter} />

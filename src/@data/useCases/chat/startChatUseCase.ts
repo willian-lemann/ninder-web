@@ -46,8 +46,6 @@ export async function startChatUseCase({
     return sendMessageUseCase(message);
   }
 
-  console.log("ta vindo aqui");
-
   try {
     const newChat: CreateChatDto = {
       users: [
