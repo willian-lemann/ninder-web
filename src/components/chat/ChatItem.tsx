@@ -28,6 +28,7 @@ export const ChatItem = ({ chat, isSelected, onSelectChat }: ChatItemProps) => {
 
   const isCurrentUserSender = chat.sentBy === currentUser?.id;
 
+  console.log(chat.isUnRead);
   return (
     <li
       onClick={() => onSelectChat(chat.id as string)}

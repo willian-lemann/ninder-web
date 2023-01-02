@@ -117,7 +117,6 @@ export const useUserChats = (): InitialState => {
   };
 
   useEffect(() => {
-    console.log(currentUser);
     if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
@@ -149,17 +148,15 @@ export const useUserChats = (): InitialState => {
 
       setChats(orderedByRecent);
 
-      notification = notify({
-        title: `New message from ${data[0].user.name}`,
-        options: { body: data[0].lastMessage.message },
-      });
+      const lastSending = data[0];
+
+      const isReceiver = currentUser.id !== lastSending.lastMessage.sentBy;
     });
 
     unsubscribeRef.current = subscriber;
 
     return () => {
       unsubscribeRef.current?.();
-      notification.close();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);

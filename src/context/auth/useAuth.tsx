@@ -36,8 +36,9 @@ import {
 import { Provider } from "@constants/login/provider";
 import { addErrorNotification } from "@components/shared/alert";
 
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, beforeAuthStateChanged } from "firebase/auth";
 import { auth } from "@config/firebase";
+
 import { saveToStorageUseCase } from "@data/useCases/auth/saveToStorageUseCase";
 
 export interface InitialState {
@@ -54,6 +55,7 @@ let authChannel: BroadcastChannel;
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
   const [user, setUser] = useState<User | null>(null);
+
   const location = useGeoLocation();
 
   async function signIn({ email, password }: SignInCredencials) {
@@ -118,16 +120,17 @@ export function useAuth(): InitialState {
       }
     };
 
-    onAuthStateChanged(auth, (stateUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (stateUser) => {
       if (!stateUser) {
         destroyCookie(undefined, STORAGE_KEY);
       } else {
-        console.log("caiu aqui", stateUser.uid);
         getUserUseCase(stateUser?.uid as string).then((recoveredUser) =>
           setUser(recoveredUser)
         );
       }
     });
+
+    return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
