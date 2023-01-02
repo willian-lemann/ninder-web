@@ -8,25 +8,37 @@ import {
 } from "react";
 import Router from "next/router";
 
-import { collection, onSnapshot, Unsubscribe } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  Unsubscribe,
+  where,
+} from "firebase/firestore";
 import { firestore } from "@config/firebase";
 
-import { getChatsUseCase, startChatUseCase } from "@data/useCases/chat";
-
-import { isEmptyString } from "@functions/asserts/isEmpty";
+import {
+  getChatsUseCase,
+  startChatUseCase,
+  updateChatUseCase,
+} from "@data/useCases/chat";
 
 import { Chat, User as CurrentUser } from "@data/entities";
 import { useAuthContext } from "@context/auth";
 import { ChatDTO, UserDTO } from "@data/dtos";
 import { StartChatDto } from "@dtos/chat/start-chat-dto";
+import { addErrorNotification } from "@components/shared/alert";
 
 export interface InitialState {
   chats: ChatDTO[];
+  currentChat: ChatDTO | null;
   numberOfUnReadChats: number;
   isEmpty: boolean;
   isLoading: boolean;
   mutate: Dispatch<SetStateAction<ChatDTO[]>>;
-  startChat: (params: StartChatDto) => Promise<void>;
+  setCurrentChat: Dispatch<SetStateAction<ChatDTO | null>>;
+  startNewChat: (params: StartChatDto) => Promise<void>;
+  focusInChat: (id: string) => Promise<void>;
 }
 
 function getUserChatWith(currentUser: CurrentUser, users: UserDTO[]) {
@@ -38,14 +50,49 @@ export const useUserChats = (): InitialState => {
   const { user: currentUser } = useAuthContext();
   const unsubscribeRef = useRef<Unsubscribe>();
   const [chats, setChats] = useState<ChatDTO[]>([]);
+  const [currentChat, setCurrentChat] = useState<ChatDTO | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const numberOfUnReadChats = useMemo(
-    () => chats.filter((chat) => chat.lastMessage.unRead).length,
+    () => chats.filter((chat) => chat.lastMessage?.unRead).length,
     [chats]
   );
 
-  const startChat = async ({
+  const focusInChat = async (id: string) => {
+    const chat = chats.find((chatItem) => chatItem.id === id) as ChatDTO;
+
+    setCurrentChat(chat);
+
+    const previousChats = structuredClone(chats);
+
+    const newChats = chats.map((chatItem) => {
+      if (chatItem.id === chat.id) {
+        return {
+          ...chatItem,
+          lastMessage: {
+            ...chatItem.lastMessage,
+            unRead: false,
+          },
+        };
+      }
+
+      return chatItem;
+    });
+
+    try {
+      await updateChatUseCase({
+        id: chat.id,
+        lastMessage: { ...chat.lastMessage, unRead: false },
+      });
+
+      setChats(newChats);
+    } catch (error) {
+      setChats(previousChats);
+      addErrorNotification(JSON.stringify(error));
+    }
+  };
+
+  const startNewChat = async ({
     userId,
     messageText,
     talkingUser,
@@ -68,15 +115,23 @@ export const useUserChats = (): InitialState => {
     if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
+    const querySnapshot = query(
+      chatUsersRef,
+      where("users", "array-contains", {
+        id: currentUser.id,
+        name: currentUser.name,
+        avatar: currentUser.avatar,
+      })
+    );
 
-    const subscriber = onSnapshot(chatUsersRef, (docSnap) => {
+    const subscriber = onSnapshot(querySnapshot, (docSnap) => {
       const data = docSnap.docs.map((doc) => {
         const newChatData = { ...doc.data(), id: doc.id } as Chat;
 
         const userChatWith = getUserChatWith(currentUser, newChatData.users);
 
         const newChat = {
-          ...newChatData,
+          id: newChatData.id,
           user: userChatWith,
           lastMessage: { ...newChatData.lastMessage, unRead: true },
         } as ChatDTO;
@@ -108,7 +163,6 @@ export const useUserChats = (): InitialState => {
     if (currentUser) {
       loadChats().finally(() => setIsLoading(false));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   return {
@@ -116,7 +170,10 @@ export const useUserChats = (): InitialState => {
     isLoading,
     numberOfUnReadChats,
     chats,
-    startChat,
+    currentChat,
+    startNewChat,
+    setCurrentChat,
     mutate: setChats,
+    focusInChat,
   };
 };

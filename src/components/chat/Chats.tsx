@@ -4,24 +4,18 @@ import { ChatDTO } from "@data/dtos/chat";
 import { Timestamp } from "firebase/firestore";
 import { ChatItem } from "./ChatItem";
 import { useChatsContext } from "@context/chat";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-interface ChatsProps {
-  onStartChatting: (chat: ChatDTO) => void;
-}
-
-export const Chats = ({ onStartChatting }: ChatsProps) => {
-  const { chats, isLoading } = useChatsContext();
-  const [selectedChat, setSelectedChat] = useState("");
+export const Chats = () => {
+  const { chats, isLoading, focusInChat, currentChat } = useChatsContext();
 
   const isSelected = useMemo(() => {
     const firstChat = chats.at(0)?.id;
-    return selectedChat || firstChat;
-  }, [chats, selectedChat]);
+    return currentChat?.id || firstChat;
+  }, [chats, currentChat]);
 
-  const handleSelectChat = (chat: ChatDTO) => {
-    setSelectedChat(chat.id as string);
-    onStartChatting(chat);
+  const handleSelectChat = async (chat: ChatDTO) => {
+    await focusInChat(chat.id as string);
   };
 
   if (isLoading) {

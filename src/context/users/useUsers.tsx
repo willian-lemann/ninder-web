@@ -13,10 +13,16 @@ import useSWR from "swr";
 export const useUsers = (queryFilter = "", location?: Location | null) => {
   const { user: currentUser } = useAuthContext();
 
-  const usersData = useSWR("/users", () =>
-    getUsersUseCase(currentUser?.id as string, location).then(
-      (response) => response.data.result
-    )
+  const usersData = useSWR(
+    "/users",
+    () =>
+      getUsersUseCase(currentUser?.id as string, location).then(
+        (response) => response.data.result
+      ),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
   );
 
   const isLoading = !usersData.data;

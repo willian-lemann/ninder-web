@@ -19,13 +19,11 @@ import { useBottomScroll } from "@hooks/useBottomScroll";
 import { ChatDTO } from "@data/dtos";
 import { isEmptyString } from "@functions/asserts/isEmpty";
 import { FindUsersModal } from "./FindUsersModal";
+import { useChatsContext } from "@context/chat";
 
-interface MessagesProps {
-  chat: ChatDTO | null;
-}
-
-export const Messages = ({ chat }: MessagesProps) => {
+export const Messages = () => {
   const { user: currentUser } = useAuthContext();
+  const { currentChat } = useChatsContext();
   const { messages, isLoading, isEmpty, loadMessages, sendMessage } =
     useMessagesContext();
   const emojiRef = useRef<Handles>(null);
@@ -59,12 +57,12 @@ export const Messages = ({ chat }: MessagesProps) => {
 
   const handleSendMessage = async () => {
     const message: SendMessageDto = {
-      chatId: chat?.id as string,
+      chatId: currentChat?.id as string,
       messageText,
       user: {
-        id: chat?.user.id as string,
-        name: chat?.user.name as string,
-        avatar: chat?.user.avatar as string,
+        id: currentChat?.user.id as string,
+        name: currentChat?.user.name as string,
+        avatar: currentChat?.user.avatar as string,
       },
       sentBy: currentUser?.id as string,
     };
@@ -83,11 +81,11 @@ export const Messages = ({ chat }: MessagesProps) => {
   };
 
   useEffect(() => {
-    if (chat?.id) {
-      loadMessages(chat?.id as string);
+    if (currentChat?.id) {
+      loadMessages(currentChat?.id as string);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chat?.id]);
+  }, [currentChat?.id]);
 
   if (isLoading) {
     return (
@@ -100,7 +98,7 @@ export const Messages = ({ chat }: MessagesProps) => {
     );
   }
 
-  if (!chat?.id) {
+  if (!currentChat?.id) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -122,14 +120,14 @@ export const Messages = ({ chat }: MessagesProps) => {
   return (
     <>
       <div className="h-12 flex items-center pl-4">
-        <strong>{chat?.user.name}</strong>
+        <strong>{currentChat?.user.name}</strong>
       </div>
 
       <div className="h-full w-full flex flex-col divide-y relative">
         {isEmpty ? (
           <div className="h-full flex items-center justify-center overflow-auto flex-col px-10">
             <h1 className="text-zinc-400">
-              No messages yet with {chat.user.name}
+              No messages yet with {currentChat.user.name}
             </h1>
           </div>
         ) : (
@@ -139,8 +137,8 @@ export const Messages = ({ chat }: MessagesProps) => {
                 key={message.id}
                 message={{
                   id: message?.id as string,
-                  avatar: chat?.user?.avatar as string,
-                  name: chat?.user.name as string,
+                  avatar: currentChat?.user?.avatar as string,
+                  name: currentChat?.user.name as string,
                   sentBy: message.sentBy,
                   date: message.sentAt,
                   messageText: message.messageText,

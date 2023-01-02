@@ -15,14 +15,14 @@ export default function UserDetails() {
   const { user: currentUser } = useAuthContext();
   const { query } = useRouter();
   const { user, isLoading } = useUserDetails(query.id as string);
-  const { startChat } = useChatsContext();
+  const { startNewChat } = useChatsContext();
   const [messageText, setMessageText] = useState("");
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const handleStartConversation = async (talkingUser: UserDTO) => {
     setIsSendingMessage(true);
 
-    await startChat({
+    await startNewChat({
       userId: currentUser?.id as string,
       messageText,
       talkingUser,

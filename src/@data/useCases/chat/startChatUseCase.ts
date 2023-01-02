@@ -1,12 +1,11 @@
 import { Timestamp } from "firebase/firestore";
-import Router from "next/router";
-import { SendMessageDto } from "@dtos/chat/send-message-dto";
+
 import { UserDTO } from "@data/dtos";
 import { createMessageGateway } from "@data/gateways/message/createMessageGateway";
 import { createChatGateway } from "@data/gateways/chat/createChatGateway";
 import { CreateChatDto } from "@dtos/chat/create-chat-dto";
 
-import { getChatsUseCase } from "./";
+import { getChatsUseCase, sendMessageUseCase } from "./";
 import { Message } from "@data/entities";
 import { isEmptyString } from "@functions/asserts/isEmpty";
 
@@ -31,12 +30,12 @@ export async function startChatUseCase({
     avatar: currentUser.avatar as string,
   });
 
-  const chat = chats.find((chat) => chat.user.id === userId);
+  const chat = chats.find((chatItem) => chatItem.user.id === talkingUser.id);
 
   const sentAt = Timestamp.fromDate(new Date());
 
   if (chat) {
-    const newMessage: Message = {
+    const message: Message = {
       chatId: chat.id as string,
       messageText,
       sentAt,
@@ -44,10 +43,10 @@ export async function startChatUseCase({
       user: talkingUser,
     };
 
-    return await createMessageGateway({
-      data: newMessage,
-    });
+    return sendMessageUseCase(message);
   }
+
+  console.log("ta vindo aqui");
 
   try {
     const newChat: CreateChatDto = {

@@ -41,16 +41,6 @@ export const useUserMessages = (): InitialState => {
 
     await sendMessageUseCase(params);
 
-    await updateChatUseCase({
-      id: params.chatId,
-      lastMessage: {
-        message: params.messageText,
-        sentBy: params.sentBy,
-        unRead: false,
-        sentAt: Timestamp.fromDate(new Date()),
-      },
-    });
-
     setIsSendingMessage(false);
   };
 
