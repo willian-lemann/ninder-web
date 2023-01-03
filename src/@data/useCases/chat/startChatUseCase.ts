@@ -5,7 +5,9 @@ import { createMessageGateway } from "@data/gateways/message/createMessageGatewa
 import { createChatGateway } from "@data/gateways/chat/createChatGateway";
 import { CreateChatDto } from "@dtos/chat/create-chat-dto";
 
-import { getChatsUseCase, sendMessageUseCase } from "./";
+import { getChatsUseCase } from "./";
+import { sendMessageUseCase } from "@data/useCases/message";
+
 import { Message } from "@data/entities";
 import { isEmptyString } from "@functions/asserts/isEmpty";
 
