@@ -65,5 +65,6 @@ export const useUsers = (queryFilter = "", location?: Location | null) => {
     isLoading,
     users,
     isEmpty,
+    mutate: setData,
   };
 };

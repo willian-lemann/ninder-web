@@ -44,7 +44,6 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
   const showSearchAreaButton = !!handlerLocation;
 
   const handleSearchNearArea = () => {
-    mutate();
     setHandlerLocation(null);
   };
 
