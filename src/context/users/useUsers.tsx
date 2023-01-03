@@ -17,7 +17,7 @@ export const useUsers = (queryFilter = "", location?: Location | null) => {
     "/users",
     () =>
       getUsersUseCase(currentUser?.id as string, location).then(
-        (response) => response.data.result
+        (response) => response?.data.result
       ),
     {
       revalidateOnFocus: false,
