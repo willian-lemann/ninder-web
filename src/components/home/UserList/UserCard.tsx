@@ -24,7 +24,11 @@ interface UserCardProps {
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser } = useAuthContext();
-  const { favorite } = useFavoriteUsers();
+  const { favorite, favorites, checkUserIsFavorited } = useFavoriteUsers();
+
+  const handlefavorite = async (event: any, userId: string) => {
+    await favorite(event, user.id as string);
+  };
 
   const handleSeeUserDetails = (id: string) => {
     Router.push(`/user/${id}`);
@@ -36,7 +40,8 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
     targetLocation: user.location,
   });
 
-  const isFavorite = currentUser?.favorites?.includes(user.id as string);
+  console.log(favorites);
+  const isFavorite = checkUserIsFavorited(user.id);
 
   return (
     <li
@@ -63,12 +68,12 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
 
         {isFavorite ? (
           <FilledHeartIcon
-            onClick={(event) => favorite(event, user.id as string)}
+            onClick={(event) => handlefavorite(event, user.id as string)}
             className="h-8 w-8 z-20 cursor-pointer text-primary animate-fadeIn"
           />
         ) : (
           <OutlinedHeartIcon
-            onClick={(event) => favorite(event, user.id as string)}
+            onClick={(event) => handlefavorite(event, user.id as string)}
             className="h-8 w-8 z-20 cursor-pointer text-zinc-600 animate-fadeIn"
           />
         )}

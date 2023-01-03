@@ -10,6 +10,7 @@ import { Provider } from "../context";
 import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  console.log("render");
   return (
     <SessionProvider session={session}>
       <Provider>

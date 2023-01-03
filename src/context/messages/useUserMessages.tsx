@@ -53,6 +53,7 @@ export const useUserMessages = (): InitialState => {
     const messagesRef = collection(firestore, "messages");
 
     const subscribe = onSnapshot(messagesRef, (docSnap) => {
+      console.log("render snapshot messages");
       const data = docSnap.docs.map((doc) => {
         const newMessage = {
           ...doc.data(),

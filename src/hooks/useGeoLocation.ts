@@ -29,19 +29,21 @@ export const useGeoLocation = () => {
       addErrorNotification("Geolocation not supported in this browser.");
     }
 
-    const loadFromStorage = () => {
-      const { [storageKey]: storagedLocation } = parseCookies(undefined);
+    // const loadFromStorage = () => {
+    //   const { [storageKey]: storagedLocation } = parseCookies(undefined);
 
-      if (!storagedLocation) {
-        return navigator.geolocation.getCurrentPosition(onSuccess, onError);
-      }
+    //   if (!storagedLocation) {
+    //     return navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    //   }
 
-      const locationParsed = JSON.parse(storagedLocation);
+    //   const locationParsed = JSON.parse(storagedLocation);
 
-      setLocation(locationParsed);
-    };
+    //   setLocation(locationParsed);
+    // };
 
-    loadFromStorage();
+    // loadFromStorage();
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onError);
   }, [onError]);
 
   return location;

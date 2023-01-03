@@ -1,25 +1,33 @@
+import { MouseEvent } from "react";
 import { useAuthContext } from "@context/auth";
 import { User } from "@data/entities/user";
 import { updateUserUseCase } from "@data/useCases/user";
-import { MouseEvent } from "react";
-import { useUsers } from "./useUsers";
+
+import useSWR from "swr";
+import { getFavoritesUseCase } from "@data/useCases/favorite/getFavoritesUseCase";
+import { createFavoriteUseCase } from "@data/useCases/favorite/createFavoriteUseCase";
+import { Favorite } from "@data/entities/favorite";
+import { uuid } from "@utils/uniqueId";
 
 export function useFavoriteUsers() {
-  const { user: currentUser, setUser } = useAuthContext();
-  const { users: favorites } = useUsers();
+  const { user: currentUser } = useAuthContext();
 
-  const favoriteUsers = currentUser?.favorites?.map((favoriteUser) => {
-    const mappedFavoriteUser = favorites.find(
-      (favorite) => favorite.id === favoriteUser
-    ) as User;
+  const { mutate, data } = useSWR(
+    "/favorites",
+    () =>
+      getFavoritesUseCase(currentUser?.id as string).then(
+        (response) => response
+      ),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
-    return mappedFavoriteUser;
-  });
+  const favorites = data as Favorite[];
 
-  const isEmpty = favoriteUsers?.length === 0;
+  const isEmpty = data?.length === 0;
+  const isLoading = !data;
 
   function checkUserIsFavorited(userId: string) {
-    return currentUser?.favorites?.includes(userId as string);
+    return favorites?.find((favorite) => favorite.userId === userId);
   }
 
   async function favorite(
@@ -28,51 +36,28 @@ export function useFavoriteUsers() {
   ) {
     event.stopPropagation();
 
-    const previousFavorites = currentUser?.favorites ?? [];
+    const previousFavorites = structuredClone(favorites);
 
-    const removedFavorites = previousFavorites.filter(
-      (favoritedUser) => favoritedUser !== userId
-    );
-
-    if (currentUser?.favorites?.includes(userId)) {
-      setUser((state) => ({
-        ...(state as User),
-        favorites: removedFavorites,
-      }));
-
-      try {
-        await updateUserUseCase(currentUser?.id as string, {
-          favorites: removedFavorites,
-        });
-      } catch (error) {
-        setUser((state) => ({
-          ...(state as User),
-          favorites: previousFavorites,
-        }));
-      }
-
-      return;
+    if (checkUserIsFavorited(userId)) {
+      mutate(
+        favorites.filter((favorite) => favorite.userId !== userId),
+        false
+      );
+    } else {
+      mutate([...favorites, { id: uuid(), userId }], false);
     }
 
-    const newFavorites = [...previousFavorites, userId];
-
-    setUser((state) => ({ ...(state as User), favorites: newFavorites }));
-
     try {
-      await updateUserUseCase(currentUser?.id as string, {
-        favorites: newFavorites,
-      });
+      await createFavoriteUseCase(currentUser?.id as string, userId);
     } catch (error) {
-      setUser((state) => ({
-        ...(state as User),
-        favorites: previousFavorites,
-      }));
+      mutate(previousFavorites, false);
     }
   }
 
   return {
+    isLoading,
     isEmpty,
-    favoriteUsers,
+    favorites,
     favorite,
     checkUserIsFavorited,
   };

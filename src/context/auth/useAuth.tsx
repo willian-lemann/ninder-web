@@ -4,6 +4,7 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
+  useRef,
 } from "react";
 import Router from "next/router";
 import {
@@ -36,7 +37,11 @@ import {
 import { Provider } from "@constants/login/provider";
 import { addErrorNotification } from "@components/shared/alert";
 
-import { onAuthStateChanged, beforeAuthStateChanged } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  beforeAuthStateChanged,
+  Unsubscribe,
+} from "firebase/auth";
 import { auth } from "@config/firebase";
 
 import { saveToStorageUseCase } from "@data/useCases/auth/saveToStorageUseCase";
@@ -53,6 +58,8 @@ export interface InitialState {
 let authChannel: BroadcastChannel;
 
 export function useAuth(): InitialState {
+  const unsubscribeRef = useRef<Unsubscribe>();
+
   const { session } = useGoogleContext();
   const [user, setUser] = useState<User | null>(null);
 
@@ -112,6 +119,7 @@ export function useAuth(): InitialState {
   }, [session]);
 
   useEffect(() => {
+    console.log("render auth");
     authChannel = new BroadcastChannel("auth");
 
     authChannel.onmessage = (message) => {
@@ -130,11 +138,17 @@ export function useAuth(): InitialState {
       }
     });
 
-    return () => unsubscribe();
+    unsubscribeRef.current = unsubscribe;
+
+    return () => {
+      unsubscribeRef.current?.();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    console.log("chegou aqui");
     async function loadGoogleSession() {
       if (session) {
         const sessionUser = {

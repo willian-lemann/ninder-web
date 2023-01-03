@@ -39,11 +39,14 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
   const [handlerLocation, setHandlerLocation] = useState<Location | null>(
     currentLocation
   );
+
+  console.log(currentLocation);
   const { users, isLoading, mutate } = useUsers(searchFilter, currentLocation);
 
   const showSearchAreaButton = !!handlerLocation;
 
   const handleSearchNearArea = () => {
+    mutate();
     setHandlerLocation(null);
   };
 

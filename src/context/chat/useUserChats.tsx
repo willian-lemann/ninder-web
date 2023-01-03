@@ -48,10 +48,7 @@ function getUserChatWith(currentUser: CurrentUser, users: UserDTO[]) {
   return userChatWith as UserDTO;
 }
 
-let notification: Notification;
-
 export const useUserChats = (): InitialState => {
-  const { notify } = useNotification();
   const { user: currentUser } = useAuthContext();
   const unsubscribeRef = useRef<Unsubscribe>();
   const [chats, setChats] = useState<ChatDTO[]>([]);
@@ -117,6 +114,8 @@ export const useUserChats = (): InitialState => {
   };
 
   useEffect(() => {
+    console.log("render chats");
+
     if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
@@ -129,8 +128,10 @@ export const useUserChats = (): InitialState => {
       })
     );
 
-    const subscriber = onSnapshot(querySnapshot, (docSnap) => {
-      const data = docSnap.docs.map((doc) => {
+    onSnapshot(querySnapshot, (docSnap) => {
+      console.log("render snapshot chats");
+
+      const data = docSnap.docChanges().map(({ doc, type }) => {
         const newChatData = { ...doc.data(), id: doc.id } as Chat;
 
         const userChatWith = getUserChatWith(currentUser, newChatData.users);
@@ -147,17 +148,8 @@ export const useUserChats = (): InitialState => {
       const orderedByRecent = getSortedChatsByRecent(data);
 
       setChats(orderedByRecent);
-
-      const lastSending = data[0];
-
-      const isReceiver = currentUser.id !== lastSending.lastMessage.sentBy;
     });
 
-    unsubscribeRef.current = subscriber;
-
-    return () => {
-      unsubscribeRef.current?.();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
