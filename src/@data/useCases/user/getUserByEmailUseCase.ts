@@ -26,6 +26,5 @@ export async function getUserByEmailUseCase(email: string) {
 
   const user = users[0];
 
-  console.log(user);
   return user;
 }

@@ -40,8 +40,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
     targetLocation: user.location,
   });
 
-  console.log(favorites);
-  const isFavorite = checkUserIsFavorited(user.id);
+  const isFavorite = checkUserIsFavorited(user.id as string);
 
   return (
     <li

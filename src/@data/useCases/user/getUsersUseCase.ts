@@ -22,6 +22,8 @@ export async function getUsersUseCase(
   currentUserId: string,
   location?: Location | null
 ) {
+  if (!location) return;
+
   const bounds = geohashQueryBounds(
     [Number(location?.latitude), Number(location?.longitude)],
     RADIUS_IN_METERS

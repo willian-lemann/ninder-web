@@ -9,6 +9,5 @@ export async function getFavoritesUseCase(currentUserId: string) {
     id: doc.id,
   })) as Favorite[];
 
-  console.log(favorites);
   return favorites;
 }

@@ -114,8 +114,6 @@ export const useUserChats = (): InitialState => {
   };
 
   useEffect(() => {
-    console.log("render chats");
-
     if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
@@ -129,9 +127,7 @@ export const useUserChats = (): InitialState => {
     );
 
     onSnapshot(querySnapshot, (docSnap) => {
-      console.log("render snapshot chats");
-
-      const data = docSnap.docChanges().map(({ doc, type }) => {
+      const data = docSnap.docs.map((doc) => {
         const newChatData = { ...doc.data(), id: doc.id } as Chat;
 
         const userChatWith = getUserChatWith(currentUser, newChatData.users);

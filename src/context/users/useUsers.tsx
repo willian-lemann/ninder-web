@@ -5,9 +5,8 @@ import { useAuthContext } from "@context/auth";
 import { User } from "@data/entities/user";
 import { getUsersUseCase } from "@data/useCases/user";
 import { Location } from "@dtos/users/location";
-import { useGeoLocation } from "@hooks/useGeoLocation";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import useSWR from "swr";
 

@@ -120,6 +120,7 @@ export function useAuth(): InitialState {
 
   useEffect(() => {
     console.log("render auth");
+
     authChannel = new BroadcastChannel("auth");
 
     authChannel.onmessage = (message) => {
@@ -148,7 +149,6 @@ export function useAuth(): InitialState {
   }, []);
 
   useEffect(() => {
-    console.log("chegou aqui");
     async function loadGoogleSession() {
       if (session) {
         const sessionUser = {
