@@ -7,7 +7,7 @@ interface AvatarProps {
 
 export const Avatar = ({ avatar }: AvatarProps) => {
   if (!avatar) {
-    return <UserIcon className="h-10 w-10 text-title-opacity" />;
+    return <UserIcon className="h-12 w-12 text-title-opacity" />;
   }
 
   return (
