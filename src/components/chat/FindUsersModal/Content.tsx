@@ -23,8 +23,7 @@ export const Content = ({
   onChangeSelectedUser,
   onChangeMessageText,
 }: ContentProps) => {
-  const location = useGeoLocation();
-  const { users, isLoading } = useUsers("", location);
+  const { users, isLoading } = useUsers();
 
   if (isLoading) {
     return (
