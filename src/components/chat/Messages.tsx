@@ -16,7 +16,7 @@ import Image from "next/image";
 import { Loading } from "@components/shared/Loading";
 import { useMessagesContext } from "@context/messages";
 import { useBottomScroll } from "@hooks/useBottomScroll";
-import { ChatDTO } from "@data/dtos";
+
 import { isEmptyString } from "@functions/asserts/isEmpty";
 import { FindUsersModal } from "./FindUsersModal";
 import { useChatsContext } from "@context/chat";
@@ -24,12 +24,11 @@ import { useChatsContext } from "@context/chat";
 export const Messages = () => {
   const { user: currentUser } = useAuthContext();
   const { currentChat } = useChatsContext();
-  const { messages, isLoading, isEmpty, loadMessages, sendMessage } =
-    useMessagesContext();
+  const { messages, isLoading, isEmpty, sendMessage } = useMessagesContext();
+
   const emojiRef = useRef<Handles>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [messageText, setMessageText] = useState("");
-
   const { ElementToBeScrolled } = useBottomScroll({
     listener: messages,
   });
@@ -43,7 +42,6 @@ export const Messages = () => {
     event: globalThis.MouseEvent
   ) => {
     const startPosition = Number(inputRef.current?.selectionStart);
-    const endPosition = Number(inputRef.current?.selectionEnd);
 
     const messageText = inputRef.current?.value as string;
 
@@ -79,13 +77,6 @@ export const Messages = () => {
       await handleSendMessage();
     }
   };
-
-  useEffect(() => {
-    if (currentChat?.id) {
-      loadMessages(currentChat?.id as string);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChat?.id]);
 
   if (isLoading) {
     return (

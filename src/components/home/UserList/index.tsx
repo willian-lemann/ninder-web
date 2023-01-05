@@ -3,21 +3,14 @@ import { UserCard } from "./UserCard";
 import { Skeleton } from "./Skeleton";
 import { classNames } from "@utils/classNames";
 
-import { useUsers } from "@context/users/useUsers";
-import { Location } from "@dtos/users/location";
+import { useUsersContext } from "@context/users";
 
 interface UserListProps {
   toggleMap: boolean;
-  searchFilter: string;
-  filterLocation: Location | null;
 }
 
-export const UserList = ({
-  toggleMap,
-  searchFilter,
-  filterLocation,
-}: UserListProps) => {
-  const { users, isLoading, isEmpty } = useUsers(searchFilter, filterLocation);
+export const UserList = ({ toggleMap }: UserListProps) => {
+  const { users, isLoading, isEmpty } = useUsersContext();
 
   if (isLoading) {
     return <Skeleton />;

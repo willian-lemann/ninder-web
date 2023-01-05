@@ -7,11 +7,7 @@ import { MobileBarMenu } from "./MobileBarMenu";
 import { SearchUsers } from "./SearchUsers";
 import Image from "next/image";
 
-interface HeaderProps {
-  onSearchFilter: Dispatch<SetStateAction<string>>;
-}
-
-export const Header = ({ onSearchFilter }: HeaderProps) => {
+export const Header = () => {
   return (
     <Disclosure as="nav" className="bg-white container">
       {({ open }) => (
@@ -25,7 +21,7 @@ export const Header = ({ onSearchFilter }: HeaderProps) => {
                   <Image src="/logo.svg" alt="logo" fill />
                 </div>
 
-                <SearchUsers onSearchFilter={onSearchFilter} />
+                <SearchUsers />
 
                 <div className="absolute flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <MenuOptions />

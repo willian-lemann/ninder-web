@@ -6,9 +6,12 @@ import { ArrowLeftOnRectangleIcon as BackIcon } from "@heroicons/react/24/solid"
 
 import { Chats } from "@components/chat/Chats";
 import { Messages } from "@components/chat/Messages";
+import { classNames } from "@utils/classNames";
+import { useChatsContext } from "@context/chat";
 
 export default function ChatPage() {
   const router = useRouter();
+  const { isEmpty } = useChatsContext();
 
   const handleBack = () => {
     router.replace("/");
@@ -28,10 +31,17 @@ export default function ChatPage() {
         </div>
       </header>
 
-      <main className="grid grid-cols-[1fr,2fr] auto-rows-[calc(100vh-60px)] divide-x">
-        <section className="h-auto max-h-screen">
-          <Chats />
-        </section>
+      <main
+        className={classNames(
+          isEmpty ? "grid-cols-[1fr]" : "grid-cols-[1fr,2fr]",
+          "grid auto-rows-[calc(100vh-60px)] divide-x"
+        )}
+      >
+        {isEmpty ? null : (
+          <section className="h-auto max-h-screen">
+            <Chats />
+          </section>
+        )}
 
         <section className="h-[calc(100%-60px)]">
           <Messages />

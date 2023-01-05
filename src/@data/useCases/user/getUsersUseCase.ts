@@ -18,18 +18,14 @@ import { getUserUseCase } from "./getUserUseCase";
 const DISTANCE = 10; // KM
 const RADIUS_IN_METERS = DISTANCE * 1000;
 
-export async function getUsersUseCase(
-  currentUserId: string,
-  location?: Location | null
-) {
-  if (!location) return;
-
+export async function getUsersUseCase(currentUser: User) {
   const bounds = geohashQueryBounds(
-    [Number(location?.latitude), Number(location?.longitude)],
+    [
+      Number(currentUser.location?.latitude),
+      Number(currentUser.location?.longitude),
+    ],
     RADIUS_IN_METERS
   );
-
-  const currentUser = await getUserUseCase(currentUserId as string);
 
   const promises = bounds.map(async (bound) => {
     const usersRef = collection(firestore, "users");
@@ -69,8 +65,10 @@ export async function getUsersUseCase(
   });
 
   const filteredUsersByNotMe = users.filter(
-    (user) => user.id !== currentUserId
+    (user) => user.id !== currentUser.id
   );
+
+  console.log("render users", filteredUsersByNotMe);
 
   return {
     data: {

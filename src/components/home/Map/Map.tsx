@@ -11,12 +11,10 @@ import { useUsers } from "@context/users/useUsers";
 import { Popup } from "./Popup";
 import { useState } from "react";
 import { Location } from "@dtos/users/location";
+import { useAuthContext } from "@context/auth";
 
 interface MapProps {
   toggleMap: boolean;
-  searchFilter: string;
-  filterLocation: Location | null;
-  onFilterLocation: (location: Location) => void;
 }
 
 interface MapEventHandlersProps {
@@ -34,14 +32,10 @@ const MapEventHandlers = ({ onUpdateLocation }: MapEventHandlersProps) => {
   return null;
 };
 
-const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
-  const currentLocation = useGeoLocation();
-  const [handlerLocation, setHandlerLocation] = useState<Location | null>(
-    currentLocation
-  );
-
-  console.log(currentLocation);
-  const { users, isLoading, mutate } = useUsers(searchFilter, currentLocation);
+const Map = ({ toggleMap }: MapProps) => {
+  const { user: currentUser } = useAuthContext();
+  const [handlerLocation, setHandlerLocation] = useState<Location | null>(null);
+  const { users, isLoading, mutate } = useUsers();
 
   const showSearchAreaButton = !!handlerLocation;
 
@@ -50,7 +44,7 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
     setHandlerLocation(null);
   };
 
-  if (!currentLocation || isLoading) {
+  if (!currentUser?.location || isLoading) {
     return (
       <div className="w-[53%] h-[100%] flex flex-col gap-4 items-center justify-center">
         <Loading size={8} />
@@ -70,7 +64,10 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
       )}
     >
       <MapContainer
-        center={[currentLocation.latitude, currentLocation.longitude]}
+        center={[
+          currentUser?.location?.latitude as number,
+          currentUser?.location?.longitude as number,
+        ]}
         zoom={13}
         maxZoom={14}
         scrollWheelZoom
@@ -116,7 +113,6 @@ const Map = ({ toggleMap, searchFilter, onFilterLocation }: MapProps) => {
         <MapEventHandlers
           onUpdateLocation={(location) => {
             setHandlerLocation(location);
-            onFilterLocation(location);
           }}
         />
       </MapContainer>

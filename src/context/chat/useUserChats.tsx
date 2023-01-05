@@ -114,6 +114,7 @@ export const useUserChats = (): InitialState => {
   };
 
   useEffect(() => {
+    console.log("render chats");
     if (!currentUser) return;
 
     const chatUsersRef = collection(firestore, "chats");
@@ -126,7 +127,7 @@ export const useUserChats = (): InitialState => {
       })
     );
 
-    onSnapshot(querySnapshot, (docSnap) => {
+    const unsubscribe = onSnapshot(querySnapshot, (docSnap) => {
       const data = docSnap.docs.map((doc) => {
         const newChatData = { ...doc.data(), id: doc.id } as Chat;
 
@@ -146,6 +147,11 @@ export const useUserChats = (): InitialState => {
       setChats(orderedByRecent);
     });
 
+    unsubscribeRef.current = unsubscribe;
+
+    return () => {
+      unsubscribeRef.current?.();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 

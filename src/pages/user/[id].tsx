@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+
 import { getGender } from "@functions/formatGender";
 
 import { useUserDetails } from "@context/users";
@@ -10,10 +12,11 @@ import { useChatsContext } from "@context/chat";
 
 import { Loading } from "@components/shared/Loading";
 import { UserDTO } from "@data/dtos";
+import { Skeleton } from "@components/user/Skeleton";
 
 export default function UserDetails() {
   const { user: currentUser } = useAuthContext();
-  const { query } = useRouter();
+  const { query, back } = useRouter();
   const { user, isLoading } = useUserDetails(query.id as string);
   const { startNewChat } = useChatsContext();
   const [messageText, setMessageText] = useState("");
@@ -31,27 +34,36 @@ export default function UserDetails() {
     setIsSendingMessage(false);
   };
 
-  if (isLoading) return <p>loading...</p>;
+  if (isLoading) {
+    return <Skeleton />;
+  }
 
   return (
     <div className="container h-screen w-screen">
       <div className="flex h-full">
         <section className="flex-1 flex flex-col items-center">
-          <div className="flex flex-col items-center mt-10 ">
-            <div className="relative h-[100px] w-[100px] object-cover rounded-full border-4 border-black">
-              <Image
-                src={user.avatar as string}
-                alt="user avatar"
-                fill
-                className="rounded-full"
-              />
-            </div>
+          <div className=" w-full flex items-start pt-10">
+            <ArrowLeftIcon
+              className="absolute h-8 w-8 cursor-pointer"
+              onClick={() => back()}
+            />
 
-            <div className="mt-4 flex gap-1">
-              <strong>{user.name}</strong>
-              <p>
-                {user.hometown}, <span>{user.nationality}</span>
-              </p>
+            <div className="flex flex-col items-center mx-auto">
+              <div className="relative h-[100px] w-[100px] object-cover rounded-full border-4 border-black">
+                <Image
+                  src={user.avatar as string}
+                  alt="user avatar"
+                  fill
+                  className="rounded-full"
+                />
+              </div>
+
+              <div className="mt-4 flex gap-1">
+                <strong>{user.name}</strong>
+                <p>
+                  {user.hometown}, <span>{user.nationality}</span>
+                </p>
+              </div>
             </div>
           </div>
 

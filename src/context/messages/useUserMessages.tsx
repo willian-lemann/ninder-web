@@ -6,29 +6,38 @@ import {
   query,
   Timestamp,
   Unsubscribe,
+  where,
 } from "firebase/firestore";
 import { firestore } from "@config/firebase";
+import useSWR, { KeyedMutator } from "swr";
 
 import { getMessagesUseCase, sendMessageUseCase } from "@data/useCases/message";
 import { Message } from "@data/entities/message";
 import { SendMessageDto } from "@dtos/chat/send-message-dto";
 import { isEmptyString } from "@functions/asserts/isEmpty";
+import { useChatsContext } from "@context/chat";
+import { getChatsUseCase } from "@data/useCases/chat";
+import { useAuthContext } from "@context/auth";
+import { ChatDTO } from "@data/dtos";
 
 export interface InitialState {
   isLoading: boolean;
   isEmpty: boolean;
   messages: Message[];
-  mutate: Dispatch<SetStateAction<Message[]>>;
+  mutate: KeyedMutator<Message[]>;
   isSendingMessage: boolean;
-  loadMessages: (chatId: string) => void;
   sendMessage: (params: SendMessageDto) => Promise<void>;
 }
 
 export const useUserMessages = (): InitialState => {
+  const { currentChat } = useChatsContext();
   const unsubscribeRef = useRef<Unsubscribe>();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+
+  const { data, mutate, isLoading } = useSWR(
+    `/messages/${currentChat?.id}`,
+    () => getMessagesUseCase(currentChat?.id as string).then((result) => result)
+  );
 
   const sendMessage = async (params: SendMessageDto) => {
     setIsSendingMessage(true);
@@ -40,19 +49,17 @@ export const useUserMessages = (): InitialState => {
     setIsSendingMessage(false);
   };
 
-  const loadMessages = async (chatId = "") => {
-    setIsLoading(true);
-
-    const messages = await getMessagesUseCase(chatId);
-    setMessages(messages);
-
-    setIsLoading(false);
-  };
-
   useEffect(() => {
+    if (!currentChat) return;
+
     const messagesRef = collection(firestore, "messages");
 
-    const subscribe = onSnapshot(messagesRef, (docSnap) => {
+    const querySnapshot = query(
+      messagesRef,
+      where("chatId", "==", currentChat?.id as string)
+    );
+
+    const subscribe = onSnapshot(querySnapshot, (docSnap) => {
       const data = docSnap.docs.map((doc) => {
         const newMessage = {
           ...doc.data(),
@@ -69,7 +76,7 @@ export const useUserMessages = (): InitialState => {
         return -1;
       });
 
-      setMessages(mostRecentSorted.reverse());
+      mutate(mostRecentSorted.reverse(), false);
     });
 
     unsubscribeRef.current = subscribe;
@@ -77,15 +84,14 @@ export const useUserMessages = (): InitialState => {
     return () => {
       unsubscribeRef.current?.();
     };
-  }, []);
+  }, [currentChat, mutate]);
 
   return {
-    mutate: setMessages,
-    isEmpty: messages?.length === 0 && !isLoading,
+    mutate,
+    isEmpty: data?.length === 0,
     isSendingMessage,
     isLoading,
-    messages,
-    loadMessages,
+    messages: data as Message[],
     sendMessage,
   };
 };

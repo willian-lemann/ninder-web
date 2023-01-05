@@ -10,25 +10,23 @@ import {
   MagnifyingGlassIcon as SearchIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useUsers, useUsersContext } from "@context/users";
 
-interface SearchUsersProps {
-  onSearchFilter: Dispatch<SetStateAction<string>>;
-}
-
-export const SearchUsers = ({ onSearchFilter }: SearchUsersProps) => {
+export const SearchUsers = () => {
   const [searchValue, setSearchValue] = useState("");
+  const { search } = useUsersContext();
 
   const handleSearchFilter = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
 
     startTransition(() => {
-      onSearchFilter(event.target.value);
+      search(event.target.value);
     });
   };
 
   const handleReset = () => {
     setSearchValue("");
-    onSearchFilter("");
+    search("");
   };
 
   return (

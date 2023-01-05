@@ -6,29 +6,18 @@ import { classNames } from "@utils/classNames";
 import { Header } from "@components/home/Header";
 import { Map } from "@components/home/Map";
 import { UserList } from "@components/home/UserList";
-import { Location } from "@dtos/users/location";
 
 export default function Home() {
   const [toggleMap, setToggleMap] = useState(false);
-  const [searchFilter, setSearchFilter] = useState("");
-  const [filterLocation, setFilterLocation] = useState<Location | null>(null);
 
   return (
     <div className="h-screen w-screen">
-      <Header onSearchFilter={setSearchFilter} />
+      <Header />
 
       <div className="flex justify-between h-[calc(100vh-4rem)] z-0 relative">
-        <UserList
-          toggleMap={toggleMap}
-          searchFilter={searchFilter}
-          filterLocation={filterLocation}
-        />
-        <Map
-          toggleMap={toggleMap}
-          searchFilter={searchFilter}
-          filterLocation={filterLocation}
-          onFilterLocation={(location) => setFilterLocation(location)}
-        />
+        <UserList toggleMap={toggleMap} />
+        <Map toggleMap={toggleMap} />
+
         <button
           onClick={() => setToggleMap((state) => !state)}
           className={classNames(

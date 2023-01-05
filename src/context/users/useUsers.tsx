@@ -1,32 +1,35 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-
-import { addErrorNotification } from "@components/shared/alert";
 import { useAuthContext } from "@context/auth";
 import { User } from "@data/entities/user";
 import { getUsersUseCase } from "@data/useCases/user";
-import { Location } from "@dtos/users/location";
 
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import useSWR from "swr";
+import useSWR, { KeyedMutator, mutate } from "swr";
 
-export const useUsers = (queryFilter = "", location?: Location | null) => {
+export interface UsersContextParams {
+  isLoading: boolean;
+  isEmpty: boolean;
+  users: User[];
+  search(filter: string): void;
+  mutate: KeyedMutator<User[]>;
+}
+
+export const useUsers = (): UsersContextParams => {
   const { user: currentUser } = useAuthContext();
+  const [queryFilter, setQueryFilter] = useState("");
 
-  const usersData = useSWR(
-    "/users",
-    () =>
-      getUsersUseCase(currentUser?.id as string, location).then(
-        (response) => response?.data.result
-      ),
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
+  const usersData = useSWR(`/users/${currentUser?.id}`, () =>
+    getUsersUseCase(currentUser as User).then(
+      (response) => response?.data.result
+    )
   );
 
   const isLoading = !usersData.data;
   const isEmpty = usersData.data?.length === 0;
+
+  const search = (filter: string) => {
+    setQueryFilter(filter);
+  };
 
   const users = useMemo(() => {
     const filteredUsers =
@@ -39,30 +42,11 @@ export const useUsers = (queryFilter = "", location?: Location | null) => {
     return filteredUsers as User[];
   }, [queryFilter, usersData.data]);
 
-  // useEffect(() => {
-  //   const loadUsers = async () => {
-  //     try {
-  //       const response = await getUsersUseCase(
-  //         currentUser?.id as string,
-  //         location
-  //       );
-
-  //       const { result } = response.data;
-  //       setData(result);
-  //     } catch (error) {
-  //       addErrorNotification(error as any);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   loadUsers();
-  // }, [currentUser?.id, location]);
-
   return {
-    ...usersData,
+    mutate,
     isLoading,
     users,
     isEmpty,
+    search,
   };
 };

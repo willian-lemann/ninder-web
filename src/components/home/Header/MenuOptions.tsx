@@ -69,9 +69,7 @@ export const MenuOptions = () => {
           </Menu.Item>
 
           <Menu.Item>
-            <FavoritesPopover
-              numberOfFavorites={Number(user?.favorites?.length)}
-            />
+            <FavoritesPopover />
           </Menu.Item>
 
           <Menu.Item>
