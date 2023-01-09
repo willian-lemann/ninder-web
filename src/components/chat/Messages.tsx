@@ -5,6 +5,7 @@ import { EmojiPicker, EmojiClickData, Handles } from "./EmojiPIcker";
 import {
   PaperAirplaneIcon as SendIconOutlined,
   FaceSmileIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
 
@@ -121,8 +122,10 @@ export const Messages = () => {
 
   return (
     <>
-      <div className="h-12 flex items-center pl-4">
+      <div className="h-12 flex items-center justify-between px-12">
         <strong>{currentChat?.user.name}</strong>
+
+        <InformationCircleIcon className="h-6 w-6 cursor-pointer" />
       </div>
 
       <div className="h-full w-full flex flex-col divide-y relative">
