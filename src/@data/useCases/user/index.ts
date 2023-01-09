@@ -1,6 +1,6 @@
-export { createGoogleUserUseCase } from "./createGoogleUserUseCase";
-export { createUserUseCase } from "./createUserUseCase";
-export { getUserByEmailUseCase } from "./getUserByEmailUseCase";
-export { getUserUseCase } from "./getUserUseCase";
-export { getUsersUseCase } from "./getUsersUseCase";
-export { updateUserUseCase } from "./updateUserUseCase";
+export { createGoogleUserUseCase } from "./create-google-user-usecase";
+export { createUserUseCase } from "./create-usecase";
+export { getByEmailUseCase } from "./get-by-email-usecase";
+export { getByIdUseCase } from "./get-by-id-usecase";
+export { getAllUseCase } from "./get-all-usecase";
+export { updateUseCase } from "./update-usecase";

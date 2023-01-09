@@ -1,30 +1,57 @@
-import { firebase } from "@config/firebase-admin";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+import { getByEmailUseCase } from "@data/useCases/user";
+import { createApiResponse } from "@utils/createApiResponse";
 import { NextApiRequest, NextApiResponse } from "next";
+import { exclude } from "@utils/exclude";
+import { User } from "@data/entities";
 
 type Methods = "POST";
 
+async function validateUser(req: NextApiRequest, res: NextApiResponse) {
+  const { email, password } = req.body;
+
+  const user = await getByEmailUseCase(email);
+
+  if (!user) {
+    return res.status(404).json(
+      createApiResponse({
+        success: false,
+        error: {
+          message: `User ${email} not found.`,
+        },
+      })
+    );
+  }
+
+  const isSamePassword = await bcrypt.compare(password, user.password);
+
+  if (!isSamePassword) {
+    return res.status(404).json(
+      createApiResponse({
+        success: false,
+        error: { message: "User/Password is incorrect" },
+      })
+    );
+  }
+
+  exclude(user, ["password"]);
+
+  return user;
+}
+
 const controller = {
   POST: async (req: NextApiRequest, res: NextApiResponse) => {
-    const { email } = req.body;
+    const validatedUser = await validateUser(req, res);
 
-    const user = await firebase.auth().getUserByEmail(email);
+    const user = validateUser as User;
 
-    const token = await firebase.auth().createCustomToken(user.uid);
+    const payload = { email: req.body.email, userId: user.id };
 
-    const userDoc = await firebase
-      .firestore()
-      .collection("users")
-      .doc(user.uid)
-      .get();
+    const token = jwt.sign(payload, "123", { expiresIn: "1d" });
 
-    if (!userDoc) return res.status(404).json({ message: "user not found." });
-
-    const registeredUser = { ...userDoc.data(), id: userDoc.id };
-
-    return res.json({
-      user: registeredUser,
-      token,
-    });
+    return res.status(200).json(createApiResponse({ result: { token, user } }));
   },
 };
 
