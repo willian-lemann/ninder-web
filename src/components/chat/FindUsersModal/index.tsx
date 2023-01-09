@@ -1,4 +1,10 @@
-import { Fragment, useCallback, useState } from "react";
+import {
+  forwardRef,
+  Fragment,
+  useCallback,
+  useImperativeHandle,
+  useState,
+} from "react";
 
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -8,7 +14,11 @@ import { ContentType, SelectedUser } from "./types";
 import { useChatsContext } from "@context/chat";
 import { useAuthContext } from "@context/auth";
 
-export const FindUsersModal = () => {
+export interface FindUsersModalHandles {
+  openModal(): void;
+}
+
+export const FindUsersModal = forwardRef((props, ref) => {
   const { startNewChat } = useChatsContext();
   const { user } = useAuthContext();
   const [messageText, setMessageText] = useState("");
@@ -54,18 +64,12 @@ export const FindUsersModal = () => {
     setIsOpen(true);
   };
 
+  useImperativeHandle(ref, () => ({
+    openModal,
+  }));
+
   return (
     <>
-      <div className="flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="rounded-md bg-gradient-to-r from-light-primary to-primary hover:brightness-90 transition-all duration-300 px-4 py-2 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          Send Message
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -113,4 +117,4 @@ export const FindUsersModal = () => {
       </Transition>
     </>
   );
-};
+});

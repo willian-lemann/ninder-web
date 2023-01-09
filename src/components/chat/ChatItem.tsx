@@ -32,8 +32,8 @@ export const ChatItem = ({ chat, isSelected, onSelectChat }: ChatItemProps) => {
     <li
       onClick={() => onSelectChat(chat.id as string)}
       className={classNames(
-        isSelected ? "bg-zinc-200" : "hover:bg-zinc-100",
-        "flex items-center justify-between  px-4 py-2 transition-colors duration-300 cursor-pointer"
+        isSelected ? "bg-zinc-100" : "hover:bg-zinc-100",
+        "flex items-center justify-between  px-6 py-2 transition-colors duration-300 cursor-pointer"
       )}
     >
       <section className="flex items-center">

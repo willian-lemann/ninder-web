@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useRef, useState } from "react";
 
 import { EmojiPicker, EmojiClickData, Handles } from "./EmojiPIcker";
 
@@ -18,7 +18,7 @@ import { useMessagesContext } from "@context/messages";
 import { useBottomScroll } from "@hooks/useBottomScroll";
 
 import { isEmptyString } from "@functions/asserts/isEmpty";
-import { FindUsersModal } from "./FindUsersModal";
+import { FindUsersModal, FindUsersModalHandles } from "./FindUsersModal";
 import { useChatsContext } from "@context/chat";
 
 export const Messages = () => {
@@ -26,6 +26,7 @@ export const Messages = () => {
   const { currentChat } = useChatsContext();
   const { messages, isLoading, isEmpty, sendMessage } = useMessagesContext();
 
+  const findUsersModalRef = useRef<FindUsersModalHandles>(null);
   const emojiRef = useRef<Handles>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [messageText, setMessageText] = useState("");
@@ -102,7 +103,17 @@ export const Messages = () => {
             Send private photos and messages to a friend or group
           </p>
 
-          <FindUsersModal />
+          <div className="flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => findUsersModalRef.current?.openModal()}
+              className="rounded-md bg-gradient-to-r from-light-primary to-primary hover:brightness-90 transition-all duration-300 px-4 py-2 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+            >
+              Send Message
+            </button>
+          </div>
+
+          <FindUsersModal ref={findUsersModalRef} />
         </div>
       </div>
     );
