@@ -1,31 +1,39 @@
+import jwtDecode from "jwt-decode";
+
 import { NextRequest, NextResponse } from "next/server";
 
-// Limit the middleware to paths starting with `/api/`
 export const config = {
-  matcher: "/api/:function*",
+  matcher: [
+    "/api/users/:path*",
+    "/api/chats/:path*",
+    "/api/messages/:path*",
+    "/api/me",
+  ],
 };
 
 function createResponse(message: string, options: ResponseInit | undefined) {
   return new NextResponse(JSON.stringify({ success: false, message }), options);
 }
 
-function hasTokenValid(request: NextRequest) {
-  return false;
-}
-
 function hasToken(request: NextRequest) {
-  const token = request.headers.get("authorization")?.split(" ").at(1);
+  const token = request.headers
+    .get("Authorization")
+    ?.split(" ")
+    .at(1) as string;
+
   return token;
 }
 
-export function middleware(request: NextRequest, response: NextResponse) {
-  if (!hasToken(request)) {
-    return createResponse("No token provided.", { status: 401 });
-  }
-
-  // if (!hasTokenValid(request)) {
-  //   return createResponse("Unauthorized. Token is not valid.", {
-  //     status: 401,
-  //   });
-  // }
+export function middleware(request: NextRequest) {
+  // const token = hasToken(request);
+  // if (!token) return createResponse("No token provided.", { status: 401 });
+  // const decodedToken = jwtDecode<{ email: string; userId: string }>(token);
+  // const requestHeaders = new Headers(request.headers);
+  // requestHeaders.set("userid", decodedToken.userId as string);
+  // const response = NextResponse.next({
+  //   request: {
+  //     headers: requestHeaders,
+  //   },
+  // });
+  // return response;
 }

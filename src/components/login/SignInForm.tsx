@@ -12,12 +12,16 @@ import { errors } from "@utils/errorHandler";
 import { FirebaseError } from "firebase/app";
 import { preload } from "swr";
 import { api } from "@config/axios";
+import axios from "axios";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
-const fetcher = () => api.get("/countries").then((response) => response.data);
+const fetcher = () =>
+  axios
+    .get("https://restcountries.com/v3.1/all")
+    .then((response) => response.data);
 
 preload("/api/data", fetcher);
 

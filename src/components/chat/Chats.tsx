@@ -14,19 +14,19 @@ import { ChatItem } from "./ChatItem";
 import { ChatDTO } from "@data/dtos/chat";
 import { useChatsContext } from "@context/chat";
 import { FindUsersModal, FindUsersModalHandles } from "./FindUsersModal";
+import { useUserChats } from "@context/chat/useUserChats";
 
 export const Chats = () => {
-  const { chats, isLoading, focusInChat, currentChat } = useChatsContext();
+  const { chats, currentChat, isLoading } = useChatsContext();
   const findUsersModalRef = useRef<FindUsersModalHandles>(null);
 
+  console.log(chats);
   const isSelected = useMemo(() => {
-    const firstChat = chats.at(0)?.id;
+    const firstChat = chats?.at(0)?.id;
     return currentChat?.id || firstChat;
   }, [chats, currentChat]);
 
-  const handleSelectChat = async (chat: ChatDTO) => {
-    await focusInChat(chat.id as string);
-  };
+  const handleSelectChat = async (chat: ChatDTO) => {};
 
   if (isLoading) {
     return (

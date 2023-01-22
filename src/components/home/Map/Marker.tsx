@@ -11,8 +11,8 @@ interface MarkerProps {
 
 export const Marker = ({ iconUrl, position, children }: MarkerProps) => {
   const icon = new Icon({
-    iconUrl: iconUrl ?? "/icons/avatar.svg",
-    iconRetinaUrl: iconUrl ?? "/icons/avatar.svg",
+    iconUrl: iconUrl || "/icons/avatar.svg",
+    iconRetinaUrl: iconUrl || "/icons/avatar.svg",
     popupAnchor: [-0, -25],
     iconSize: [80, 80],
     className: "rounded-full animate-fadeIn",

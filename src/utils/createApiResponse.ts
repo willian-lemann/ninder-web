@@ -4,16 +4,16 @@ type Error = {
   message: string;
 };
 
-interface Result<T> {
+export interface Result<T> {
   success?: boolean;
   error?: Error | null;
-  result?: T | null | any;
+  result?: T | null;
 }
 
 export function createApiResponse<T>({
   success = true,
   error = null,
-  result,
+  result = null,
 }: Result<T>) {
   const resultObj: Result<T> = {
     success,

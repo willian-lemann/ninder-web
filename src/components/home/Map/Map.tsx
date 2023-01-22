@@ -44,7 +44,7 @@ const Map = ({ toggleMap }: MapProps) => {
     setHandlerLocation(null);
   };
 
-  if (!currentUser?.location || isLoading) {
+  if (isLoading) {
     return (
       <div className="w-[53%] h-[100%] flex flex-col gap-4 items-center justify-center">
         <Loading size={8} />
@@ -65,8 +65,8 @@ const Map = ({ toggleMap }: MapProps) => {
     >
       <MapContainer
         center={[
-          currentUser?.location?.latitude as number,
-          currentUser?.location?.longitude as number,
+          currentUser?.latitude as number,
+          currentUser?.longitude as number,
         ]}
         zoom={13}
         maxZoom={14}
@@ -93,8 +93,8 @@ const Map = ({ toggleMap }: MapProps) => {
               key={nearUser.id}
               iconUrl={nearUser.avatar as string}
               position={[
-                Number(nearUser.location?.latitude),
-                Number(nearUser.location?.longitude),
+                Number(nearUser?.latitude),
+                Number(nearUser?.longitude),
               ]}
             >
               <Popup

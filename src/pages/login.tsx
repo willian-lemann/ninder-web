@@ -6,7 +6,7 @@ import { LoginTypes } from "@constants/login/LoginTypes";
 import { withSSRGuest } from "../utils/withSSRGuest";
 
 import { SignInForm } from "@components/login/SignInForm";
-import { MultiStepSignup } from "../components/login/MultiStepSignup";
+import { SignupForm } from "../components/login/SignupForm";
 
 export default function Login() {
   const [loginType, setLoginType] = useState<LoginTypes>("signin");
@@ -21,7 +21,7 @@ export default function Login() {
         {loginType === "signin" ? (
           <SignInForm onLoginType={handleChangeLoginType} />
         ) : (
-          <MultiStepSignup onLoginType={handleChangeLoginType} />
+          <SignupForm onLoginType={handleChangeLoginType} />
         )}
       </section>
 

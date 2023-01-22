@@ -1,9 +1,9 @@
 import { useAuthContext } from "@context/auth";
 import { createContext, ReactNode, useContext } from "react";
 
-import { InitialState, useUserChats } from "./useUserChats";
+import { ContextParams, useUserChats } from "./useUserChats";
 
-const ChatsContext = createContext({} as InitialState);
+const ChatsContext = createContext({} as ContextParams);
 
 interface ChatsProviderProps {
   children: ReactNode;

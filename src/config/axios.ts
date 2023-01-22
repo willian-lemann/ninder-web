@@ -1,7 +1,14 @@
+import { STORAGE_KEY } from "@constants/login/auth";
 import axios from "axios";
+import { parseCookies } from "nookies";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const cookies = parseCookies();
 
 export const api = axios.create({
-  baseURL: `${APP_URL}/api`,
+  baseURL: `${API_URL}/api`,
+  headers: {
+    Authorization: `Bearer ${cookies[STORAGE_KEY]}`,
+  },
 });

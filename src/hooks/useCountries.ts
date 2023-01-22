@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { api } from "@config/axios";
+import axios from "axios";
 import useSWR, { SWRResponse } from "swr";
 
 interface Country {
@@ -7,10 +8,10 @@ interface Country {
   value: string;
 }
 
-const fetcher = async () => {
-  const response = await api.get("/countries");
-  return response.data;
-};
+const fetcher = (url: string) =>
+  axios
+    .get("https://restcountries.com/v3.1/all")
+    .then((response) => response.data);
 
 export const useCountries = () => {
   const countriesData = useSWR<string[]>("/countries", fetcher);

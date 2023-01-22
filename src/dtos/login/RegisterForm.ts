@@ -1,7 +1,9 @@
 import { User } from "@data/entities/user";
 
-export interface RegisterForm extends Omit<User, "id"> {
-  email: string;
-  password: string;
+export interface RegisterForm
+  extends Pick<
+    User,
+    "email" | "name" | "avatar" | "password" | "latitude" | "longitude"
+  > {
   confirmPassword: string;
 }

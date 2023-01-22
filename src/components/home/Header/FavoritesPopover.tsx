@@ -20,7 +20,7 @@ export const FavoritesPopover = () => {
   return (
     <Popover className="relative">
       <Popover.Button
-        disabled={favorites.length === 0}
+        disabled={favorites?.length === 0}
         as="button"
         className={classNames(
           "block hover:bg-gray-200 px-4 py-2 text-left w-full"
@@ -28,7 +28,7 @@ export const FavoritesPopover = () => {
       >
         <span className="text-sm text-gray-700 relative">
           My Favorites
-          {favorites.length > 0 ? (
+          {favorites?.length > 0 ? (
             <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-xs text-white flex items-center justify-center">
               {favorites.length}
             </span>
@@ -49,7 +49,7 @@ export const FavoritesPopover = () => {
           <Popover.Panel className="absolute z-10 -left-[135%]">
             <div className="bg-white h-auto w-64 rounded-md py-4 px-6">
               <ul>
-                {favorites.map(({ user }) => (
+                {favorites?.map(({ user }) => (
                   <li
                     key={user?.id}
                     className="flex justify-between group mb-4 last:mb-0 cursor-pointer"

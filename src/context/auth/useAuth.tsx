@@ -1,52 +1,35 @@
 import {
-  useState,
-  useEffect,
   Dispatch,
   SetStateAction,
   useCallback,
-  useRef,
+  useEffect,
+  useState,
 } from "react";
 import Router from "next/router";
 import {
   signIn as NextAuthSignIn,
   signOut as NextAuthSignOut,
 } from "next-auth/react";
-import { destroyCookie, setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 
-import { User } from "@data/entities/user";
+import { User } from "@data/models/user";
 
 import { SignInCredencials } from "@dtos/login/SignInCredencials";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 import { useGeoLocation } from "@hooks/useGeoLocation";
 
-import {
-  signInUseCase,
-  signUpUseCase,
-  logoutUseCase,
-} from "@data/useCases/auth";
-
 import { STORAGE_KEY } from "src/constants/login/auth";
 import { useGoogleContext } from ".";
 
-import {
-  createGoogleUserUseCase,
-  getUserUseCase,
-  getUserByEmailUseCase,
-} from "@data/useCases/user";
-
-import { Provider } from "@constants/login/provider";
 import { addErrorNotification } from "@components/shared/alert";
 
-import {
-  onAuthStateChanged,
-  beforeAuthStateChanged,
-  Unsubscribe,
-} from "firebase/auth";
-import { auth } from "@config/firebase";
+import { api } from "@config/axios";
+import { authenticateService } from "@services/auth/authenticate";
+import { signupService } from "@services/auth/signup";
 
-import { saveToStorageUseCase } from "@data/useCases/auth/saveToStorageUseCase";
-
+import useSWR from "swr";
 export interface InitialState {
+  isAuthenticated: boolean;
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
   signIn(credencials: SignInCredencials): Promise<void>;
@@ -57,30 +40,32 @@ export interface InitialState {
 
 let authChannel: BroadcastChannel;
 
-export function useAuth(): InitialState {
-  const unsubscribeRef = useRef<Unsubscribe>();
+const fetcher = (url: string) =>
+  api.get(url).then((response) => response.data.result);
 
+export function useAuth(): InitialState {
   const { session } = useGoogleContext();
   const [user, setUser] = useState<User | null>(null);
 
   const location = useGeoLocation();
 
   async function signIn({ email, password }: SignInCredencials) {
-    const response = await signInUseCase(email, password);
+    const response = await authenticateService(email, password);
 
-    if (!response) {
-      return addErrorNotification(
-        "User does not exist or is not registered in our database."
-      );
+    const { result, error, success } = response;
+
+    if (!success) {
+      return addErrorNotification(String(error?.message));
     }
 
-    const { user, token } = response;
+    setUser(result?.user);
 
-    setUser({ ...user, location });
+    setCookie(undefined, STORAGE_KEY, result?.token as string, {
+      maxAge: 60 * 60 * 24 * 30, // 30 days,
+      path: "/",
+    });
 
-    saveToStorageUseCase(token);
-
-    if (user.hasConfirmedRegulation) {
+    if (result?.user.hasConfirmedRegulation) {
       Router.push("/");
     } else {
       Router.push("/regulations");
@@ -88,14 +73,29 @@ export function useAuth(): InitialState {
   }
 
   async function signUp(signUpData: SignUpCredencials) {
-    const { token, user } = await signUpUseCase({
+    const payload = {
       ...signUpData,
-      location,
+      latitude: location?.latitude,
+      longitude: location?.longitude,
+    };
+
+    const response = await signupService(payload);
+
+    const { result, error, success } = response.data;
+
+  
+    if (!success) {
+      return addErrorNotification(error.message);
+    }
+
+    setUser(result.user);
+
+    setCookie(undefined, STORAGE_KEY, result.token, {
+      maxAge: 60 * 60 * 24 * 30, // 30 days,
+      path: "/",
     });
 
-    setUser(user);
-
-    saveToStorageUseCase(token);
+    api.defaults.headers["Authorization"] = `Bearer ${result.token}`;
 
     Router.push("/regulations");
   }
@@ -105,7 +105,6 @@ export function useAuth(): InitialState {
   }
 
   const signOut = useCallback(async () => {
-    await logoutUseCase();
     setUser(null);
     destroyCookie(undefined, STORAGE_KEY);
 
@@ -119,59 +118,42 @@ export function useAuth(): InitialState {
   }, [session]);
 
   useEffect(() => {
-    console.log("render auth");
+    const cookies = parseCookies();
 
-    authChannel = new BroadcastChannel("auth");
+    const token = cookies[STORAGE_KEY];
 
-    authChannel.onmessage = (message) => {
-      if (message.data === "signOut") {
-        signOut();
-      }
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, (stateUser) => {
-      if (!stateUser) {
-        destroyCookie(undefined, STORAGE_KEY);
-      } else {
-        getUserUseCase(stateUser?.uid as string).then((recoveredUser) =>
-          setUser(recoveredUser)
-        );
-      }
-    });
-
-    unsubscribeRef.current = unsubscribe;
-
-    return () => {
-      unsubscribeRef.current?.();
-    };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (token) {
+      api.get("/me").then((response) => {
+        setUser(response.data.result);
+      });
+    }
   }, []);
 
-  useEffect(() => {
-    async function loadGoogleSession() {
-      if (session) {
-        const sessionUser = {
-          email: session.user?.email as string,
-          avatar: session.user?.image as null,
-          name: session.user?.name as string,
-          provider: Provider.Google,
-        };
+  // useEffect(() => {
+  //   async function loadGoogleSession() {
+  //     if (session) {
+  //       const sessionUser = {
+  //         email: session.user?.email as string,
+  //         avatar: session.user?.image as null,
+  //         name: session.user?.name as string,
+  //         provider: Provider.Google,
+  //       };
 
-        const hasUser = await getUserByEmailUseCase(sessionUser.email);
+  //       const hasUser = await api.get(`/users/email/${sessionUser.email}`);
 
-        if (hasUser) return setUser({ ...hasUser, location });
+  //       if (hasUser) return setUser({ ...hasUser, location });
 
-        await createGoogleUserUseCase({ ...sessionUser, location });
+  //       await createGoogleUserUseCase({ ...sessionUser, location });
 
-        setUser(sessionUser);
-      }
-    }
+  //       setUser(sessionUser);
+  //     }
+  //   }
 
-    loadGoogleSession();
-  }, [session, location]);
+  //   loadGoogleSession();
+  // }, [session, location]);
 
   return {
+    isAuthenticated: !!user,
     user,
     setUser,
     signIn,
