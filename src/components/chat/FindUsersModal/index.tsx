@@ -39,6 +39,7 @@ export const FindUsersModal = forwardRef((props, ref) => {
         },
         lastMessage: {
           message: "",
+          createdAt: null,
         },
       });
     },
