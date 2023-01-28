@@ -12,9 +12,9 @@ interface ChatItemProps {
   chat: {
     id?: string;
     lastMessage: {
-      message: string,
-      createdAt: Date | null
-    }
+      message: string;
+      createdAt?: Date | null;
+    };
     user: {
       id: string;
       name: string;
