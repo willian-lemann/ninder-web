@@ -38,11 +38,7 @@ export function useFavoriteUsers() {
           ...favorites,
           {
             id: uuid(),
-            user: {
-              id: user.id as string,
-              avatar: user.avatar as string,
-              name: user.name as string,
-            },
+            user,
           },
         ],
         false

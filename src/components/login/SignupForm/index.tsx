@@ -106,8 +106,6 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
         ...formData,
       };
 
-      exclude(data, ["confirmPassword"]);
-
       await signUp(data);
     } catch (err: any) {
       if (err instanceof yup.ValidationError) {

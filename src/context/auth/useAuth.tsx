@@ -128,7 +128,7 @@ export function useAuth(): InitialState {
         })
         .catch(() => signOut());
     }
-  }, []);
+  }, [signOut]);
 
   // useEffect(() => {
   //   async function loadGoogleSession() {
