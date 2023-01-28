@@ -2,7 +2,7 @@ import { api } from "@config/axios";
 import { useAuthContext } from "@context/auth";
 import { User } from "@data/models/user";
 
-import { useCallback, useMemo, useState } from "react";
+import { startTransition, useCallback, useMemo, useState } from "react";
 
 import useSWR, { KeyedMutator } from "swr";
 
@@ -10,7 +10,8 @@ export interface UsersContextParams {
   isLoading: boolean;
   isEmpty: boolean;
   users: User[];
-  search(filter: string): void;
+  queryFilter: string;
+  searchUsers(filter: string): void;
   mutate: KeyedMutator<User[]>;
 }
 
@@ -22,14 +23,17 @@ export const useUsers = (): UsersContextParams => {
   const [queryFilter, setQueryFilter] = useState("");
 
   const { data, mutate } = useSWR<User[]>(
-    isAuthenticated ? `/users` : null,
-    fetcher
+    isAuthenticated ? `/users?search=${queryFilter}` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    }
   );
 
   const isLoading = !data;
   const isEmpty = data?.length === 0;
 
-  const search = (filter: string) => {
+  const searchUsers = (filter: string) => {
     setQueryFilter(filter);
   };
 
@@ -49,6 +53,7 @@ export const useUsers = (): UsersContextParams => {
     isLoading,
     users,
     isEmpty,
-    search,
+    searchUsers,
+    queryFilter,
   };
 };

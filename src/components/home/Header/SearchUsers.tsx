@@ -14,19 +14,19 @@ import { useUsers, useUsersContext } from "@context/users";
 
 export const SearchUsers = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { search } = useUsersContext();
+  const { searchUsers } = useUsersContext();
 
   const handleSearchFilter = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
 
     startTransition(() => {
-      search(event.target.value);
+      searchUsers(searchValue);
     });
   };
 
   const handleReset = () => {
     setSearchValue("");
-    search("");
+    searchUsers("");
   };
 
   return (

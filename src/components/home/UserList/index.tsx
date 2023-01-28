@@ -10,9 +10,9 @@ interface UserListProps {
 }
 
 export const UserList = ({ toggleMap }: UserListProps) => {
-  const { users, isLoading, isEmpty } = useUsers();
+  const { users, isLoading, isEmpty } = useUsersContext();
 
-  if (!users) {
+  if (isLoading) {
     return <Skeleton />;
   }
 
