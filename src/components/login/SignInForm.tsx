@@ -9,7 +9,7 @@ import Image from "next/image";
 
 import { useAuthContext } from "@context/auth";
 import { errors } from "@utils/errorHandler";
-import { FirebaseError } from "firebase/app";
+
 import { preload } from "swr";
 import { api } from "@config/axios";
 import axios from "axios";
@@ -53,11 +53,6 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
       await signIn({ email, password });
     } catch (error: any) {
       console.log(error);
-      if (error instanceof FirebaseError) {
-        return addErrorNotification(
-          errors[error.code] || "Error trying to sign in. Try again!"
-        );
-      }
 
       addErrorNotification("Error trying to sign in. Try again!");
     } finally {

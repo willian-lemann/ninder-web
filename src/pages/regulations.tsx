@@ -6,8 +6,7 @@ import { addErrorNotification } from "@components/shared/alert";
 import { Loading } from "@components/shared/Loading";
 import { acceptRegulationsService } from "@services/user/accept-regulations";
 
-const file =
-  "https://firebasestorage.googleapis.com/v0/b/ninder-dev.appspot.com/o/documents%2Fninder-terms.pdf?alt=media&token=57bbb415-9b05-461f-b950-d009effe0ed4";
+const file = "https://termify.io/terms-and-conditions/1667685585";
 
 export default function Regulations() {
   const [isAcceptingRegulation, setIsAcceptingRegulation] = useState(false);

@@ -1,5 +1,4 @@
 import { differenceInHours, format, formatDistanceToNow } from "date-fns";
-import { Timestamp } from "firebase/firestore";
 
 export function formatDate(date: Date | null) {
   if (!date) {

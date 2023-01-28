@@ -26,13 +26,13 @@ export default function Login() {
       </section>
 
       <section className="hidden md:block w-[50%] h-screen relative">
-        <Image
+        {/* <Image
           src="https://firebasestorage.googleapis.com/v0/b/ninder-dev.appspot.com/o/images%2Flogin-background.png?alt=media&token=f9e85180-2e56-4181-a5b1-cca409f664d2"
           alt="background image"
           className="h-full w-full object-cover"
           fill
           loading="lazy"
-        />
+        /> */}
       </section>
     </div>
   );

@@ -4,7 +4,6 @@ import { ChangeEvent, useState } from "react";
 import { format } from "date-fns";
 import { classNames } from "@utils/classNames";
 import ReactDatePicker from "react-datepicker";
-import { Timestamp } from "firebase/firestore";
 
 interface DatePickerProps {
   error?: string | null;
