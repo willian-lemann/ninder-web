@@ -12,7 +12,8 @@ import { NotificationsPopover } from "./NotificationsPopover";
 
 export const MenuOptions = () => {
   const { user, signOut } = useAuthContext();
-  const { numberOfUnReadChats } = useChatsContext();
+
+  const numberOfUnReadChats = 1;
 
   function handleNavigate(path: string) {
     Router.push(path);

@@ -1,5 +1,5 @@
 import { classNames } from "@utils/classNames";
-import { Timestamp } from "firebase/firestore";
+
 import Image from "next/image";
 
 import { formatDate } from "@functions/formatDate";

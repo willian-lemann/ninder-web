@@ -1,5 +1,4 @@
 import { useMemo, useRef } from "react";
-import { Timestamp } from "firebase/firestore";
 
 import {
   PencilSquareIcon,
