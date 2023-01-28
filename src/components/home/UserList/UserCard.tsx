@@ -3,7 +3,7 @@ import Router from "next/router";
 
 import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
 
-import { User } from "@data/entities/user";
+import { User } from "@data/models/user";
 
 import {
   ChatBubbleLeftEllipsisIcon as ChatIcon,
@@ -21,7 +21,7 @@ import { formatAge } from "@functions/formatAge";
 import { Thumbnail } from "@components/Thumbnail";
 import { useChatsContext } from "@context/chat";
 import { useUserChats } from "@context/chat/useUserChats";
-import { Chat } from "@data/entities";
+import { Chat } from "@data/models/chat";
 
 interface UserCardProps {
   user: User;
@@ -30,23 +30,37 @@ interface UserCardProps {
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser } = useAuthContext();
-  const { startNewChat } = useChatsContext();
-  const { favorite, favorites, checkUserIsFavorited } = useFavoriteUsers();
+  const { chats, startNewChat } = useChatsContext();
+  const { favoriteToggle, checkUserIsFavorited } = useFavoriteUsers();
 
   const handleStartChat = (
-    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    user: User
   ) => {
     event.stopPropagation();
 
     const chat = {
-      userId: currentUser?.id as string,
-      chatWith: user.id as string,
-      lastMessage: "",
+      user: {
+        id: user.id,
+        avatar: user.avatar,
+        name: user.name,
+      },
+      lastMessage: {
+        message: "",
+        createdAt: null,
+      },
     } as Chat;
 
     startNewChat(chat);
+  };
 
-    Router.push("/chats");
+  const handleFavoriteToggle = async (
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    user: User
+  ) => {
+    event.stopPropagation();
+
+    await favoriteToggle(user);
   };
 
   const handleSeeUserDetails = (id: string) => {
@@ -92,18 +106,18 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
 
         <div className="flex items-center gap-4">
           <ChatIcon
-            onClick={handleStartChat}
+            onClick={(event) => handleStartChat(event, user)}
             className="h-8 w-8 z-20 cursor-pointer text-zinc-600 animate-fadeIn"
           />
 
           {isFavorite ? (
             <FilledHeartIcon
-              onClick={(event) => favorite(event, user)}
+              onClick={(event) => handleFavoriteToggle(event, user)}
               className="h-8 w-8 z-20 cursor-pointer text-primary animate-fadeIn"
             />
           ) : (
             <OutlinedHeartIcon
-              onClick={(event) => favorite(event, user)}
+              onClick={(event) => handleFavoriteToggle(event, user)}
               className="h-8 w-8 z-20 cursor-pointer text-zinc-600 animate-fadeIn"
             />
           )}

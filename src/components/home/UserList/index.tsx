@@ -3,16 +3,16 @@ import { UserCard } from "./UserCard";
 import { Skeleton } from "./Skeleton";
 import { classNames } from "@utils/classNames";
 
-import { useUsersContext } from "@context/users";
+import { useUsers, useUsersContext } from "@context/users";
 
 interface UserListProps {
   toggleMap: boolean;
 }
 
 export const UserList = ({ toggleMap }: UserListProps) => {
-  const { users, isLoading, isEmpty } = useUsersContext();
+  const { users, isLoading, isEmpty } = useUsers();
 
-  if (isLoading) {
+  if (!users) {
     return <Skeleton />;
   }
 

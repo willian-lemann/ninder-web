@@ -4,7 +4,7 @@ import { User } from "@data/models/user";
 
 import { useCallback, useMemo, useState } from "react";
 
-import useSWR, { KeyedMutator, mutate } from "swr";
+import useSWR, { KeyedMutator } from "swr";
 
 export interface UsersContextParams {
   isLoading: boolean;
@@ -14,19 +14,20 @@ export interface UsersContextParams {
   mutate: KeyedMutator<User[]>;
 }
 
-const fetcher = (url: string) => api.get(url).then((res) => res.data);
+const fetcher = (url: string) => api.get(url).then((res) => res.data.result);
 
 export const useUsers = (): UsersContextParams => {
+  const { isAuthenticated } = useAuthContext();
+
   const [queryFilter, setQueryFilter] = useState("");
 
-  const { data } = useSWR<{
-    result: User[];
-    error: { message: string };
-    success: boolean;
-  }>(`/users`, fetcher, { shouldRetryOnError: false });
+  const { data, mutate } = useSWR<User[]>(
+    isAuthenticated ? `/users` : null,
+    fetcher
+  );
 
-  const isLoading = !data?.result;
-  const isEmpty = data?.result?.length === 0;
+  const isLoading = !data;
+  const isEmpty = data?.length === 0;
 
   const search = (filter: string) => {
     setQueryFilter(filter);
@@ -35,13 +36,13 @@ export const useUsers = (): UsersContextParams => {
   const users = useMemo(() => {
     const filteredUsers =
       queryFilter.length > 0
-        ? data?.result?.filter((user) =>
+        ? data?.filter((user) =>
             user.name?.toLowerCase().includes(queryFilter.toLowerCase())
           )
-        : data?.result;
+        : data;
 
     return filteredUsers as User[];
-  }, [data?.result, queryFilter]);
+  }, [data, queryFilter]);
 
   return {
     mutate,

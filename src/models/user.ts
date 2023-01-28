@@ -1,24 +1,19 @@
-import { differenceInYears } from "date-fns";
-
-interface Location {
-  latitude: number;
-  longitude: number;
-}
-
-export type User = Partial<{
-  id: string;
+export type User = {
+  id?: string;
   email: string;
   name: string;
-  avatar: Blob | null | string;
-  bio: string;
+  avatar?: string;
+  bio?: string;
   hometown: string;
-  occupation: string;
-  nationality: string;
-  phone: string;
-  birthday: Date | null;
-  gender: number | null;
-  location: Location | null;
+  occupation?: string;
+  nationality?: string;
+  phone?: string;
+  birthday?: Date;
+  gender?: number;
+  latitude?: number;
+  longitude?: number;
   hasConfirmedRegulation: boolean;
-  favorites: string[];
   provider: number;
-}>;
+  createdAt?: Date;
+  updatedAt?: Date;
+};

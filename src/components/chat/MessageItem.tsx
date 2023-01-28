@@ -12,7 +12,7 @@ interface MessageItemProps {
   message: {
     id: string;
     avatar: string;
-    date: Timestamp;
+    date: Date | null;
     name: string;
     sentBy: string;
     messageText: string;

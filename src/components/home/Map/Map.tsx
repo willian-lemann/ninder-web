@@ -44,7 +44,7 @@ const Map = ({ toggleMap }: MapProps) => {
     setHandlerLocation(null);
   };
 
-  if (isLoading) {
+  if (isLoading || !users) {
     return (
       <div className="w-[53%] h-[100%] flex flex-col gap-4 items-center justify-center">
         <Loading size={8} />

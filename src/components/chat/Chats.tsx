@@ -11,22 +11,28 @@ import { FunnelIcon as FilterIcon } from "@heroicons/react/24/outline";
 import { Loading } from "@components/shared/Loading";
 import { ChatItem } from "./ChatItem";
 
-import { ChatDTO } from "@data/dtos/chat";
 import { useChatsContext } from "@context/chat";
 import { FindUsersModal, FindUsersModalHandles } from "./FindUsersModal";
-import { useUserChats } from "@context/chat/useUserChats";
+import { Chat } from "@data/models/chat";
 
 export const Chats = () => {
-  const { chats, currentChat, isLoading } = useChatsContext();
+  const { chats, setCurrentChat, currentChat, isLoading } = useChatsContext();
   const findUsersModalRef = useRef<FindUsersModalHandles>(null);
 
-  console.log(chats);
   const isSelected = useMemo(() => {
     const firstChat = chats?.at(0)?.id;
+
     return currentChat?.id || firstChat;
   }, [chats, currentChat]);
 
-  const handleSelectChat = async (chat: ChatDTO) => {};
+  const handleSelectChat = async (chat: Chat) => {
+    setCurrentChat((state) => ({
+      ...state,
+      user: chat.user,
+      lastMessage: chat.lastMessage,
+      id: chat.id,
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -63,20 +69,18 @@ export const Chats = () => {
       </div>
 
       <ul className="overflow-auto">
-        {chats.map((chat) => (
+        {chats?.map((chat) => (
           <ChatItem
             key={chat?.id}
             chat={{
               id: chat.id,
-              avatar: chat.user?.avatar,
-              title: chat.user?.name,
-              subtitle: chat.lastMessage?.message as string,
-              sentAt: chat.lastMessage?.sentAt as Timestamp,
-              isUnRead: chat.lastMessage?.unRead as boolean,
-              sentBy: chat.lastMessage?.sentBy as string,
+              user: chat.user,
+              lastMessage: chat.lastMessage,
+              isUnRead: true,
+              sentAt: chat.lastMessage.createdAt,
             }}
             isSelected={isSelected === chat.id}
-            onSelectChat={() => handleSelectChat(chat)}
+            onSelectChat={(selectedChat) => handleSelectChat(selectedChat)}
           />
         ))}
       </ul>

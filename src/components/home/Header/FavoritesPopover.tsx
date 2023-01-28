@@ -5,13 +5,23 @@ import { classNames } from "@utils/classNames";
 import { BookmarkIcon } from "@heroicons/react/24/solid";
 import { BookmarkIcon as OutlinedBookmarkIcon } from "@heroicons/react/24/outline";
 import { Popover, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, MouseEvent } from "react";
 
 import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
+import { User } from "@data/models/user";
 
 export const FavoritesPopover = () => {
-  const { favorite, favorites, isEmpty, checkUserIsFavorited } =
+  const { favoriteToggle, favorites, isEmpty, checkUserIsFavorited } =
     useFavoriteUsers();
+
+  const handleFavoriteToggle = async (
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    user: User
+  ) => {
+    event.stopPropagation();
+
+    await favoriteToggle(user);
+  };
 
   const handleNavigate = (path: string) => {
     Router.push(path);
@@ -69,12 +79,12 @@ export const FavoritesPopover = () => {
                     {checkUserIsFavorited(user.id as string) ? (
                       <BookmarkIcon
                         className="h-4 w-4 cursor-pointer text-primary"
-                        onClick={(event) => favorite(event, user)}
+                        onClick={(event) => handleFavoriteToggle(event, user)}
                       />
                     ) : (
                       <OutlinedBookmarkIcon
                         className="h-4 w-4 cursor-pointer"
-                        onClick={(event) => favorite(event, user)}
+                        onClick={(event) => handleFavoriteToggle(event, user)}
                       />
                     )}
                   </li>

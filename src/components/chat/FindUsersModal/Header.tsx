@@ -1,11 +1,6 @@
-import { useAuthContext } from "@context/auth";
-import { useChatsContext } from "@context/chat";
-import { ChatDTO } from "@data/dtos";
-import { getNow } from "@functions/getNow";
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon as CloseIcon } from "@heroicons/react/24/outline";
 import { classNames } from "@utils/classNames";
-import { uuid } from "@utils/uniqueId";
 import { ContentType, SelectedUser } from "./types";
 
 interface HeaderProps {
@@ -15,12 +10,7 @@ interface HeaderProps {
   onNext(selectedUser: SelectedUser): void;
 }
 
-export const Header = ({
-  selectedUser,
-  contentType,
-  onNext,
-  onCloseModal,
-}: HeaderProps) => {
+export const Header = ({ selectedUser, onNext, onCloseModal }: HeaderProps) => {
   return (
     <Dialog.Title
       as="h3"
@@ -32,7 +22,7 @@ export const Header = ({
         <button
           onClick={() => onNext(selectedUser)}
           className={classNames(
-            selectedUser.id || contentType === "Next"
+            selectedUser.id
               ? "opacity-100 font-bold cursor-pointer"
               : "opacity-50  cursor-default",
             "text-primary transition-colors duration-300"

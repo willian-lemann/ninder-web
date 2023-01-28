@@ -1,6 +1,5 @@
 import { api } from "@config/axios";
-
-import { User } from "@data/entities/user";
+import { User } from "@data/models/user";
 
 import useSWR from "swr";
 

@@ -10,7 +10,7 @@ import {
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
 
 import { MessageItem } from "./MessageItem";
-import { SendMessageDto } from "@dtos/chat/send-message-dto";
+import { NewMessageDto, SendMessageDto } from "@dtos/chat/send-message-dto";
 
 import { useAuthContext } from "@context/auth";
 import Image from "next/image";
@@ -21,11 +21,14 @@ import { useBottomScroll } from "@hooks/useBottomScroll";
 import { isEmptyString } from "@functions/asserts/isEmpty";
 import { FindUsersModal, FindUsersModalHandles } from "./FindUsersModal";
 import { useChatsContext } from "@context/chat";
+import { useUserMessages } from "@context/messages/useUserMessages";
 
 export const Messages = () => {
   const { user: currentUser } = useAuthContext();
   const { currentChat } = useChatsContext();
-  const { messages, isLoading, isEmpty, sendMessage } = useMessagesContext();
+  const { messages, isLoading, isEmpty, sendMessage } = useUserMessages(
+    currentChat?.id
+  );
 
   const findUsersModalRef = useRef<FindUsersModalHandles>(null);
   const emojiRef = useRef<Handles>(null);
@@ -56,15 +59,10 @@ export const Messages = () => {
   };
 
   const handleSendMessage = async () => {
-    const message: SendMessageDto = {
+    const message: NewMessageDto = {
       chatId: currentChat?.id as string,
-      messageText,
-      user: {
-        id: currentChat?.user.id as string,
-        name: currentChat?.user.name as string,
-        avatar: currentChat?.user.avatar as string,
-      },
-      sentBy: currentUser?.id as string,
+      message: messageText,
+      userId: currentChat?.user.id as string,
     };
 
     setMessageText("");
@@ -90,8 +88,9 @@ export const Messages = () => {
       </div>
     );
   }
+  console.log(currentChat);
 
-  if (!currentChat?.id) {
+  if (!currentChat) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -145,8 +144,8 @@ export const Messages = () => {
                   avatar: currentChat?.user?.avatar as string,
                   name: currentChat?.user.name as string,
                   sentBy: message.sentBy,
-                  date: message.sentAt,
-                  messageText: message.messageText,
+                  date: message.createdAt,
+                  messageText: message.message,
                 }}
               />
             ))}

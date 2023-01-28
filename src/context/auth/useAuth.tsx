@@ -40,9 +40,6 @@ export interface InitialState {
 
 let authChannel: BroadcastChannel;
 
-const fetcher = (url: string) =>
-  api.get(url).then((response) => response.data.result);
-
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
   const [user, setUser] = useState<User | null>(null);
@@ -58,12 +55,14 @@ export function useAuth(): InitialState {
       return addErrorNotification(String(error?.message));
     }
 
-    setUser(result?.user);
+    setUser(result?.user as User);
 
     setCookie(undefined, STORAGE_KEY, result?.token as string, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
       path: "/",
     });
+
+    api.defaults.headers["Authorization"] = `Bearer ${result?.token}`;
 
     if (result?.user.hasConfirmedRegulation) {
       Router.push("/");
@@ -83,7 +82,6 @@ export function useAuth(): InitialState {
 
     const { result, error, success } = response.data;
 
-  
     if (!success) {
       return addErrorNotification(error.message);
     }
@@ -123,9 +121,12 @@ export function useAuth(): InitialState {
     const token = cookies[STORAGE_KEY];
 
     if (token) {
-      api.get("/me").then((response) => {
-        setUser(response.data.result);
-      });
+      api
+        .get("/me")
+        .then((response) => {
+          setUser(response.data.result);
+        })
+        .catch(() => signOut());
     }
   }, []);
 
