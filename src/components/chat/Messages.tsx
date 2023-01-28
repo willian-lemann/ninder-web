@@ -10,7 +10,7 @@ import {
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
 
 import { MessageItem } from "./MessageItem";
-import { NewMessageDto, SendMessageDto } from "@dtos/chat/send-message-dto";
+import { NewMessageDto } from "@dtos/chat/send-message-dto";
 
 import { useAuthContext } from "@context/auth";
 import Image from "next/image";
