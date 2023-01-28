@@ -1,65 +1,76 @@
-import { MouseEvent } from "react";
+import { addErrorNotification } from "@components/shared/alert";
+import { api } from "@config/axios";
 import { useAuthContext } from "@context/auth";
-import { User } from "@data/entities/user";
-import { updateUserUseCase } from "@data/useCases/user";
+import { Favorite } from "@data/models/favorite";
+import { User } from "@data/models/user";
+import { favoriteToggleService } from "@services/favorite/favoriteToggle";
+import { uuid } from "@utils/uniqueId";
 
 import useSWR from "swr";
-import { getFavoritesUseCase } from "@data/useCases/favorite/getFavoritesUseCase";
-import { createFavoriteUseCase } from "@data/useCases/favorite/createFavoriteUseCase";
-import { Favorite } from "@data/entities/favorite";
-import { uuid } from "@utils/uniqueId";
-import { FavoriteDTO } from "@data/dtos/favorite";
+
+const fetcher = (url: string) => api.get(url).then((res) => res.data.result);
 
 export function useFavoriteUsers() {
-  const { user: currentUser } = useAuthContext();
+  const {
+    mutate,
+    data = [],
+    isLoading,
+  } = useSWR<Favorite[]>(`/favorites`, fetcher);
 
-  const { mutate, data } = useSWR(
-    `/favorites/${currentUser?.id}`,
-    () =>
-      getFavoritesUseCase(currentUser?.id as string).then(
-        (response) => response
-      ),
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  const favorites = data as FavoriteDTO[];
-
-  const isEmpty = data?.length === 0;
-  const isLoading = !data;
+  const favorites = data as Favorite[];
+  const isEmpty = favorites?.length === 0;
 
   function checkUserIsFavorited(userId: string) {
-    return favorites?.find((favorite) => favorite.user.id === userId);
+    const favorite = favorites?.find((favorite) => favorite.user.id === userId);
+    return !!favorite;
   }
 
-  async function favorite(
-    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
-    user: User
-  ) {
-    event.stopPropagation();
-
+  async function favoriteToggle(user: User) {
     const previousFavorites = structuredClone(favorites);
 
-    if (checkUserIsFavorited(user.id as string)) {
+    const hasFavorite = favorites?.find(
+      (favorite) => favorite.user.id === user.id
+    );
+
+    if (!hasFavorite) {
       mutate(
-        favorites.filter((favorite) => favorite.user.id !== user.id),
+        [
+          ...favorites,
+          {
+            id: uuid(),
+            user,
+          },
+        ],
         false
       );
     } else {
-      mutate([...favorites, { id: uuid(), user }], false);
+      const newFavorites = favorites.filter(
+        (favorite) => favorite.user.id !== user.id
+      );
+
+      mutate(newFavorites, false);
     }
 
     try {
-      await createFavoriteUseCase(currentUser?.id as string, user.id as string);
+      const response = await favoriteToggleService(user.id as string);
+
+      const { result, error, success } = response.data;
+
+      if (!success) {
+        return addErrorNotification(error.message);
+      }
     } catch (error) {
+      addErrorNotification(`Error trying to favorite ${user.name}`);
       mutate(previousFavorites, false);
     }
   }
 
   return {
-    isLoading,
+    mutate,
     isEmpty,
+    isLoading,
     favorites,
-    favorite,
+    favoriteToggle,
     checkUserIsFavorited,
   };
 }

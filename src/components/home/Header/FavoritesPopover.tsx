@@ -5,13 +5,23 @@ import { classNames } from "@utils/classNames";
 import { BookmarkIcon } from "@heroicons/react/24/solid";
 import { BookmarkIcon as OutlinedBookmarkIcon } from "@heroicons/react/24/outline";
 import { Popover, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, MouseEvent } from "react";
 
 import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
+import { User } from "@data/models/user";
 
 export const FavoritesPopover = () => {
-  const { favorite, favorites, isEmpty, checkUserIsFavorited } =
+  const { favoriteToggle, favorites, isEmpty, checkUserIsFavorited } =
     useFavoriteUsers();
+
+  const handleFavoriteToggle = async (
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    user: User
+  ) => {
+    event.stopPropagation();
+
+    await favoriteToggle(user);
+  };
 
   const handleNavigate = (path: string) => {
     Router.push(path);
@@ -20,7 +30,7 @@ export const FavoritesPopover = () => {
   return (
     <Popover className="relative">
       <Popover.Button
-        disabled={favorites.length === 0}
+        disabled={favorites?.length === 0}
         as="button"
         className={classNames(
           "block hover:bg-gray-200 px-4 py-2 text-left w-full"
@@ -28,7 +38,7 @@ export const FavoritesPopover = () => {
       >
         <span className="text-sm text-gray-700 relative">
           My Favorites
-          {favorites.length > 0 ? (
+          {favorites?.length > 0 ? (
             <span className="absolute -right-4 -top-1 bg-primary rounded-full w-4 h-4 text-xs text-white flex items-center justify-center">
               {favorites.length}
             </span>
@@ -49,7 +59,7 @@ export const FavoritesPopover = () => {
           <Popover.Panel className="absolute z-10 -left-[135%]">
             <div className="bg-white h-auto w-64 rounded-md py-4 px-6">
               <ul>
-                {favorites.map(({ user }) => (
+                {favorites?.map(({ user }) => (
                   <li
                     key={user?.id}
                     className="flex justify-between group mb-4 last:mb-0 cursor-pointer"
@@ -69,12 +79,12 @@ export const FavoritesPopover = () => {
                     {checkUserIsFavorited(user.id as string) ? (
                       <BookmarkIcon
                         className="h-4 w-4 cursor-pointer text-primary"
-                        onClick={(event) => favorite(event, user)}
+                        onClick={(event) => handleFavoriteToggle(event, user)}
                       />
                     ) : (
                       <OutlinedBookmarkIcon
                         className="h-4 w-4 cursor-pointer"
-                        onClick={(event) => favorite(event, user)}
+                        onClick={(event) => handleFavoriteToggle(event, user)}
                       />
                     )}
                   </li>

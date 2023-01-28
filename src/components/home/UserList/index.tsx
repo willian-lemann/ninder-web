@@ -3,7 +3,7 @@ import { UserCard } from "./UserCard";
 import { Skeleton } from "./Skeleton";
 import { classNames } from "@utils/classNames";
 
-import { useUsersContext } from "@context/users";
+import { useUsers, useUsersContext } from "@context/users";
 
 interface UserListProps {
   toggleMap: boolean;

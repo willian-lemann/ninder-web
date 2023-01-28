@@ -11,7 +11,7 @@ import { useAuthContext } from "@context/auth";
 import { useChatsContext } from "@context/chat";
 
 import { Loading } from "@components/shared/Loading";
-import { UserDTO } from "@data/dtos";
+
 import { Skeleton } from "@components/user/Skeleton";
 
 export default function UserDetails() {
@@ -21,18 +21,6 @@ export default function UserDetails() {
   const { startNewChat } = useChatsContext();
   const [messageText, setMessageText] = useState("");
   const [isSendingMessage, setIsSendingMessage] = useState(false);
-
-  const handleStartConversation = async (talkingUser: UserDTO) => {
-    setIsSendingMessage(true);
-
-    await startNewChat({
-      userId: currentUser?.id as string,
-      messageText,
-      talkingUser,
-    });
-
-    setIsSendingMessage(false);
-  };
 
   if (isLoading) {
     return <Skeleton />;
@@ -91,36 +79,6 @@ export default function UserDetails() {
             modi perspiciatis mollitia. Quibusdam, voluptates mollitia!
             Voluptate, vel deserunt!
           </p>
-        </section>
-
-        <section className="flex-1 flex flex-col justify-center">
-          <div className="flex flex-col items-center">
-            <span className="self-start">
-              Say something to <strong>{user.name}</strong>
-            </span>
-
-            <textarea
-              name="message-text"
-              id="message-text"
-              placeholder="type here..."
-              className="h-52 w-full px-3 py-2 mt-4 outline-none border rounded-md resize-none"
-              value={messageText}
-              onChange={({ target }) => setMessageText(target.value)}
-            />
-
-            <button
-              onClick={() =>
-                handleStartConversation({
-                  id: user.id as string,
-                  name: user.name as string,
-                  avatar: user.avatar as string,
-                })
-              }
-              className="rounded-md mt-4 flex justify-center self-end bg-primary text-white px-4 py-2 w-52 hover:brightness-90 transition-[filter] duration-300"
-            >
-              {isSendingMessage ? <Loading /> : "Send Message"}
-            </button>
-          </div>
         </section>
       </div>
     </div>

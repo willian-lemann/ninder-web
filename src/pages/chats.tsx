@@ -1,5 +1,3 @@
-import "react-chat-elements/dist/main.css";
-
 import { useRouter } from "next/router";
 
 import { ArrowLeftOnRectangleIcon as BackIcon } from "@heroicons/react/24/solid";

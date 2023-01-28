@@ -1,52 +1,59 @@
+import { api } from "@config/axios";
 import { useAuthContext } from "@context/auth";
-import { User } from "@data/entities/user";
-import { getUsersUseCase } from "@data/useCases/user";
+import { User } from "@data/models/user";
 
-import { useCallback, useMemo, useState } from "react";
+import { startTransition, useCallback, useMemo, useState } from "react";
 
-import useSWR, { KeyedMutator, mutate } from "swr";
+import useSWR, { KeyedMutator } from "swr";
 
 export interface UsersContextParams {
   isLoading: boolean;
   isEmpty: boolean;
   users: User[];
-  search(filter: string): void;
+  queryFilter: string;
+  searchUsers(filter: string): void;
   mutate: KeyedMutator<User[]>;
 }
 
+const fetcher = (url: string) => api.get(url).then((res) => res.data.result);
+
 export const useUsers = (): UsersContextParams => {
-  const { user: currentUser } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
+
   const [queryFilter, setQueryFilter] = useState("");
 
-  const usersData = useSWR(`/users/${currentUser?.id}`, () =>
-    getUsersUseCase(currentUser as User).then(
-      (response) => response?.data.result
-    )
+  const { data, mutate } = useSWR<User[]>(
+    isAuthenticated ? `/users?search=${queryFilter}` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    }
   );
 
-  const isLoading = !usersData.data;
-  const isEmpty = usersData.data?.length === 0;
+  const isLoading = !data;
+  const isEmpty = data?.length === 0;
 
-  const search = (filter: string) => {
+  const searchUsers = (filter: string) => {
     setQueryFilter(filter);
   };
 
   const users = useMemo(() => {
     const filteredUsers =
       queryFilter.length > 0
-        ? usersData.data?.filter((user) =>
+        ? data?.filter((user) =>
             user.name?.toLowerCase().includes(queryFilter.toLowerCase())
           )
-        : usersData.data;
+        : data;
 
     return filteredUsers as User[];
-  }, [queryFilter, usersData.data]);
+  }, [data, queryFilter]);
 
   return {
     mutate,
     isLoading,
     users,
     isEmpty,
-    search,
+    searchUsers,
+    queryFilter,
   };
 };

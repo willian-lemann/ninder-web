@@ -1,6 +1,4 @@
 import type { AppProps } from "next/app";
-import "firebase/firestore";
-import "@config/firebase";
 
 import "@styles/globals.css";
 

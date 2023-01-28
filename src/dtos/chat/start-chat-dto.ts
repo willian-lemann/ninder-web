@@ -1,7 +1,3 @@
-import { UserDTO } from "@data/dtos";
+import { Chat } from "@data/models/chat";
 
-export interface StartChatDto {
-  userId: string;
-  messageText: string;
-  talkingUser: UserDTO;
-}
+export interface NewChatDto extends Chat {}

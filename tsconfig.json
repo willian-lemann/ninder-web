@@ -17,11 +17,12 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
-      "@data/*": ["src/@data/*"],
+      "@data/models/*": ["src/models/*"],
       "@models/*": ["src/@data/models/*"],
       "@styles/*": ["src/styles/*"],
       "@dtos/*": ["src/dtos/*"],
       "@utils/*": ["src/utils/*"],
+      "@services/*": ["src/services/*"],
       "@config/*": ["src/config/*"],
       "@context/*": ["src/context/*"],
       "@constants/*": ["src/constants/*"],

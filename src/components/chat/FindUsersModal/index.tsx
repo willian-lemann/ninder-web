@@ -20,8 +20,7 @@ export interface FindUsersModalHandles {
 
 export const FindUsersModal = forwardRef((props, ref) => {
   const { startNewChat } = useChatsContext();
-  const { user } = useAuthContext();
-  const [messageText, setMessageText] = useState("");
+
   const [selectedUser, setSelectedUser] = useState<SelectedUser>({
     id: "",
     avatar: "",
@@ -30,24 +29,21 @@ export const FindUsersModal = forwardRef((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [contentType, setContentType] = useState<ContentType>("List");
 
-  const handleChangeMessageText = useCallback((message: string) => {
-    setMessageText(message);
-  }, []);
-
   const handleNext = useCallback(
     async (selectedUser: SelectedUser) => {
-      if (contentType === "Next") {
-        await startNewChat({
-          messageText,
-          userId: user?.id as string,
-          talkingUser: selectedUser,
-        });
-      }
-
-      setSelectedUser(selectedUser);
-      setContentType("Next");
+      startNewChat({
+        user: {
+          id: selectedUser.id,
+          avatar: selectedUser.avatar,
+          name: selectedUser.name,
+        },
+        lastMessage: {
+          message: "",
+          createdAt: null,
+        },
+      });
     },
-    [contentType, messageText, startNewChat, user?.id]
+    [startNewChat]
   );
 
   const closeModal = useCallback(() => {
@@ -104,10 +100,8 @@ export const FindUsersModal = forwardRef((props, ref) => {
                   />
 
                   <Content
-                    contentType={contentType}
                     selectedUser={selectedUser}
                     onChangeSelectedUser={setSelectedUser}
-                    onChangeMessageText={handleChangeMessageText}
                   />
                 </Dialog.Panel>
               </Transition.Child>

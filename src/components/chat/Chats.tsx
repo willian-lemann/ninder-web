@@ -1,5 +1,4 @@
 import { useMemo, useRef } from "react";
-import { Timestamp } from "firebase/firestore";
 
 import {
   PencilSquareIcon,
@@ -11,21 +10,27 @@ import { FunnelIcon as FilterIcon } from "@heroicons/react/24/outline";
 import { Loading } from "@components/shared/Loading";
 import { ChatItem } from "./ChatItem";
 
-import { ChatDTO } from "@data/dtos/chat";
 import { useChatsContext } from "@context/chat";
 import { FindUsersModal, FindUsersModalHandles } from "./FindUsersModal";
+import { Chat } from "@data/models/chat";
 
 export const Chats = () => {
-  const { chats, isLoading, focusInChat, currentChat } = useChatsContext();
+  const { chats, setCurrentChat, currentChat, isLoading } = useChatsContext();
   const findUsersModalRef = useRef<FindUsersModalHandles>(null);
 
   const isSelected = useMemo(() => {
-    const firstChat = chats.at(0)?.id;
+    const firstChat = chats?.at(0)?.id;
+
     return currentChat?.id || firstChat;
   }, [chats, currentChat]);
 
-  const handleSelectChat = async (chat: ChatDTO) => {
-    await focusInChat(chat.id as string);
+  const handleSelectChat = async (chat: Chat) => {
+    setCurrentChat((state) => ({
+      ...state,
+      user: chat.user,
+      lastMessage: chat.lastMessage,
+      id: chat.id,
+    }));
   };
 
   if (isLoading) {
@@ -63,20 +68,18 @@ export const Chats = () => {
       </div>
 
       <ul className="overflow-auto">
-        {chats.map((chat) => (
+        {chats?.map((chat) => (
           <ChatItem
             key={chat?.id}
             chat={{
               id: chat.id,
-              avatar: chat.user?.avatar,
-              title: chat.user?.name,
-              subtitle: chat.lastMessage?.message as string,
-              sentAt: chat.lastMessage?.sentAt as Timestamp,
-              isUnRead: chat.lastMessage?.unRead as boolean,
-              sentBy: chat.lastMessage?.sentBy as string,
+              user: chat.user,
+              lastMessage: chat.lastMessage,
+              isUnRead: true,
+              sentAt: chat.lastMessage.createdAt,
             }}
             isSelected={isSelected === chat.id}
-            onSelectChat={() => handleSelectChat(chat)}
+            onSelectChat={(selectedChat) => handleSelectChat(selectedChat)}
           />
         ))}
       </ul>

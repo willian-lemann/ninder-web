@@ -1,12 +1,11 @@
 import { differenceInHours, format, formatDistanceToNow } from "date-fns";
-import { Timestamp } from "firebase/firestore";
 
-export function formatDate(timestampDate: Timestamp) {
-  if (!timestampDate) {
+export function formatDate(date: Date | null) {
+  if (!date) {
     return null;
   }
 
-  const toDate = new Date(timestampDate.toDate());
+  const toDate = new Date(date);
 
   const hours = differenceInHours(new Date(), toDate);
 

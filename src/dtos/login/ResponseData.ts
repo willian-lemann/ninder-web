@@ -1,4 +1,4 @@
-import { User } from "@data/entities/user";
+import { User } from "@data/models/user";
 
 export interface ResponseData {
   token: string;

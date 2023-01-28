@@ -6,7 +6,7 @@ import { LoginTypes } from "@constants/login/LoginTypes";
 import { withSSRGuest } from "../utils/withSSRGuest";
 
 import { SignInForm } from "@components/login/SignInForm";
-import { MultiStepSignup } from "../components/login/MultiStepSignup";
+import { SignupForm } from "../components/login/SignupForm";
 
 export default function Login() {
   const [loginType, setLoginType] = useState<LoginTypes>("signin");
@@ -21,18 +21,18 @@ export default function Login() {
         {loginType === "signin" ? (
           <SignInForm onLoginType={handleChangeLoginType} />
         ) : (
-          <MultiStepSignup onLoginType={handleChangeLoginType} />
+          <SignupForm onLoginType={handleChangeLoginType} />
         )}
       </section>
 
       <section className="hidden md:block w-[50%] h-screen relative">
-        <Image
+        {/* <Image
           src="https://firebasestorage.googleapis.com/v0/b/ninder-dev.appspot.com/o/images%2Flogin-background.png?alt=media&token=f9e85180-2e56-4181-a5b1-cca409f664d2"
           alt="background image"
           className="h-full w-full object-cover"
           fill
           loading="lazy"
-        />
+        /> */}
       </section>
     </div>
   );

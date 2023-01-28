@@ -16,7 +16,7 @@ export default function Home() {
 
       <div className="flex justify-between h-[calc(100vh-4rem)] z-0 relative">
         <UserList toggleMap={toggleMap} />
-        <Map toggleMap={toggleMap} />
+      <Map toggleMap={toggleMap} />
 
         <button
           onClick={() => setToggleMap((state) => !state)}

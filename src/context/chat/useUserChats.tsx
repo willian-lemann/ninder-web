@@ -1,185 +1,59 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import useSWR, { KeyedMutator } from "swr";
+
+import { api } from "@config/axios";
+import { Chat } from "@data/models/chat";
+import { Dispatch, SetStateAction, useState } from "react";
+import { useAuthContext } from "@context/auth";
+import { NewChatDto } from "@dtos/chat/start-chat-dto";
 import Router from "next/router";
 
-import {
-  collection,
-  onSnapshot,
-  query,
-  Unsubscribe,
-  where,
-} from "firebase/firestore";
-import { firestore } from "@config/firebase";
-
-import {
-  getChatsUseCase,
-  startChatUseCase,
-  updateChatUseCase,
-} from "@data/useCases/chat";
-
-import { Chat, User as CurrentUser } from "@data/entities";
-import { useAuthContext } from "@context/auth";
-import { ChatDTO, UserDTO } from "@data/dtos";
-import { StartChatDto } from "@dtos/chat/start-chat-dto";
-import { addErrorNotification } from "@components/shared/alert";
-import { getSortedChatsByRecent } from "@utils/getSortedChatsByRecent";
-import { useNotification } from "@hooks/useNotification";
-
-export interface InitialState {
-  chats: ChatDTO[];
-  currentChat: ChatDTO | null;
-  numberOfUnReadChats: number;
+export interface ContextParams {
+  chats: Chat[];
+  mutate: KeyedMutator<Chat[]>;
+  error: any;
   isEmpty: boolean;
   isLoading: boolean;
-  mutate: Dispatch<SetStateAction<ChatDTO[]>>;
-  setCurrentChat: Dispatch<SetStateAction<ChatDTO | null>>;
-  startNewChat: (params: StartChatDto) => Promise<void>;
-  focusInChat: (id: string) => Promise<void>;
+  currentChat: Chat | null;
+  setCurrentChat: Dispatch<SetStateAction<Chat | null>>;
+  startNewChat(newChat: NewChatDto): void;
 }
 
-function getUserChatWith(currentUser: CurrentUser, users: UserDTO[]) {
-  const userChatWith = users.find((user) => user.id !== currentUser.id);
-  return userChatWith as UserDTO;
-}
+const fetcher = (url: string) =>
+  api.get(url).then((response) => response.data.result);
 
-export const useUserChats = (): InitialState => {
-  const { user: currentUser } = useAuthContext();
-  const unsubscribeRef = useRef<Unsubscribe>();
-  const [chats, setChats] = useState<ChatDTO[]>([]);
-  const [currentChat, setCurrentChat] = useState<ChatDTO | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const numberOfUnReadChats = useMemo(
-    () => chats.filter((chat) => chat.lastMessage?.unRead).length,
-    [chats]
+export const useUserChats = (): ContextParams => {
+  const { isAuthenticated } = useAuthContext();
+  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
+  const { data, error, isLoading, mutate } = useSWR<Chat[]>(
+    isAuthenticated ? "/chats" : null,
+    fetcher,
+    { revalidateOnFocus: false }
   );
 
-  const focusInChat = async (id: string) => {
-    const chat = chats.find((chatItem) => chatItem.id === id) as ChatDTO;
-
-    setCurrentChat(chat);
-
-    const previousChats = structuredClone(chats);
-
-    const newChats = chats.map((chatItem) => {
-      if (chatItem.id === chat.id) {
-        return {
-          ...chatItem,
-          lastMessage: {
-            ...chatItem.lastMessage,
-            unRead: false,
-          },
-        };
-      }
-
-      return chatItem;
-    });
-
-    try {
-      await updateChatUseCase({
-        id: chat.id,
-        lastMessage: { ...chat.lastMessage, unRead: false },
-      });
-
-      setChats(newChats);
-    } catch (error) {
-      setChats(previousChats);
-      addErrorNotification(JSON.stringify(error));
-    }
-  };
-
-  const startNewChat = async ({
-    userId,
-    messageText,
-    talkingUser,
-  }: StartChatDto) => {
-    await startChatUseCase({
-      currentUser: {
-        id: currentUser?.id as string,
-        name: currentUser?.name as string,
-        avatar: currentUser?.avatar as string,
-      },
-      messageText,
-      talkingUser,
-      userId,
-    });
-
-    Router.push(`/chats`);
-  };
-
-  useEffect(() => {
-    console.log("render chats");
-    if (!currentUser) return;
-
-    const chatUsersRef = collection(firestore, "chats");
-    const querySnapshot = query(
-      chatUsersRef,
-      where("users", "array-contains", {
-        id: currentUser.id,
-        name: currentUser.name,
-        avatar: currentUser.avatar,
-      })
+  const startNewChat = (newChat: NewChatDto) => {
+    const alreadyHasChat = data?.find(
+      (chat) => chat.user.id === newChat.user.id
     );
 
-    const unsubscribe = onSnapshot(querySnapshot, (docSnap) => {
-      const data = docSnap.docs.map((doc) => {
-        const newChatData = { ...doc.data(), id: doc.id } as Chat;
-
-        const userChatWith = getUserChatWith(currentUser, newChatData.users);
-
-        const newChat = {
-          id: newChatData.id,
-          user: userChatWith,
-          lastMessage: { ...newChatData.lastMessage, unRead: true },
-        } as ChatDTO;
-
-        return newChat;
-      });
-
-      const orderedByRecent = getSortedChatsByRecent(data);
-
-      setChats(orderedByRecent);
-    });
-
-    unsubscribeRef.current = unsubscribe;
-
-    return () => {
-      unsubscribeRef.current?.();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
-
-  useEffect(() => {
-    const loadChats = async () => {
-      const chats = await getChatsUseCase({
-        id: currentUser?.id as string,
-        name: currentUser?.name as string,
-        avatar: currentUser?.avatar as string,
-      });
-
-      setChats(chats);
-    };
-
-    if (currentUser) {
-      loadChats().finally(() => setIsLoading(false));
+    if (alreadyHasChat) {
+      return Router.push(`/chats`);
     }
-  }, [currentUser]);
+
+    if (data) {
+      mutate([...data, newChat], false);
+    } else {
+      mutate([newChat], false);
+    }
+  };
 
   return {
-    isEmpty: chats.length === 0 && !isLoading,
+    chats: data as Chat[],
+    mutate,
+    error,
+    isEmpty: data?.length === 0,
     isLoading,
-    numberOfUnReadChats,
-    chats,
     currentChat,
     startNewChat,
     setCurrentChat,
-    mutate: setChats,
-    focusInChat,
   };
 };

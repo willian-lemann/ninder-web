@@ -9,15 +9,19 @@ import Image from "next/image";
 
 import { useAuthContext } from "@context/auth";
 import { errors } from "@utils/errorHandler";
-import { FirebaseError } from "firebase/app";
+
 import { preload } from "swr";
 import { api } from "@config/axios";
+import axios from "axios";
 
 interface SignInFormProps {
   onLoginType: (type: "signin" | "signup") => void;
 }
 
-const fetcher = () => api.get("/countries").then((response) => response.data);
+const fetcher = () =>
+  axios
+    .get("https://restcountries.com/v3.1/all")
+    .then((response) => response.data);
 
 preload("/api/data", fetcher);
 
@@ -49,11 +53,6 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
       await signIn({ email, password });
     } catch (error: any) {
       console.log(error);
-      if (error instanceof FirebaseError) {
-        return addErrorNotification(
-          errors[error.code] || "Error trying to sign in. Try again!"
-        );
-      }
 
       addErrorNotification("Error trying to sign in. Try again!");
     } finally {

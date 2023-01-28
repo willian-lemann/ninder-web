@@ -22,19 +22,6 @@ export const userInformationSchema = object({
       /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
       { message: "Email must be valid." }
     ),
-  hometown: string().required("Hometown is required."),
-  occupation: string().required("Occupation is required."),
-  bio: string().required("Bio is required."),
-});
-
-export const userProfileSchema = object().shape({
-  nationality: string().required("Nationality is required."),
-  birthday: date()
-    .required("Birthday is required.")
-    .test("test if is more than 18y", "You must be 18+ to join", (value) => {
-      return differenceInYears(new Date(), new Date(value as Date)) >= 18;
-    }),
-  gender: number().moreThan(0, "Gender is required"),
   password: string()
     .required("Password must not be empty.")
     .min(8, "Must be at least 8 digits."),

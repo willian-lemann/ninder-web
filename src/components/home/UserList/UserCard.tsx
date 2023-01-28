@@ -1,11 +1,12 @@
-import { memo } from "react";
+import { memo, MouseEvent, use } from "react";
 import Router from "next/router";
 
-import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
+import { User } from "@data/models/user";
 
-import { User } from "@data/entities/user";
-
-import { HeartIcon as OutlinedHeartIcon } from "@heroicons/react/24/outline";
+import {
+  ChatBubbleLeftEllipsisIcon as ChatIcon,
+  HeartIcon as OutlinedHeartIcon,
+} from "@heroicons/react/24/outline";
 import { HeartIcon as FilledHeartIcon } from "@heroicons/react/24/solid";
 
 import Image from "next/image";
@@ -16,6 +17,9 @@ import { classNames } from "@utils/classNames";
 import { useFavoriteUsers } from "@context/users/useFavoriteUsers";
 import { formatAge } from "@functions/formatAge";
 import { Thumbnail } from "@components/Thumbnail";
+import { useChatsContext } from "@context/chat";
+import { useUserChats } from "@context/chat/useUserChats";
+import { Chat } from "@data/models/chat";
 
 interface UserCardProps {
   user: User;
@@ -24,17 +28,42 @@ interface UserCardProps {
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser } = useAuthContext();
-  const { favorite, favorites, checkUserIsFavorited } = useFavoriteUsers();
+  const { startNewChat } = useChatsContext();
+  const { favoriteToggle, checkUserIsFavorited } = useFavoriteUsers();
+
+  const handleStartChat = (
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    user: User
+  ) => {
+    event.stopPropagation();
+
+    const chat = {
+      user: {
+        id: user.id,
+        avatar: user.avatar,
+        name: user.name,
+      },
+      lastMessage: {
+        message: "",
+        createdAt: null,
+      },
+    } as Chat;
+
+    startNewChat(chat);
+  };
+
+  const handleFavoriteToggle = async (
+    event: MouseEvent<SVGSVGElement, globalThis.MouseEvent>,
+    user: User
+  ) => {
+    event.stopPropagation();
+
+    await favoriteToggle(user);
+  };
 
   const handleSeeUserDetails = (id: string) => {
     Router.push(`/user/${id}`);
   };
-
-  const distance = getDistanceBetweenTwoCoords({
-    isMiles: false,
-    sourceLocation: currentUser?.location,
-    targetLocation: user.location,
-  });
 
   const isFavorite = checkUserIsFavorited(user.id as string);
 
@@ -57,21 +86,28 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
           </div>
 
           <p className="m-0 text-sm leading-3 text-zinc-400">
-            {distance} kilometers away
+            {user.distanceAway} kilometers away
           </p>
         </div>
 
-        {isFavorite ? (
-          <FilledHeartIcon
-            onClick={(event) => favorite(event, user)}
-            className="h-8 w-8 z-20 cursor-pointer text-primary animate-fadeIn"
-          />
-        ) : (
-          <OutlinedHeartIcon
-            onClick={(event) => favorite(event, user)}
+        <div className="flex items-center gap-4">
+          <ChatIcon
+            onClick={(event) => handleStartChat(event, user)}
             className="h-8 w-8 z-20 cursor-pointer text-zinc-600 animate-fadeIn"
           />
-        )}
+
+          {isFavorite ? (
+            <FilledHeartIcon
+              onClick={(event) => handleFavoriteToggle(event, user)}
+              className="h-8 w-8 z-20 cursor-pointer text-primary animate-fadeIn"
+            />
+          ) : (
+            <OutlinedHeartIcon
+              onClick={(event) => handleFavoriteToggle(event, user)}
+              className="h-8 w-8 z-20 cursor-pointer text-zinc-600 animate-fadeIn"
+            />
+          )}
+        </div>
       </div>
     </li>
   );

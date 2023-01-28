@@ -3,7 +3,7 @@ import { formatDate } from "@functions/formatDate";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 import { classNames } from "@utils/classNames";
-import { Timestamp } from "firebase/firestore";
+
 import Image from "next/image";
 import { memo, useCallback } from "react";
 import { Avatar } from "./Avatar";
@@ -12,7 +12,7 @@ interface MessageItemProps {
   message: {
     id: string;
     avatar: string;
-    date: Timestamp;
+    date: Date | null;
     name: string;
     sentBy: string;
     messageText: string;
