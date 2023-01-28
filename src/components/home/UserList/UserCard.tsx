@@ -1,7 +1,5 @@
-import { memo, MouseEvent } from "react";
+import { memo, MouseEvent, use } from "react";
 import Router from "next/router";
-
-import { getDistanceBetweenTwoCoords } from "@utils/getDistanceBetweenTwoCoords";
 
 import { User } from "@data/models/user";
 
@@ -30,7 +28,7 @@ interface UserCardProps {
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
   const { user: currentUser } = useAuthContext();
-  const { chats, startNewChat } = useChatsContext();
+  const { startNewChat } = useChatsContext();
   const { favoriteToggle, checkUserIsFavorited } = useFavoriteUsers();
 
   const handleStartChat = (
@@ -67,18 +65,6 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
     Router.push(`/user/${id}`);
   };
 
-  const distance = getDistanceBetweenTwoCoords({
-    isMiles: false,
-    sourceLocation: {
-      latitude: currentUser?.latitude as number,
-      longitude: currentUser?.longitude as number,
-    },
-    targetLocation: {
-      latitude: user.latitude as number,
-      longitude: user.longitude as number,
-    },
-  });
-
   const isFavorite = checkUserIsFavorited(user.id as string);
 
   return (
@@ -100,7 +86,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
           </div>
 
           <p className="m-0 text-sm leading-3 text-zinc-400">
-            {distance} kilometers away
+            {user.distanceAway} kilometers away
           </p>
         </div>
 

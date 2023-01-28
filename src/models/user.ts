@@ -16,4 +16,5 @@ export type User = {
   provider: number;
   createdAt?: Date;
   updatedAt?: Date;
+  distanceAway: number;
 };
