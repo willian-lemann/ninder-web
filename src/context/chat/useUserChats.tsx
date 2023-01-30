@@ -2,36 +2,35 @@ import useSWR, { KeyedMutator } from "swr";
 
 import { api } from "@config/axios";
 import { Chat } from "@data/models/chat";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAuthContext } from "@context/auth";
 import { NewChatDto } from "@dtos/chat/start-chat-dto";
 import Router from "next/router";
+import { addErrorNotification } from "@components/shared/alert";
 
 export interface ContextParams {
   chats: Chat[];
-  mutate: KeyedMutator<Chat[]>;
-  error: any;
+  setChats: Dispatch<SetStateAction<Chat[]>>;
   isEmpty: boolean;
   isLoading: boolean;
   currentChat: Chat | null;
   setCurrentChat: Dispatch<SetStateAction<Chat | null>>;
   startNewChat(newChat: NewChatDto): void;
+  checkHasChat(id: string): boolean;
 }
 
-const fetcher = (url: string) =>
-  api.get(url).then((response) => response.data.result);
-
 export const useUserChats = (): ContextParams => {
-  const { isAuthenticated } = useAuthContext();
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
-  const { data, error, isLoading, mutate } = useSWR<Chat[]>(
-    isAuthenticated ? "/chats" : null,
-    fetcher,
-    { revalidateOnFocus: false }
-  );
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkHasChat = (id: string) => {
+    const chat = chats.find((chatItem) => chatItem.user.id === id);
+    return !!chat;
+  };
 
   const startNewChat = (newChat: NewChatDto) => {
-    const alreadyHasChat = data?.find(
+    const alreadyHasChat = chats?.find(
       (chat) => chat.user.id === newChat.user.id
     );
 
@@ -39,21 +38,45 @@ export const useUserChats = (): ContextParams => {
       return Router.push(`/chats`);
     }
 
-    if (data) {
-      mutate([...data, newChat], false);
-    } else {
-      mutate([newChat], false);
-    }
+    const newChats = [...chats, newChat];
+
+    localStorage.setItem("@ninder.chats", JSON.stringify(newChats));
+
+    setChats(newChats);
+
+    Router.push(`/chats`);
   };
 
+  useEffect(() => {
+    const loadChats = async () => {
+      try {
+        const response = await api.get("/chats");
+
+        const { success, error, result } = response.data;
+
+        if (!success) {
+          return addErrorNotification(error.message);
+        }
+
+        setChats(result);
+      } catch (error) {
+        addErrorNotification(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadChats();
+  }, []);
+
   return {
-    chats: data as Chat[],
-    mutate,
-    error,
-    isEmpty: data?.length === 0,
+    chats,
+    setChats,
+    isEmpty: chats.length === 0,
     isLoading,
     currentChat,
     startNewChat,
     setCurrentChat,
+    checkHasChat,
   };
 };

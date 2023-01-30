@@ -26,8 +26,8 @@ export const MenuOptions = () => {
 
         <span
           className={classNames(
-            numberOfUnReadChats > 0 ? "block animate-bounce" : "hidden",
-            "absolute right-0 -top-1 text-white w-4 h-4 flex items-center justify-center bg-primary rounded-full text-xs"
+            numberOfUnReadChats > 0 ? "block" : "hidden",
+            "absolute right-0 top-1 text-white w-4 h-4 flex items-center justify-center bg-primary rounded-full text-xs"
           )}
         >
           {numberOfUnReadChats}

@@ -102,6 +102,8 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
 
       await userInformationSchema.validate(formData, { abortEarly: false });
 
+      exclude(formData, ["confirmPassword"]);
+
       const data: SignUpCredencials = {
         ...formData,
       };

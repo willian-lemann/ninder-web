@@ -3,7 +3,9 @@ export interface Chat {
   lastMessage: {
     message: string;
     createdAt: Date | null;
+    sentBy: string;
   };
+  isUnRead?: boolean;
   user: {
     id: string;
     name: string;

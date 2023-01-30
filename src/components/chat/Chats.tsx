@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import {
   PencilSquareIcon,
@@ -30,6 +30,7 @@ export const Chats = () => {
       user: chat.user,
       lastMessage: chat.lastMessage,
       id: chat.id,
+      isUnRead: false,
     }));
   };
 
@@ -68,16 +69,10 @@ export const Chats = () => {
       </div>
 
       <ul className="overflow-auto">
-        {chats?.map((chat) => (
+        {chats.map((chat) => (
           <ChatItem
             key={chat?.id}
-            chat={{
-              id: chat.id,
-              user: chat.user,
-              lastMessage: chat.lastMessage,
-              isUnRead: true,
-              sentAt: chat.lastMessage.createdAt,
-            }}
+            chat={chat}
             isSelected={isSelected === chat.id}
             onSelectChat={(selectedChat) => handleSelectChat(selectedChat)}
           />

@@ -6,6 +6,7 @@ import { classNames } from "@utils/classNames";
 import { Header } from "@components/home/Header";
 import { Map } from "@components/home/Map";
 import { UserList } from "@components/home/UserList";
+import { useChatsContext } from "@context/chat";
 
 export default function Home() {
   const [toggleMap, setToggleMap] = useState(false);
@@ -16,7 +17,7 @@ export default function Home() {
 
       <div className="flex justify-between h-[calc(100vh-4rem)] z-0 relative">
         <UserList toggleMap={toggleMap} />
-      <Map toggleMap={toggleMap} />
+        <Map toggleMap={toggleMap} />
 
         <button
           onClick={() => setToggleMap((state) => !state)}

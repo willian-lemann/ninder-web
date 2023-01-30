@@ -1,51 +1,22 @@
 import { classNames } from "@utils/classNames";
 
-import Image from "next/image";
-
 import { formatDate } from "@functions/formatDate";
-import { useAuthContext } from "@context/auth";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+
 import { Avatar } from "./Avatar";
 import { Chat } from "@data/models/chat";
 
 interface ChatItemProps {
-  chat: {
-    id?: string;
-    lastMessage: {
-      message: string;
-      createdAt?: Date | null;
-    };
-    user: {
-      id: string;
-      name: string;
-      avatar: string;
-    };
-    sentAt: Date | null;
-    isUnRead: boolean;
-  };
+  chat: Chat;
   isSelected: boolean;
   onSelectChat: (chat: Chat) => void;
 }
 
 export const ChatItem = ({ chat, isSelected, onSelectChat }: ChatItemProps) => {
-  const formattedDateToNow = formatDate(chat.sentAt);
+  const formattedDateToNow = formatDate(chat.lastMessage.createdAt);
 
   return (
     <li
-      onClick={() =>
-        onSelectChat({
-          id: chat.id,
-          user: {
-            id: chat.user.id,
-            avatar: chat.user.avatar,
-            name: chat.user.name,
-          },
-          lastMessage: {
-            message: chat.user.id,
-            createdAt: chat.sentAt,
-          },
-        })
-      }
+      onClick={() => onSelectChat(chat)}
       className={classNames(
         isSelected ? "bg-zinc-100" : "hover:bg-zinc-100",
         "flex items-center justify-between  px-6 py-2 transition-colors duration-300 cursor-pointer"

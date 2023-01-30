@@ -10,12 +10,10 @@ import {
 import { PaperAirplaneIcon as SendIconSolid } from "@heroicons/react/24/solid";
 
 import { MessageItem } from "./MessageItem";
-import { NewMessageDto } from "@dtos/chat/send-message-dto";
 
-import { useAuthContext } from "@context/auth";
 import Image from "next/image";
 import { Loading } from "@components/shared/Loading";
-import { useMessagesContext } from "@context/messages";
+
 import { useBottomScroll } from "@hooks/useBottomScroll";
 
 import { isEmptyString } from "@functions/asserts/isEmpty";
@@ -23,12 +21,13 @@ import { FindUsersModal, FindUsersModalHandles } from "./FindUsersModal";
 import { useChatsContext } from "@context/chat";
 import { useUserMessages } from "@context/messages/useUserMessages";
 
+import { Socket } from "socket.io-client";
+import { useAuthContext } from "@context/auth";
+
 export const Messages = () => {
-  const { user: currentUser } = useAuthContext();
   const { currentChat } = useChatsContext();
-  const { messages, isLoading, isEmpty, sendMessage } = useUserMessages(
-    currentChat?.id
-  );
+  const { user: currentUser } = useAuthContext();
+  const { messages, isLoading, isEmpty, sendMessage } = useUserMessages();
 
   const findUsersModalRef = useRef<FindUsersModalHandles>(null);
   const emojiRef = useRef<Handles>(null);
@@ -59,15 +58,16 @@ export const Messages = () => {
   };
 
   const handleSendMessage = async () => {
-    const message: NewMessageDto = {
-      chatId: currentChat?.id as string,
-      message: messageText,
-      userId: currentChat?.user.id as string,
-    };
+    const message = messageText;
 
     setMessageText("");
 
-    await sendMessage(message);
+    await sendMessage({
+      chatId: currentChat?.id as string,
+      message: message,
+      createdBy: currentUser?.id as string,
+      userId: currentChat?.user.id as string,
+    });
   };
 
   const handleSendMessageByEnterKey = async (
@@ -88,7 +88,6 @@ export const Messages = () => {
       </div>
     );
   }
-  console.log(currentChat);
 
   if (!currentChat) {
     return (

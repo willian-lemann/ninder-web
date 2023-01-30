@@ -18,16 +18,11 @@ export interface UsersContextParams {
 const fetcher = (url: string) => api.get(url).then((res) => res.data.result);
 
 export const useUsers = (): UsersContextParams => {
-  const { isAuthenticated } = useAuthContext();
-
   const [queryFilter, setQueryFilter] = useState("");
 
   const { data, mutate } = useSWR<User[]>(
-    isAuthenticated ? `/users?search=${queryFilter}` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-    }
+    `/users?search=${queryFilter}`,
+    fetcher
   );
 
   const isLoading = !data;
