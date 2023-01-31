@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode      = "prisma"
+}
+
+model User {
+  id                     String     @id @default(uuid())
+  email                  String     @unique
+  name                   String
+  password               String
+  avatar                 String?
+  bio                    String?
+  hometown               String?
+  occupation             String?
+  nationality            String?
+  phone                  String?
+  birthday               DateTime?
+  gender                 Int?
+  latitude               Float?
+  longitude              Float?
+  hasConfirmedRegulation Boolean    @default(false)
+  provider               Int        @default(1)
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+  chats                  Chat[]     @relation(name: "CreatedByRelation")
+  createdByChats         Chat[]     @relation(name: "UserRelation")
+  favorites              Favorite[] @relation(name: "FavoriteUserRelation")
+  favoritedUser          Favorite[] @relation(name: "FavoritedUserRelation")
+
+  @@map("users")
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  createdBy String
+  userId    String
+  isUnRead  Boolean   @default(false)
+  messages  Message[]
+
+  createdByUser User @relation(name: "CreatedByRelation", fields: [createdBy], references: [id])
+  user          User @relation(name: "UserRelation", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdBy])
+  @@map("chats")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  message   String
+  chatId    String
+  sentBy    String
+  createdAt DateTime @default(now())
+
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  @@index([chatId])
+  @@map("messages")
+}
+
+model Favorite {
+  id              String @id @default(uuid())
+  userId          String
+  favoritedUserId String
+
+  user          User @relation(name: "FavoriteUserRelation", fields: [userId], references: [id])
+  favoritedUser User @relation(name: "FavoritedUserRelation", fields: [favoritedUserId], references: [id])
+
+  @@index([userId])
+  @@index([favoritedUserId])
+  @@map("favorites")
+}
