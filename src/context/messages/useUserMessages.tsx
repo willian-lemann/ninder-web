@@ -1,12 +1,9 @@
-import useSWR, { KeyedMutator } from "swr";
-
 import { Message } from "@data/models/message";
-import { NewMessageDto } from "@dtos/chat/new-message-dto";
 import { api } from "@config/axios";
 
 import { useChatsContext } from "@context/chat";
 import { getNow } from "@functions/getNow";
-import { useSocketContext } from "@context/socket";
+
 import { useAuthContext } from "@context/auth";
 
 import { addErrorNotification } from "@components/shared/alert";
@@ -31,7 +28,6 @@ const fetcher = (url: string) =>
   api.get(url).then((response) => response.data.result);
 
 export const useUserMessages = (): InitialState => {
-  const socket = useSocketContext();
   const { user: currentUser } = useAuthContext();
   const { currentChat, chats, setChats } = useChatsContext();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -72,7 +68,7 @@ export const useUserMessages = (): InitialState => {
       },
     ]);
 
-    socket.emit("send-message", message);
+    // socket.emit("send-message", message);
   };
 
   const onReceiveMessage = useCallback(
@@ -87,25 +83,22 @@ export const useUserMessages = (): InitialState => {
     [currentUser?.id]
   );
 
-  useEffect(() => {
-    socket?.on("on-received-message", onReceiveMessage);
+  // useEffect(() => {
+  //   socket?.on("on-received-message", onReceiveMessage);
 
-    return () => {
-      socket.off("on-received-message", onReceiveMessage);
-    };
-  }, [onReceiveMessage, socket]);
+  //   return () => {
+  //     socket.off("on-received-message", onReceiveMessage);
+  //   };
+  // }, [onReceiveMessage, socket]);
 
   useEffect(() => {
     const loadMessages = async () => {
-      const response = await api.get(`/messages/${currentChat?.id}`);
-
-      const { success, error, result } = response.data;
-
-      if (!success) {
-        return addErrorNotification(error.message);
-      }
-
-      setMessages(result);
+      // const response = await api.get(`/messages/${currentChat?.id}`);
+      // const { success, error, result } = response.data;
+      // if (!success) {
+      //   return addErrorNotification(error.message);
+      // }
+      // setMessages(result);
     };
 
     loadMessages().finally(() => setIsLoading(false));

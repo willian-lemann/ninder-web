@@ -1,9 +1,7 @@
-import useSWR, { KeyedMutator } from "swr";
-
 import { api } from "@config/axios";
 import { Chat } from "@data/models/chat";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useAuthContext } from "@context/auth";
+
 import { NewChatDto } from "@dtos/chat/start-chat-dto";
 import Router from "next/router";
 import { addErrorNotification } from "@components/shared/alert";
@@ -49,21 +47,21 @@ export const useUserChats = (): ContextParams => {
 
   useEffect(() => {
     const loadChats = async () => {
-      try {
-        const response = await api.get("/chats");
+      // try {
+      //   const response = await api.get("/chats");
 
-        const { success, error, result } = response.data;
+      //   const { success, error, result } = response.data;
 
-        if (!success) {
-          return addErrorNotification(error.message);
-        }
+      //   if (!success) {
+      //     return addErrorNotification(error.message);
+      //   }
 
-        setChats(result);
-      } catch (error) {
-        addErrorNotification(error);
-      } finally {
-        setIsLoading(false);
-      }
+      //   setChats(result);
+      // } catch (error) {
+      //   addErrorNotification(error);
+      // } finally {
+      //   setIsLoading(false);
+      // }
     };
 
     loadChats();

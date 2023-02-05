@@ -1,6 +1,5 @@
 import { addErrorNotification } from "@components/shared/alert";
 import { api } from "@config/axios";
-import { useAuthContext } from "@context/auth";
 import { Favorite } from "@data/models/favorite";
 import { User } from "@data/models/user";
 import { favoriteToggleService } from "@services/favorite/favoriteToggle";
@@ -54,7 +53,7 @@ export function useFavoriteUsers() {
     try {
       const response = await favoriteToggleService(user.id as string);
 
-      const { result, error, success } = response.data;
+      const { error, success } = response.data;
 
       if (!success) {
         return addErrorNotification(error.message);
