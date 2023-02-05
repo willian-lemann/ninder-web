@@ -8,10 +8,12 @@ import { ResponseType } from "./types";
 
 export async function signupService(data: SignUpCredencials) {
   console.log(data, "squii");
-  // TODO: checar se eu ja tenho usuario cadastrado
+
   const alreadyHasAccount = await prisma.user.findUnique({
     where: { email: data.email },
   });
+
+  console.log(alreadyHasAccount);
 
   if (alreadyHasAccount) {
     return createApiResponse<ResponseType>({
@@ -19,8 +21,8 @@ export async function signupService(data: SignUpCredencials) {
       success: false,
     });
   }
-  // TODO: Se nao tiver eu crio um, e dps gero um token com as informacoes dele
 
+  console.log("passou criou");
   const createdAccount = await prisma.user.create({ data });
 
   const payload = {
@@ -31,6 +33,8 @@ export async function signupService(data: SignUpCredencials) {
   const token = jwt.sign(payload, SECRET, JWT_OPTIONS);
 
   const user = createUser(createdAccount);
+
+  console.log("passou criou user", user);
 
   return createApiResponse<ResponseType>({
     result: { token, user },

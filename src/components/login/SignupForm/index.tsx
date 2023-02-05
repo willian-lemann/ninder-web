@@ -1,5 +1,11 @@
 /* eslint-disable react/jsx-key */
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import * as yup from "yup";
 
 import {
@@ -25,6 +31,7 @@ import { Input } from "../Input";
 import { PreviewImage } from "./PreviewImage";
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 import { Loading } from "@components/shared/Loading";
+import { prisma } from "@config/prisma";
 
 interface SignupFormProps {
   onLoginType: (type: "signin" | "signup") => void;
