@@ -8,6 +8,7 @@ export const config = {
     "/api/chats/:path*",
     "/api/messages/:path*",
     "/api/me",
+    "/api/accept-regulation",
   ],
 };
 
@@ -25,15 +26,22 @@ function hasToken(request: NextRequest) {
 }
 
 export function middleware(request: NextRequest) {
-  // const token = hasToken(request);
-  // if (!token) return createResponse("No token provided.", { status: 401 });
-  // const decodedToken = jwtDecode<{ email: string; userId: string }>(token);
-  // const requestHeaders = new Headers(request.headers);
-  // requestHeaders.set("userid", decodedToken.userId as string);
-  // const response = NextResponse.next({
-  //   request: {
-  //     headers: requestHeaders,
-  //   },
-  // });
-  // return response;
+  const token = hasToken(request);
+
+  if (!token) return createResponse("No token provided.", { status: 401 });
+
+  const decodedToken = jwtDecode<{ email: string; sub: string }>(token);
+
+  const requestHeaders = new Headers(request.headers);
+
+  console.log(decodedToken);
+  requestHeaders.set("userid", decodedToken.sub as string);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  return response;
 }

@@ -1,4 +1,7 @@
 import { NextApiResponse } from "next";
+import { User } from "../models";
+
+export type ResponseAuthType = { token: string; user: User };
 
 type Error = {
   message: string;

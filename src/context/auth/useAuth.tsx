@@ -49,7 +49,7 @@ export function useAuth(): InitialState {
   async function signIn({ email, password }: SignInCredencials) {
     const response = await authenticateService(email, password);
 
-    const { result, error, success } = response;
+    const { result, error, success } = response.data;
 
     if (!success) {
       return addErrorNotification(String(error?.message));
@@ -61,6 +61,8 @@ export function useAuth(): InitialState {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
       path: "/",
     });
+
+    api.defaults.headers["Authorization"] = `Bearer ${result.token}`;
 
     if (result?.user.hasConfirmedRegulation) {
       Router.push("/");
@@ -78,7 +80,7 @@ export function useAuth(): InitialState {
 
     const response = await signupService(payload);
 
-    const { result, error, success } = response;
+    const { result, error, success } = response.data;
 
     if (!success) {
       return addErrorNotification(String(error?.message));
@@ -90,6 +92,8 @@ export function useAuth(): InitialState {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
       path: "/",
     });
+
+    api.defaults.headers["Authorization"] = `Bearer ${result.token}`;
 
     Router.push("/regulations");
   }
