@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { LoginTypes } from "@constants/login/LoginTypes";
@@ -7,7 +7,6 @@ import { withSSRGuest } from "../utils/withSSRGuest";
 
 import { SignInForm } from "@components/login/SignInForm";
 import { SignupForm } from "../components/login/SignupForm";
-import { prisma } from "@config/prisma";
 
 export default function Login() {
   const [loginType, setLoginType] = useState<LoginTypes>("signin");
@@ -40,10 +39,6 @@ export default function Login() {
 }
 
 export const getServerSideProps = withSSRGuest(async (context) => {
-  const users = await prisma.user.findMany();
-
-  console.log(users);
-
   return {
     props: {},
   };
