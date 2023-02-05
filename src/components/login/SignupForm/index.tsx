@@ -100,6 +100,7 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
     try {
       setIsSubmiting(true);
 
+      console.log(formData);
       await userInformationSchema.validate(formData, { abortEarly: false });
 
       exclude(formData, ["confirmPassword"]);

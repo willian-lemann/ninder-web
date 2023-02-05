@@ -62,8 +62,6 @@ export function useAuth(): InitialState {
       path: "/",
     });
 
-    api.defaults.headers["Authorization"] = `Bearer ${result?.token}`;
-
     if (result?.user.hasConfirmedRegulation) {
       Router.push("/");
     } else {
@@ -80,20 +78,18 @@ export function useAuth(): InitialState {
 
     const response = await signupService(payload);
 
-    const { result, error, success } = response.data;
+    const { result, error, success } = response;
 
     if (!success) {
-      return addErrorNotification(error.message);
+      return addErrorNotification(String(error?.message));
     }
 
-    setUser(result.user);
+    setUser(result?.user as User);
 
-    setCookie(undefined, STORAGE_KEY, result.token, {
+    setCookie(undefined, STORAGE_KEY, result?.token as string, {
       maxAge: 60 * 60 * 24 * 30, // 30 days,
       path: "/",
     });
-
-    api.defaults.headers["Authorization"] = `Bearer ${result.token}`;
 
     Router.push("/regulations");
   }
