@@ -7,11 +7,17 @@ type Error = {
   message: string;
 };
 
-export interface Result<T> {
+export interface Result<T = unknown> {
   success?: boolean;
   error?: Error | null;
   result?: T | null;
 }
+
+export type ResponseError<T = any> = {
+  response: {
+    data: Result<T>;
+  };
+};
 
 export function createApiResponse<T>({
   success = true,

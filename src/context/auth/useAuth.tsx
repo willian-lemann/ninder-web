@@ -28,10 +28,12 @@ import { authenticateService } from "@services/auth/authenticate";
 import { signupService } from "@services/auth/signup";
 
 import useSWR from "swr";
+import { ResponseError } from "@utils/createApiResponse";
 export interface InitialState {
   isAuthenticated: boolean;
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
+  isSubmitting: boolean;
   signIn(credencials: SignInCredencials): Promise<void>;
   signInWithGoogle(): Promise<void>;
   signUp(credencials: SignUpCredencials): Promise<void>;
@@ -43,31 +45,45 @@ let authChannel: BroadcastChannel;
 export function useAuth(): InitialState {
   const { session } = useGoogleContext();
   const [user, setUser] = useState<User | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const location = useGeoLocation();
 
   async function signIn({ email, password }: SignInCredencials) {
-    const response = await authenticateService(email, password);
+    setIsSubmitting(true);
 
-    const { result, error, success } = response.data;
+    try {
+      const response = await authenticateService(email, password);
 
-    if (!success) {
-      return addErrorNotification(String(error?.message));
-    }
+      const { result, error, success } = response.data;
 
-    setUser(result?.user as User);
+      console.log(response.data);
+      if (!success) {
+        return addErrorNotification(String(error?.message));
+      }
 
-    setCookie(undefined, STORAGE_KEY, result?.token as string, {
-      maxAge: 60 * 60 * 24 * 30, // 30 days,
-      path: "/",
-    });
+      setUser(result?.user as User);
 
-    api.defaults.headers["Authorization"] = `Bearer ${result.token}`;
+      setCookie(undefined, STORAGE_KEY, result?.token as string, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days,
+        path: "/",
+      });
 
-    if (result?.user.hasConfirmedRegulation) {
-      Router.push("/");
-    } else {
-      Router.push("/regulations");
+      api.defaults.headers["Authorization"] = `Bearer ${result.token}`;
+
+      if (result?.user.hasConfirmedRegulation) {
+        Router.push("/");
+      } else {
+        Router.push("/regulations");
+      }
+    } catch (error: any) {
+      const err = error as ResponseError;
+
+      addErrorNotification(
+        err.response.data.error?.message || "Error during request in sign in."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -77,6 +93,8 @@ export function useAuth(): InitialState {
       latitude: location?.latitude,
       longitude: location?.longitude,
     };
+
+    console.log("coming", payload);
 
     const response = await signupService(payload);
 
@@ -155,6 +173,7 @@ export function useAuth(): InitialState {
 
   return {
     isAuthenticated: !!user,
+    isSubmitting,
     user,
     setUser,
     signIn,

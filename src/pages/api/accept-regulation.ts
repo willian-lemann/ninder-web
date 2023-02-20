@@ -8,7 +8,6 @@ export default async function handler(
 ) {
   const userId = request.headers.userid as string;
 
-  console.log(userId);
   if (request.method === "POST") {
     const updatedUser = await prisma.user.update({
       where: { id: userId },

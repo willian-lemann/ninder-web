@@ -26,8 +26,7 @@ const fetcher = () =>
 preload("/api/data", fetcher);
 
 export const SignInForm = ({ onLoginType }: SignInFormProps) => {
-  const { signIn, signInWithGoogle } = useAuthContext();
-  const [loading, setLoading] = useState(false);
+  const { signIn, signInWithGoogle, isSubmitting } = useAuthContext();
   const [isSigningWithGoogle, setIsSigningWithGoogle] = useState(false);
 
   const [signInData, setSignInData] = useState({
@@ -45,19 +44,10 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
 
   const handleSignIn = async (event: FormEvent) => {
     event.preventDefault();
-    setLoading(true);
 
     const { email, password } = signInData;
 
-    try {
-      await signIn({ email, password });
-    } catch (error: any) {
-      console.log(error);
-
-      addErrorNotification("Error trying to sign in. Try again!");
-    } finally {
-      setLoading(false);
-    }
+    await signIn({ email, password });
   };
 
   return (
@@ -144,7 +134,7 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
                 aria-hidden="true"
               />
             </span>
-            {loading ? <Loading size={5} /> : "Sign in"}
+            {isSubmitting ? <Loading size={5} /> : "Sign in"}
           </button>
 
           <div className="flex items-center">

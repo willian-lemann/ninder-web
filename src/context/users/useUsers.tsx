@@ -1,8 +1,9 @@
 import { api } from "@config/axios";
 import { useAuthContext } from "@context/auth";
 import { User } from "@data/models/user";
+import { getUsersService } from "@services/user/get-users";
 
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
 import useSWR, { KeyedMutator } from "swr";
 
@@ -27,6 +28,16 @@ export const useUsers = (): UsersContextParams => {
   const searchUsers = (filter: string) => {
     setQueryFilter(filter);
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      const response = await getUsersService();
+
+      setUsers(response.data.result);
+    };
+
+    loadData();
+  }, []);
 
   return {
     setUsers,

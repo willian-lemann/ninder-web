@@ -3,6 +3,10 @@ import { JWT_OPTIONS, SECRET } from "@constants/auth/jwt";
 import { createApiResponse, ResponseAuthType } from "@utils/createApiResponse";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import { SignInCredencials } from "@dtos/login/SignInCredencials";
+
+import bcrypt from "bcrypt";
+
 import jwt from "jsonwebtoken";
 import { createUser } from "src/factories/create-user";
 
@@ -11,7 +15,7 @@ export default async function handler(
   response: NextApiResponse
 ) {
   if (request.method === "POST") {
-    const data = request.body;
+    const data = request.body as SignInCredencials;
 
     const userRegister = await prisma.user.findUnique({
       where: { email: data.email },
@@ -30,6 +34,22 @@ export default async function handler(
       email: data.email,
       sub: userRegister.id,
     };
+
+    const isSamePassword = await bcrypt.compare(
+      data.password,
+      userRegister.password
+    );
+
+    if (!isSamePassword) {
+      return response.status(400).json(
+        createApiResponse({
+          success: false,
+          error: {
+            message: "Email or Password is invalid. Try again.",
+          },
+        })
+      );
+    }
 
     const token = jwt.sign(payload, SECRET, JWT_OPTIONS);
 

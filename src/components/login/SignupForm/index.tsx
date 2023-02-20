@@ -107,7 +107,6 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
     try {
       setIsSubmiting(true);
 
-      console.log(formData);
       await userInformationSchema.validate(formData, { abortEarly: false });
 
       exclude(formData, ["confirmPassword"]);
@@ -124,8 +123,6 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
         err.inner.forEach((error) => {
           errors[String(error.path)] = error.message;
         });
-
-        console.log(errors);
 
         setFormErrors((state) => ({ ...state, ...errors }));
       }

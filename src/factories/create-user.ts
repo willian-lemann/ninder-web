@@ -1,9 +1,13 @@
-import { User } from "@prisma/client";
-import { User as UserR } from "../models/user";
+import { User as PrismaModelUser } from "@prisma/client";
+import { exclude } from "@utils/exclude";
+import { User } from "../models/user";
 
-export function createUser(user: User) {
-  const createdUser: UserR = { ...user };
+export function createUser(user: PrismaModelUser) {
+  const newUser = user;
+
+  exclude(newUser, ["password"]);
+
   return {
-    ...createdUser,
+    ...newUser,
   };
 }
