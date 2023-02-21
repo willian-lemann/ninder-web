@@ -1,49 +1,63 @@
-import nextConnect from "next-connect";
-
 import { prisma } from "@config/prisma";
 import { createApiResponse } from "@utils/createApiResponse";
-import { NextApiRequest, NextApiResponse } from "next";
+
 import { User } from "@data/models/user";
 import { exclude } from "@utils/exclude";
 import { getDistanceAway } from "@utils/getDistanceAway";
 
-export default nextConnect<NextApiRequest, NextApiResponse>().get(
-  async (request, response) => {
-    const userId = request.headers.userid as string;
+import nextConnect from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
-    const users = await prisma.user.findMany({
-      where: {
-        NOT: { id: userId },
-      },
-    });
+export const router = nextConnect<NextApiRequest, NextApiResponse>({
+  onError(error, req, res) {
+    res
+      .status(501)
+      .json({ error: `Sorry something Happened! ${error.message}` });
+  },
 
-    users.forEach((user) => {
-      exclude(user, ["password"]);
-    });
+  onNoMatch(req, res) {
+    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
+  },
+});
 
-    const currentUser = await prisma.user.findUnique({ where: { id: userId } });
+export default router.get(async (request, response) => {
+  const userId = request.headers.userid as string;
 
-    users.forEach((user) => {
-      return {
-        ...user,
-        distanceAway: getDistanceAway({
-          sourceLocation: {
-            latitude: currentUser?.latitude as number,
-            longitude: currentUser?.longitude as number,
-          },
+  console.log("chegou aqui", userId);
+  const users = await prisma.user.findMany({
+    where: {
+      NOT: { id: userId },
+    },
+  });
 
-          targetLocation: {
-            latitude: user.latitude as number,
-            longitude: user.longitude as number,
-          },
-        }),
-      };
-    });
+  users.forEach((user) => {
+    exclude(user, ["password"]);
+  });
 
-    return response.status(200).json(
-      createApiResponse({
-        result: users,
-      })
-    );
-  }
-);
+  const currentUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  users.forEach((user) => {
+    return {
+      ...user,
+      distanceAway: getDistanceAway({
+        sourceLocation: {
+          latitude: currentUser?.latitude as number,
+          longitude: currentUser?.longitude as number,
+        },
+
+        targetLocation: {
+          latitude: user.latitude as number,
+          longitude: user.longitude as number,
+        },
+      }),
+    };
+  });
+
+  console.log("chegou aqui", users);
+
+  return response.status(200).json(
+    createApiResponse<User[]>({
+      result: users,
+    })
+  );
+});

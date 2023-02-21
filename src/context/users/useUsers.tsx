@@ -1,11 +1,11 @@
+import { addErrorNotification } from "@components/shared/alert";
 import { api } from "@config/axios";
 import { useAuthContext } from "@context/auth";
 import { User } from "@data/models/user";
 import { getUsersService } from "@services/user/get-users";
+import { ResponseError } from "@utils/createApiResponse";
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-
-import useSWR, { KeyedMutator } from "swr";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export interface UsersContextParams {
   isLoading: boolean;
@@ -19,6 +19,7 @@ export interface UsersContextParams {
 const fetcher = (url: string) => api.get(url).then((res) => res.data.result);
 
 export const useUsers = (): UsersContextParams => {
+  const { isAuthenticated } = useAuthContext();
   const [queryFilter, setQueryFilter] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,13 +32,22 @@ export const useUsers = (): UsersContextParams => {
 
   useEffect(() => {
     const loadData = async () => {
-      const response = await getUsersService();
+      try {
+        const response = await getUsersService();
 
-      setUsers(response.data.result);
+        const { result } = response.data;
+
+        setUsers(result as User[]);
+      } catch (error: any) {
+        const err = error as ResponseError;
+        addErrorNotification(err.response.data.error?.message as string);
+      }
     };
 
-    loadData();
-  }, []);
+    if (isAuthenticated) {
+      loadData();
+    }
+  }, [isAuthenticated]);
 
   return {
     setUsers,

@@ -34,13 +34,13 @@ const MapEventHandlers = ({ onUpdateLocation }: MapEventHandlersProps) => {
 
 const Map = ({ toggleMap }: MapProps) => {
   const { user: currentUser } = useAuthContext();
+  console.log(currentUser);
   const [handlerLocation, setHandlerLocation] = useState<Location | null>(null);
-  const { users, isLoading, mutate } = useUsers();
+  const { users, isLoading } = useUsers();
 
   const showSearchAreaButton = !!handlerLocation;
 
   const handleSearchNearArea = () => {
-    mutate();
     setHandlerLocation(null);
   };
 

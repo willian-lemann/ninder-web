@@ -1,6 +1,6 @@
 import { User } from "@data/models/user";
 
-export interface RegisterForm extends Pick<User, "email" | "name" | "avatar"> {
+export interface RegisterForm extends Pick<User, "email" | "name"> {
   password: string;
   confirmPassword: string;
 }

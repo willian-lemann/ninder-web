@@ -1,5 +1,4 @@
-import { object, string, number, date } from "yup";
-import { differenceInYears } from "date-fns";
+import { object, string } from "yup";
 
 const emailRegexPattern =
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;

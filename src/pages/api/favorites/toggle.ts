@@ -1,7 +1,6 @@
 import { prisma } from "@config/prisma";
 import { createApiResponse } from "@utils/createApiResponse";
 import { NextApiRequest, NextApiResponse } from "next";
-
 import nextConnect from "next-connect";
 
 const router = nextConnect<NextApiRequest, NextApiResponse>({
@@ -16,15 +15,31 @@ const router = nextConnect<NextApiRequest, NextApiResponse>({
   },
 });
 
-export default router.put(async (request, response) => {
+router.post(async (request, response) => {
   const userId = request.headers.userid as string;
+  const favoritedUserId = request.body.favoritedUserId as string;
 
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: { hasConfirmedRegulation: true },
+  const favorited = await prisma.favorite.findFirst({
+    where: { userId },
   });
 
-  return response
-    .status(200)
-    .json(createApiResponse({ result: updatedUser.id }));
+  if (favorited) {
+    await prisma.favorite.delete({
+      where: { id: favorited.id },
+    });
+
+    return response.status(204);
+  }
+
+  const createdFavorited = await prisma.favorite.create({
+    data: { userId, favoritedUserId },
+  });
+
+  return response.status(201).json(
+    createApiResponse({
+      result: createdFavorited.id,
+    })
+  );
 });
+
+export default router;

@@ -94,8 +94,6 @@ export function useAuth(): InitialState {
       longitude: location?.longitude,
     };
 
-    console.log("coming", payload);
-
     const response = await signupService(payload);
 
     const { result, error, success } = response.data;

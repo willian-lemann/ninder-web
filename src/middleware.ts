@@ -9,6 +9,7 @@ export const config = {
     "/api/messages/:path*",
     "/api/me",
     "/api/accept-regulation",
+    "/api/favorites/:path*",
   ],
 };
 
@@ -34,7 +35,6 @@ export function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
 
-  console.log(decodedToken);
   requestHeaders.set("userid", decodedToken.sub as string);
 
   const response = NextResponse.next({

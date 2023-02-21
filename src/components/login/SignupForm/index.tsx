@@ -1,11 +1,5 @@
 /* eslint-disable react/jsx-key */
-import {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import * as yup from "yup";
 
 import {
@@ -14,8 +8,6 @@ import {
   EyeSlashIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-
-import { classNames } from "@utils/classNames";
 
 import { useAuthContext } from "@context/auth";
 import { RegisterForm } from "@dtos/login/RegisterForm";
@@ -28,10 +20,9 @@ import { exclude } from "@utils/exclude";
 import { addErrorNotification } from "@components/shared/alert";
 import { UPLOAD_LIMIT_IN_MB } from "@constants/login/userInformation";
 import { Input } from "../Input";
-import { PreviewImage } from "./PreviewImage";
+
 import { SignUpCredencials } from "@dtos/login/SignUpCredencials";
 import { Loading } from "@components/shared/Loading";
-import { prisma } from "@config/prisma";
 
 interface SignupFormProps {
   onLoginType: (type: "signin" | "signup") => void;
@@ -46,7 +37,6 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
   const [formData, setFormData] = useState<RegisterForm>({
     email: "",
     name: "",
-    avatar: "",
     password: "",
     confirmPassword: "",
   });
@@ -77,7 +67,7 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
       event.stopPropagation();
 
       const { files } = event.target;
-      const file = files?.item(0) as File;
+      const file = files?.item(0);
 
       if (!file) return;
 
@@ -89,8 +79,6 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
 
       const previewImage = URL.createObjectURL(file);
       setPreview(previewImage);
-
-      handleUpdateFields({ avatar: previewImage });
     },
     []
   );
@@ -145,49 +133,17 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
         </div>
 
         <span className="text-primary mx-auto font-bold w-auto text-center text-4xl">
-          User information
+          Create an account
         </span>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="h-full w-full max-w-md m-auto flex flex-col justify-between mt-10"
+        className="h-full w-full max-w-md m-auto flex flex-col justify-between mt-20"
       >
         <input type="hidden" name="remember" defaultValue="true" />
 
         <div className="rounded-md shadow-sm -space-y-px gap-4 flex flex-col">
-          <div
-            className={classNames(
-              !preview ? "border-2" : "",
-              "rounded-full w-32 h-32 m-auto border-dashed"
-            )}
-          >
-            <Input
-              id="profile-image"
-              name="profile-image"
-              type="file"
-              className="sr-only"
-              onChange={handleChangeImage}
-            />
-
-            <label
-              htmlFor="profile-image"
-              className={classNames(
-                !preview ? "visible" : "hidden",
-                "text-sm text-zinc-400 h-full w-full rounded-full flex items-center justify-center cursor-pointer"
-              )}
-            >
-              Select a photo
-            </label>
-
-            {preview && (
-              <PreviewImage
-                preview={preview}
-                onChangeImage={handleChangeImage}
-              />
-            )}
-          </div>
-
           <Input
             label="Name"
             id="name"
@@ -299,9 +255,9 @@ export const SignupForm = ({ onLoginType }: SignupFormProps) => {
 
           <button
             type="submit"
-            className="border-none w-auto h-[35px] bg-primary text-white hover:brightness-90 transition-all duration-300 rounded-md px-4"
+            className="border-none w-auto h-[45px] bg-primary text-white hover:brightness-90 transition-all duration-300 rounded-md px-4"
           >
-            {isSubmiting ? <Loading /> : "Submit"}
+            {isSubmiting ? <Loading /> : "Create account"}
           </button>
         </div>
       </form>

@@ -7,7 +7,7 @@ type Error = {
   message: string;
 };
 
-export interface Result<T = unknown> {
+export interface Result<T> {
   success?: boolean;
   error?: Error | null;
   result?: T | null;
