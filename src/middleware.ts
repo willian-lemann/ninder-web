@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
 
 import { NextRequest, NextResponse } from "next/server";

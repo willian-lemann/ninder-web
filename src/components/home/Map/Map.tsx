@@ -34,7 +34,7 @@ const MapEventHandlers = ({ onUpdateLocation }: MapEventHandlersProps) => {
 
 const Map = ({ toggleMap }: MapProps) => {
   const { user: currentUser } = useAuthContext();
-  console.log(currentUser);
+
   const [handlerLocation, setHandlerLocation] = useState<Location | null>(null);
   const { users, isLoading } = useUsers();
 
@@ -59,8 +59,8 @@ const Map = ({ toggleMap }: MapProps) => {
   return (
     <div
       className={classNames(
-        toggleMap ? "w-0" : "w-[53%]",
-        "h-[100%] transition-all duration-300"
+        toggleMap ? "w-0" : "md:w-[53%] w-full",
+        "md:h-[100%] transition-all duration-300"
       )}
     >
       <MapContainer

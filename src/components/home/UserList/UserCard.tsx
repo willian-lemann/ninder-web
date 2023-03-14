@@ -19,7 +19,7 @@ import { OpenChatPopover } from "./OpenChatPopover";
 
 interface UserCardProps {
   user: User;
-  toggleMap: boolean;
+  toggleMap?: boolean;
 }
 
 export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {

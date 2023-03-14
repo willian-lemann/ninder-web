@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 
+import "react-spring-bottom-sheet/dist/style.css";
 import "@styles/globals.css";
 
 import { AlertProvider } from "../components/shared/alert";

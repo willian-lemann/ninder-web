@@ -27,7 +27,6 @@ import { api } from "@config/axios";
 import { authenticateService } from "@services/auth/authenticate";
 import { signupService } from "@services/auth/signup";
 
-import useSWR from "swr";
 import { ResponseError } from "@utils/createApiResponse";
 export interface InitialState {
   isAuthenticated: boolean;

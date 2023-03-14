@@ -4,6 +4,7 @@ import { Skeleton } from "./Skeleton";
 import { classNames } from "@utils/classNames";
 
 import { useUsers, useUsersContext } from "@context/users";
+import { UserListBottomSheet } from "./UserListBottomSheet";
 
 interface UserListProps {
   toggleMap: boolean;
@@ -12,7 +13,7 @@ interface UserListProps {
 export const UserList = ({ toggleMap }: UserListProps) => {
   const { users, isLoading, isEmpty } = useUsers();
 
-  if (!users) {
+  if (!users || isLoading) {
     return <Skeleton />;
   }
 
@@ -26,22 +27,26 @@ export const UserList = ({ toggleMap }: UserListProps) => {
   }
 
   return (
-    <section
-      className={classNames(
-        toggleMap ? "container" : "",
-        "px-4 overflow-y-auto flex-1"
-      )}
-    >
-      <ul
+    <div>
+      <section
         className={classNames(
-          toggleMap ? "md:grid-cols-4" : "md:grid-cols-2",
-          "md:grid gap-4 justify-items-center"
+          toggleMap ? "container" : "",
+          "md:px-4 md:overflow-y-auto md:flex-1 hidden md:flex"
         )}
       >
-        {users.map((user) => (
-          <UserCard key={user.id} user={user} toggleMap={toggleMap} />
-        ))}
-      </ul>
-    </section>
+        <ul
+          className={classNames(
+            toggleMap ? "md:grid-cols-4" : "md:grid-cols-2",
+            "md:grid gap-4 justify-items-center hidden"
+          )}
+        >
+          {users.map((user) => (
+            <UserCard key={user.id} user={user} toggleMap={toggleMap} />
+          ))}
+        </ul>
+      </section>
+
+      <UserListBottomSheet />
+    </div>
   );
 };

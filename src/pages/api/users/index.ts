@@ -23,7 +23,6 @@ export const router = nextConnect<NextApiRequest, NextApiResponse>({
 export default router.get(async (request, response) => {
   const userId = request.headers.userid as string;
 
-  console.log("chegou aqui", userId);
   const users = await prisma.user.findMany({
     where: {
       NOT: { id: userId },
@@ -52,8 +51,6 @@ export default router.get(async (request, response) => {
       }),
     };
   });
-
-  console.log("chegou aqui", users);
 
   return response.status(200).json(
     createApiResponse<User[]>({
