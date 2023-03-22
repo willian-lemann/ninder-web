@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export const Header = () => {
   return (
-    <Disclosure as="nav" className="bg-white container">
+    <Disclosure as="nav" className="bg-white container hidden md:inline-block">
       {({ open }) => (
         <>
           <div className="lg:w-full">
@@ -17,13 +17,13 @@ export const Header = () => {
               <MobileBarMenu open={open} />
 
               <div className="flex w-full items-center justify-center sm:items-center sm:justify-between">
-                <div className="relative h-8 w-28">
+                <div className="relative h-8 w-28 hidden md:inline-block">
                   <Image src="/logo.svg" alt="logo" fill />
                 </div>
 
                 <SearchUsers />
 
-                <div className="absolute flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <div className="flex absolute items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <MenuOptions />
                 </div>
               </div>

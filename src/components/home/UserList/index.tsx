@@ -3,7 +3,7 @@ import { UserCard } from "./UserCard";
 import { Skeleton } from "./Skeleton";
 import { classNames } from "@utils/classNames";
 
-import { useUsers, useUsersContext } from "@context/users";
+import { useUsers } from "@context/users/useUsers";
 import { UserListBottomSheet } from "./UserListBottomSheet";
 
 interface UserListProps {

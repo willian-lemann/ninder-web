@@ -56,7 +56,6 @@ export function useAuth(): InitialState {
 
       const { result, error, success } = response.data;
 
-      console.log(response.data);
       if (!success) {
         return addErrorNotification(String(error?.message));
       }

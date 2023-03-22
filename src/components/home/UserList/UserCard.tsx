@@ -44,8 +44,7 @@ export const UserCard = memo(({ user, toggleMap }: UserCardProps) => {
     <li
       key={user.id}
       className={classNames(
-        toggleMap ? "w-[330px]" : "w-full",
-        "h-[230px] flex flex-col cursor-pointer animate-fadeIn"
+        "h-[230px] w-[330px] flex flex-col cursor-pointer animate-fadeIn"
       )}
       onClick={() => handleSeeUserDetails(user.id as string)}
     >

@@ -30,7 +30,8 @@ function hasToken(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const token = hasToken(request);
 
-  if (!token) return createResponse("No token provided.", { status: 401 });
+  if (!token || token === undefined)
+    return createResponse("No token provided.", { status: 401 });
 
   const decodedToken = jwtDecode<{ email: string; sub: string }>(token);
 

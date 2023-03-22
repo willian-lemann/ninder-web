@@ -1,20 +1,15 @@
-import {
-  useState,
-  ChangeEvent,
-  startTransition,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { useState, ChangeEvent, startTransition } from "react";
 
 import {
   MagnifyingGlassIcon as SearchIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useUsers, useUsersContext } from "@context/users";
+
+import { useUsers } from "@context/users/useUsers";
 
 export const SearchUsers = () => {
   const [searchValue, setSearchValue] = useState("");
-  const { searchUsers } = useUsersContext();
+  const { searchUsers } = useUsers();
 
   const handleSearchFilter = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);

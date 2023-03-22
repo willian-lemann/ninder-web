@@ -6,6 +6,7 @@ import { classNames } from "@utils/classNames";
 import { Header } from "@components/home/Header";
 import { Map } from "@components/home/Map";
 import { UserList } from "@components/home/UserList";
+import { BottomNavigation } from "@components/home/BottomNavigation";
 
 export default function Home() {
   const [toggleMap, setToggleMap] = useState(false);
@@ -28,6 +29,8 @@ export default function Home() {
           {toggleMap ? "Show Map" : "Hide Map"}
         </button>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 }

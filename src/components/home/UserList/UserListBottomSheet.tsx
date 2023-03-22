@@ -1,4 +1,4 @@
-import { useUsers } from "@context/users";
+import { useUsers } from "@context/users/useUsers";
 import Image from "next/image";
 import { useRef } from "react";
 import { BottomSheet, BottomSheetRef } from "react-spring-bottom-sheet";
@@ -14,7 +14,11 @@ export function UserListBottomSheet() {
       blocking={false}
       className="md:hidden"
       expandOnContentDrag
-      header={<header>More than 100 users near</header>}
+      header={
+        <header>
+          <span className="text-zinc-600">{users.length} users near</span>
+        </header>
+      }
       snapPoints={() => [300, 600]}
     >
       <div className="h-full p-4">

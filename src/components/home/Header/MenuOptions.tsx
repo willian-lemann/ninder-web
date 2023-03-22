@@ -2,11 +2,11 @@ import { Fragment } from "react";
 import Router from "next/router";
 import { useAuthContext } from "@context/auth";
 import { Menu, Transition } from "@headlessui/react";
-import Image from "next/image";
+
 import { classNames } from "@utils/classNames";
 
 import { FavoritesPopover } from "./FavoritesPopover";
-import { useChatsContext } from "@context/chat";
+
 import { Avatar } from "./Avatar";
 import { NotificationsPopover } from "./NotificationsPopover";
 
