@@ -7,6 +7,7 @@ import { AlertProvider } from "../components/shared/alert";
 
 import { Provider } from "../context";
 import { SessionProvider } from "next-auth/react";
+import { BottomNavigation } from "@components/home/BottomNavigation";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
