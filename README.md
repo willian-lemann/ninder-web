@@ -19,7 +19,7 @@ the point of the app is, bring users together to connect and meet each other, to
    npm install or yarn install or any of your preference
 
 #### Usage
-Brief explanation of how to use the project.
+This gonna be a social media app to find near people to practice english, in the future, looking foward to add gamification.
 
 #### Features
 List of the main features of the project.
