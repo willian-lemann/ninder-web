@@ -46,7 +46,7 @@ const Map = ({ toggleMap }: MapProps) => {
 
   if (!currentUser || !users) {
     return (
-      <div className="w-[53%] h-[100%] flex flex-col gap-4 items-center justify-center">
+      <div className="w-full md:w-[53%] h-[100%] flex flex-col gap-4 items-center justify-center">
         <Loading size={8} />
 
         <span className="text-title-opacity">

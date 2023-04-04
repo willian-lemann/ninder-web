@@ -7,7 +7,7 @@ export function Explore() {
   const [toggleMap, setToggleMap] = useState(false);
 
   return (
-    <div className="flex justify-between h-[calc(100vh-4rem)] z-0 relative">
+    <div className="flex justify-between md:h-[calc(100vh-4rem)] h-screen z-0 relative">
       <UserList toggleMap={toggleMap} />
       <Map toggleMap={toggleMap} />
 

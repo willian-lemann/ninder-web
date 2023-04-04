@@ -23,7 +23,7 @@ export function BottomNavigation() {
   return (
     <div className="md:hidden border-t-2 shadow-lg z-50 h-16 w-full flex items-center justify-center absolute bottom-0">
       <Tab.List>
-        <ul className="h-full flex items-center justify-around px-4 gap-8 text-sm font-bold">
+        <ul className="h-full flex items-center gap-8 text-xs sm:text-sm font-bold">
           <Tab>
             <li
               onClick={() => setSelectedNavigation("explore")}

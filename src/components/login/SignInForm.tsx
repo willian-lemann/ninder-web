@@ -51,14 +51,14 @@ export const SignInForm = ({ onLoginType }: SignInFormProps) => {
   };
 
   return (
-    <div className="m-auto max-w-md">
+    <div className="m-auto max-w-xs sm:max-w-md">
       <header className="flex items-center justify-between mt-16">
         <div className="relative h-8 w-28">
           <Image src="/logo.svg" alt="logo" fill />
         </div>
 
         <div>
-          <span>Don't have an account?</span>
+          <span className="hidden md:inline-block">Don't have an account?</span>
           <span
             className=" cursor-pointer text-primary pl-1"
             onClick={() => onLoginType("signup")}
