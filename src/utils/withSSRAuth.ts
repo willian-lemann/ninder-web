@@ -1,3 +1,4 @@
+import { getAuth } from "@clerk/nextjs/server";
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -11,10 +12,9 @@ export function withSSRAuth<P>(fn: GetServerSideProps<any>) {
   return async (
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
-    const cookies = parseCookies(context);
-    const session = await getSession(context);
+    const { userId } = getAuth(context.req);
 
-    if (!cookies[STORAGE_KEY] && !session) {
+    if (!userId) {
       return {
         redirect: {
           destination: "/login",

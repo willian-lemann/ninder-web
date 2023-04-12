@@ -4,7 +4,6 @@ let cachedPusher: Pusher | null = null;
 
 function getPusherInstance() {
   if (cachedPusher) {
-    console.log("cached");
     return cachedPusher;
   }
 
@@ -17,8 +16,6 @@ function getPusherInstance() {
   });
 
   cachedPusher = newPusherClient;
-
-  console.log("new instance");
 
   return newPusherClient;
 }

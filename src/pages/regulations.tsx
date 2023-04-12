@@ -1,14 +1,14 @@
 import { useState } from "react";
 import Router from "next/router";
-import { useAuthContext } from "@context/auth";
 
-import { addErrorNotification } from "@components/shared/alert";
-import { Loading } from "@components/shared/Loading";
-import { acceptRegulationsService } from "@services/user/accept-regulations";
+import { addErrorNotification } from "@/components/alert";
+import { Loading } from "@/components/Loading";
+import { useAcceptRegulation } from "@/features/authentication/hooks/use-accept-regulation";
 
 const file = "https://termify.io/terms-and-conditions/1667685585";
 
 export default function Regulations() {
+  const { acceptRegulation } = useAcceptRegulation();
   const [isAcceptingRegulation, setIsAcceptingRegulation] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -16,7 +16,7 @@ export default function Regulations() {
     setIsAcceptingRegulation(true);
 
     try {
-      await acceptRegulationsService();
+      await acceptRegulation();
 
       Router.push("/");
     } catch (error) {

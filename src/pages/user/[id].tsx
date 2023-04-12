@@ -4,15 +4,15 @@ import Image from "next/image";
 
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
-import { getGender } from "@functions/formatGender";
+import { getGender } from "@/functions/formatGender";
 
-import { useUserDetails } from "@context/users";
-import { useAuthContext } from "@context/auth";
-import { useChatsContext } from "@context/chat";
+import { useUserDetails } from "@/context/users";
+import { useAuthContext } from "@/context/auth";
+import { useChatsContext } from "@/context/chat";
 
-import { Loading } from "@components/shared/Loading";
+import { Loading } from "@/components/Loading";
 
-import { Skeleton } from "@components/user/Skeleton";
+import { Skeleton } from "@/components/user/Skeleton";
 
 export default function UserDetails() {
   const { user: currentUser } = useAuthContext();

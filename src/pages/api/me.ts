@@ -1,5 +1,5 @@
-import { prisma } from "@config/prisma";
-import { createApiResponse } from "@utils/createApiResponse";
+import { prisma } from "@/config/prisma";
+import { createApiResponse } from "@/utils/createApiResponse";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import nextConnect from "next-connect";

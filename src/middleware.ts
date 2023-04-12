@@ -1,49 +1,12 @@
-import jwt from "jsonwebtoken";
-import jwtDecode from "jwt-decode";
+import { withClerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-import { NextRequest, NextResponse } from "next/server";
+export default withClerkMiddleware((req: NextRequest) => {
+  return NextResponse.next();
+});
 
+// Stop Middleware running on static files
 export const config = {
-  matcher: [
-    "/api/users/:path*",
-    "/api/chats/:path*",
-    "/api/messages/:path*",
-    "/api/me",
-    "/api/accept-regulation",
-    "/api/favorites/:path*",
-  ],
+  matcher: "/((?!_next/image|_next/static|favicon.ico).*)",
 };
-
-function createResponse(message: string, options: ResponseInit | undefined) {
-  return new NextResponse(JSON.stringify({ success: false, message }), options);
-}
-
-function hasToken(request: NextRequest) {
-  const token = request.headers
-    .get("Authorization")
-    ?.split(" ")
-    .at(1) as string;
-
-  return token;
-}
-
-export function middleware(request: NextRequest) {
-  const token = hasToken(request);
-
-  if (!token || token === undefined)
-    return createResponse("No token provided.", { status: 401 });
-
-  const decodedToken = jwtDecode<{ email: string; sub: string }>(token);
-
-  const requestHeaders = new Headers(request.headers);
-
-  requestHeaders.set("userid", decodedToken.sub as string);
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-
-  return response;
-}

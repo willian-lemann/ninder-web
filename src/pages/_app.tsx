@@ -1,23 +1,44 @@
 import type { AppProps } from "next/app";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  RedirectToSignIn,
+} from "@clerk/nextjs";
 
 import "react-spring-bottom-sheet/dist/style.css";
-import "@styles/globals.css";
+import "@/styles/globals.css";
 
-import { AlertProvider } from "../components/shared/alert";
+import { AlertProvider } from "@/components/alert";
 
-import { Provider } from "../context";
-import { SessionProvider } from "next-auth/react";
-import { BottomNavigation } from "@components/home/BottomNavigation";
+import { useRouter } from "next/router";
+import { api } from "@/utils/api";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+const publicPages = ["/login"];
+
+function MyApp({ Component, pageProps }: AppProps) {
+  const { pathname } = useRouter();
+
+  const isPublicPage = publicPages.includes(pathname);
+
   return (
-    <SessionProvider session={session}>
-      <Provider>
-        <AlertProvider />
+    <ClerkProvider {...pageProps}>
+      <AlertProvider />
+      {isPublicPage ? (
         <Component {...pageProps} />
-      </Provider>
-    </SessionProvider>
+      ) : (
+        <>
+          <SignedIn>
+            <Component {...pageProps} />
+          </SignedIn>
+
+          <SignedOut>
+            <RedirectToSignIn />
+          </SignedOut>
+        </>
+      )}
+    </ClerkProvider>
   );
 }
 
-export default MyApp;
+export default api.withTRPC(MyApp);

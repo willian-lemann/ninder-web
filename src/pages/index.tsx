@@ -1,14 +1,12 @@
-import { useState } from "react";
-
 import { Tab } from "@headlessui/react";
 
-import { withSSRAuth } from "@utils/withSSRAuth";
+import { Header } from "@/features/dashboard/Header";
 
-import { Header } from "@components/home/Header";
-
-import { BottomNavigation } from "@components/home/BottomNavigation";
-import { Explore } from "@components/home/Explore";
-import { Favorites } from "@components/home/Favorites";
+import { BottomNavigation } from "@/features/dashboard/BottomNavigation";
+import { Explore } from "@/features/dashboard/Explore";
+import { Favorites } from "@/features/dashboard/Favorites";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getAuth } from "@clerk/nextjs/server";
 
 export default function Home() {
   return (
@@ -34,9 +32,3 @@ export default function Home() {
     </div>
   );
 }
-
-export const getServerSideProps = withSSRAuth(async (context) => {
-  return {
-    props: {},
-  };
-});

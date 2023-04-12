@@ -2,10 +2,10 @@ import { useRouter } from "next/router";
 
 import { ArrowLeftOnRectangleIcon as BackIcon } from "@heroicons/react/24/solid";
 
-import { Chats } from "@components/chat/Chats";
-import { Messages } from "@components/chat/Messages";
-import { classNames } from "@utils/classNames";
-import { useChatsContext } from "@context/chat";
+import { Chats } from "@/components/chat/Chats";
+import { Messages } from "@/components/chat/Messages";
+import { classNames } from "@/utils/classNames";
+import { useChatsContext } from "@/context/chat";
 
 export default function ChatPage() {
   const router = useRouter();

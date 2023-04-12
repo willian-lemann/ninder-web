@@ -1,27 +1,49 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
-import { LoginTypes } from "@constants/login/LoginTypes";
+import { SignIn, SignUp } from "@clerk/nextjs";
 
-import { withSSRGuest } from "../utils/withSSRGuest";
-
-import { SignInForm } from "@components/login/SignInForm";
-import { SignupForm } from "../components/login/SignupForm";
+import { LoginTypes } from "@/constants/login/LoginTypes";
+import { useRouter } from "next/router";
 
 export default function Login() {
-  const [loginType, setLoginType] = useState<LoginTypes>("signin");
-
-  const handleChangeLoginType = (type: LoginTypes) => {
-    setLoginType(type);
-  };
+  const [formType, setFormType] = useState("signin");
 
   return (
     <div className="h-screen flex flex-col md:flex-row justify-between ">
-      <section className="flex-1">
-        {loginType === "signin" ? (
-          <SignInForm onLoginType={handleChangeLoginType} />
+      <section className="flex-1 flex items-center justify-center flex-col">
+        <button
+          onClick={() =>
+            setFormType((state) => (state === "signup" ? "signin" : "signup"))
+          }
+        >
+          {formType === "signin" ? "Signin" : "Signup"}
+        </button>
+
+        {formType === "signin" ? (
+          <SignIn
+            appearance={{
+              layout: { logoPlacement: "inside" },
+              variables: {
+                colorPrimary: "#6A3093",
+                fontFamily: "Roboto",
+              },
+              elements: {
+                footerAction__signIn: { display: "none" },
+              },
+            }}
+          />
         ) : (
-          <SignupForm onLoginType={handleChangeLoginType} />
+          <SignUp
+            appearance={{
+              layout: { logoPlacement: "inside" },
+              variables: {
+                colorPrimary: "#6A3093",
+                fontFamily: "Roboto",
+              },
+              elements: {},
+            }}
+          />
         )}
       </section>
 
@@ -37,9 +59,3 @@ export default function Login() {
     </div>
   );
 }
-
-export const getServerSideProps = withSSRGuest(async (context) => {
-  return {
-    props: {},
-  };
-});

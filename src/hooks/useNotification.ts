@@ -1,4 +1,4 @@
-import { addErrorNotification } from "@components/shared/alert";
+import { addErrorNotification } from "@/components/alert";
 import { useEffect } from "react";
 
 export interface NotifyParams {

@@ -18,7 +18,7 @@ model User {
   id                     String     @id @default(uuid())
   email                  String     @unique
   name                   String
-  password               String
+  userId                 String?
   avatar                 String?
   avatar_public_id       String?
   bio                    String?
@@ -31,7 +31,6 @@ model User {
   latitude               Float?
   longitude              Float?
   hasConfirmedRegulation Boolean    @default(false)
-  provider               Int        @default(1)
   createdAt              DateTime   @default(now())
   updatedAt              DateTime   @updatedAt
   chats                  Chat[]     @relation(name: "CreatedByRelation")
